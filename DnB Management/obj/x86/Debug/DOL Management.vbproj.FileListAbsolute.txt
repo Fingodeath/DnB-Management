@@ -1,0 +1,9 @@
+C:\Users\mschellhammer.DRESOURCES\AppData\Local\Temporary Projects\DOL Management\bin\Debug\DOL Management.exe
+C:\Users\mschellhammer.DRESOURCES\AppData\Local\Temporary Projects\DOL Management\bin\Debug\DOL Management.pdb
+C:\Users\mschellhammer.DRESOURCES\AppData\Local\Temporary Projects\DOL Management\bin\Debug\DOL Management.xml
+C:\Users\mschellhammer.DRESOURCES\AppData\Local\Temporary Projects\DOL Management\obj\x86\Debug\DOL_Management.Form1.resources
+C:\Users\mschellhammer.DRESOURCES\AppData\Local\Temporary Projects\DOL Management\obj\x86\Debug\DOL_Management.Resources.resources
+C:\Users\mschellhammer.DRESOURCES\AppData\Local\Temporary Projects\DOL Management\obj\x86\Debug\DOL Management.vbproj.GenerateResource.Cache
+C:\Users\mschellhammer.DRESOURCES\AppData\Local\Temporary Projects\DOL Management\obj\x86\Debug\DOL Management.exe
+C:\Users\mschellhammer.DRESOURCES\AppData\Local\Temporary Projects\DOL Management\obj\x86\Debug\DOL Management.xml
+C:\Users\mschellhammer.DRESOURCES\AppData\Local\Temporary Projects\DOL Management\obj\x86\Debug\DOL Management.pdb

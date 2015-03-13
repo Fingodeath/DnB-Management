@@ -1,0 +1,14 @@
+C:\Projects\DnB Management\DnB Management\bin\Debug\GlobalLibrary.dll
+C:\Projects\DnB Management\DnB Management\bin\Debug\Csla.dll
+C:\Projects\DnB Management\DnB Management\bin\Debug\GlobalLibrary.pdb
+C:\Projects\DnB Management\DnB Management\bin\Debug\GlobalLibrary.xml
+C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.vbprojResolveAssemblyReference.cache
+C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.vbproj.GenerateResource.Cache
+C:\Projects\DnB Management\DnB Management\bin\Debug\Employer Management.exe
+C:\Projects\DnB Management\DnB Management\bin\Debug\Employer Management.pdb
+C:\Projects\DnB Management\DnB Management\bin\Debug\Employer Management.xml
+C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer_Management.Form1.resources
+C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer_Management.Resources.resources
+C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.exe
+C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.xml
+C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.pdb

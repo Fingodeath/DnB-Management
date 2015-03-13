@@ -1,0 +1,127 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+GlobalLibrary
+</name>
+</assembly>
+<members>
+<member name="T:GlobalLibrary.HLIApplicationForm">
+	<summary>
+ This Form contains the references, and values that all HLI Applications need.
+ </summary>
+	<remarks></remarks>
+</member><member name="P:GlobalLibrary.ApplicationVariableInfo.ID">
+	<summary>
+ Get the ID of the current object.
+ </summary>
+	<value>A Integer that represents the ID of the current object.</value>
+	<returns>Integer representing the return value.</returns>
+	<remarks></remarks>
+</member><member name="P:GlobalLibrary.ApplicationVariableInfo.ApplicationID">
+	<summary>
+ Get the ApplicationID of the current object.
+ </summary>
+	<value>A Integer that represents the ApplicationID of the current object.</value>
+	<returns>Integer representing the return value.</returns>
+	<remarks></remarks>
+</member><member name="P:GlobalLibrary.ApplicationVariableInfo.VariableName">
+	<summary>
+ Get the VariableName of the current object.
+ </summary>
+	<value>A String that represents the VariableName of the current object.</value>
+	<returns>String representing the return value.</returns>
+	<remarks></remarks>
+</member><member name="P:GlobalLibrary.ApplicationVariableInfo.VariableType">
+	<summary>
+ Get the VariableType of the current object.
+ </summary>
+	<value>A String that represents the VariableType of the current object.</value>
+	<returns>String representing the return value.</returns>
+	<remarks></remarks>
+</member><member name="P:GlobalLibrary.ApplicationVariableInfo.VariableValue">
+	<summary>
+ Get the VariableValue of the current object.
+ </summary>
+	<value>A String that represents the VariableValue of the current object.</value>
+	<returns>String representing the return value.</returns>
+	<remarks></remarks>
+</member><member name="P:GlobalLibrary.ApplicationVariableInfo.LastUpdateDate">
+	<summary>
+ Get the LastUpdateDate of the current object.
+ </summary>
+	<value>A DateTime? that represents the LastUpdateDate of the current object.</value>
+	<returns>DateTime? representing the return value.</returns>
+	<remarks></remarks>
+</member><member name="P:GlobalLibrary.ApplicationVariableInfo.LastUpdateBy">
+	<summary>
+ Get the LastUpdateBy of the current object.
+ </summary>
+	<value>A String that represents the LastUpdateBy of the current object.</value>
+	<returns>String representing the return value.</returns>
+	<remarks></remarks>
+</member><member name="P:GlobalLibrary.ApplicationVariableInfo.InsertDate">
+	<summary>
+ Get the InsertDate of the current object.
+ </summary>
+	<value>A DateTime? that represents the InsertDate of the current object.</value>
+	<returns>DateTime? representing the return value.</returns>
+	<remarks></remarks>
+</member><member name="P:GlobalLibrary.ApplicationVariableInfo.InsertBy">
+	<summary>
+ Get the InsertBy of the current object.
+ </summary>
+	<value>A String that represents the InsertBy of the current object.</value>
+	<returns>String representing the return value.</returns>
+	<remarks></remarks>
+</member><member name="M:GlobalLibrary.ApplicationVariableInfo.GetIdValue">
+	<summary>
+ Get the unique id for the current object.
+ </summary>
+	<returns>A value that is the unique id of the object.</returns>
+	<remarks></remarks>
+</member><member name="P:GlobalLibrary.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:GlobalLibrary.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:GlobalLibrary.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member><member name="M:GlobalLibrary.Functions.Sendmail(System.String,System.String,System.Int32,System.Int32,System.String)">
+	<summary>
+ Send an Error Email 
+ </summary>
+	<param name="myMessage"></param>
+	<param name="myLocation"></param>
+	<param name="myID"></param>
+	<param name="myDate"></param>
+	<param name="ToolName"></param>
+	<remarks></remarks>
+</member><member name="M:GlobalLibrary.Functions.Sendmail(System.String,System.String,System.String,System.Int32,System.String)">
+	<summary>
+ Send an Error Email 
+ </summary>
+	<param name="myMessage"></param>
+	<param name="myLocation"></param>
+	<param name="myID"></param>
+	<param name="myDate"></param>
+	<param name="ToolName"></param>
+	<remarks></remarks>
+</member><member name="M:GlobalLibrary.Functions.Sendmail(System.String,System.String,System.String,System.String[])">
+	<summary>
+ Send an informational Email
+ </summary>
+	<param name="sMessage"></param>
+	<param name="sSubject"></param>
+	<param name="sSender"></param>
+	<param name="sRecipients"></param>
+	<remarks></remarks>
+</member>
+</members>
+</doc>
