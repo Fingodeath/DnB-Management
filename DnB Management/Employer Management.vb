@@ -34,7 +34,11 @@ Public Class Form1
     Private dsChangeRecords As DataSet
     Private dsCorporateList As DataSet
     Private dsCorpforSubsidiaryList As DataSet
+
     Private dsSubsidiaryList As DataSet
+    Private dsSubDemotionList As DataSet
+    Private dsStats As DataSet
+    Private dsSubChangeRecords As DataSet
     Dim path As String = "\\nasprosql1\Dunn & Bradstreet\DnBFlow.sql"
 
 
@@ -115,8 +119,10 @@ Public Class Form1
             cmbSubsidiaryBrowser.DataSource = dsCorpforSubsidiaryList.Tables(0)
             cmbSubsidiaryBrowser.DisplayMember = dsCorpforSubsidiaryList.Tables(0).Columns("Business Name").ToString
 
-            TabControl1.Controls.Remove(TabControl1.TabPages("TabPage1"))
-            TabControl1.Controls.Remove(TabControl1.TabPages("TabPage2"))
+            dsStats = SQLHelper.ExecuteDataset(CN, "emp.s_Get_Stats")
+            fillstats()
+
+        
             TabControl1.Controls.Remove(TabControl1.TabPages("TabPage4"))
             Label44.Visible = False
             Label46.Visible = False
@@ -126,7 +132,10 @@ Public Class Form1
             ToolTip1.SetToolTip(radDoubleDemotion, "A double demotion means that the former Corporate record is now a Subsidiary and that in the tier structure it is now third. (Two records is above it)")
             ToolTip1.SetToolTip(radPromotion, "A promotion occurs when a company goes from subsidiary to the top company")
             ToolTip1.SetToolTip(btnOrphanedHolding, "Delete the Orphaned Holding Companies mentioned below")
-
+            ToolTip1.SetToolTip(btnMatchSubDelete, "This will ateempt to verify that a possible delete has a matching Addition (Duns change without DnB knowing it) or that previously, there were duplicates with different DUNS.")
+            ToolTip1.SetToolTip(btnAcceptAllChanges, "All subsidiares for this Coprporation that are slated for delete are deleted along with related data")
+            ToolTip1.SetToolTip(btnRejectAllChanges, "All subsidiares for this Coprporation that are slated for delete are changed to 'No Change' so they won't be deleted.")
+            ToolTip1.SetToolTip(ckbExpandedList, "Expands the list to include companies where employees here is greater than 100")
 
             bInitial = False
         Catch ex As Exception
@@ -135,7 +144,34 @@ Public Class Form1
         End Try
     End Sub
 
+    Private Sub fillstats()
+        Try
+            TextBox1.Text = isnull(dsStats.Tables(0).Rows(0).Item("Total Employers"))
+            TextBox2.Text = isnull(dsStats.Tables(0).Rows(0).Item("Corporate Demotion"))
+            TextBox3.Text = isnull(dsStats.Tables(0).Rows(0).Item("Corporate Double Demotion"))
+            TextBox4.Text = isnull(dsStats.Tables(0).Rows(0).Item("Corporate Promotion"))
+            TextBox5.Text = isnull(dsStats.Tables(0).Rows(0).Item("Corporate Addition"))
+            TextBox6.Text = isnull(dsStats.Tables(0).Rows(0).Item("Corporate Delete"))
+            TextBox7.Text = isnull(dsStats.Tables(0).Rows(0).Item("Subsidiary Demotion"))
+            TextBox8.Text = isnull(dsStats.Tables(0).Rows(0).Item("Subsidiary Double Demotion"))
+            TextBox9.Text = isnull(dsStats.Tables(0).Rows(0).Item("Subsidiary Promotion"))
+            TextBox10.Text = isnull(dsStats.Tables(0).Rows(0).Item("Subsidiary Addition"))
+            TextBox11.Text = isnull(dsStats.Tables(0).Rows(0).Item("Subsidiary Delete"))
+            TextBox12.Text = isnull(dsStats.Tables(0).Rows(0).Item("Corporations"))
+            TextBox13.Text = isnull(dsStats.Tables(0).Rows(0).Item("Subsidiaries"))
+            TextBox14.Text = isnull(dsStats.Tables(0).Rows(0).Item("Oldest Corp"))
+            TextBox93.Text = isnull(dsStats.Tables(0).Rows(0).Item("Newest Corp"))
+            TextBox94.Text = isnull(dsStats.Tables(0).Rows(0).Item("Oldest Branch"))
+            TextBox95.Text = isnull(dsStats.Tables(0).Rows(0).Item("Newest Branch"))
+            TextBox96.Text = isnull(dsStats.Tables(0).Rows(0).Item("Corporate No Change"))
+            TextBox97.Text = isnull(dsStats.Tables(0).Rows(0).Item("Corporate Update"))
+            TextBox98.Text = isnull(dsStats.Tables(0).Rows(0).Item("Subsidiary No Change"))
+            TextBox99.Text = isnull(dsStats.Tables(0).Rows(0).Item("Subsidiary Update"))
 
+        Catch ex As Exception
+
+        End Try
+    End Sub
     'Private Sub Clear_NewGlobal()
     '    TextBox1.Clear()
     '    TextBox2.Clear()
@@ -387,7 +423,7 @@ Public Class Form1
         Dim iresult As Integer
         Try
             bInitial = True
-            If radAddition.Checked Then
+            If radAddition.Checked And cmbChangeList.SelectedIndex >= 0 Then
                 iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
                 If iresult = 0 Then
                     Using sw As StreamWriter = File.AppendText(path)
@@ -1021,6 +1057,282 @@ Public Class Form1
 
     End Sub
 
+    Private Sub Reprocess_Sub_List()
+        Dim changeptr As Int16
+        Try
+            If cmbSubList.SelectedIndex <> -1 Then
+                changeptr = cmbSubList.SelectedIndex
+            End If
+            If radSubDemotion.Checked Then
+                dsSubDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_SubDemotion_List")
+            ElseIf radSubDoubleDemotion.Checked Then
+                dsSubDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_SubDoubleDemotion_List")
+            ElseIf radSubDelete.Checked And ckbSortAlpha.Checked Then
+                dsSubDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_SubDelete_List", 1)
+            ElseIf radSubDelete.Checked Then
+                dsSubDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_SubDelete_List", 0)
+                'ElseIf radAddition.Checked Then
+                '    dsDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_Addition_List")
+                'ElseIf radDeletion.Checked Then
+                '    dsDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_Delete_List")
+            End If
+            cmbSubList.DataSource = dsSubDemotionList.Tables(0)
+            cmbSubList.DisplayMember = dsSubDemotionList.Tables(0).Columns("Business Name").ToString
+            Label62.Text = CStr(dsSubDemotionList.Tables(0).Rows.Count - 1)
+            'Select first item in list
+            If dsSubDemotionList.Tables(0).Rows.Count > 1 Then
+                cmbSubList.SelectedIndex = changeptr
+            Else
+                cmbSubList.SelectedIndex = 0
+            End If
+    
+
+            'fill boxes with results
+            get_SubChangeData()
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "Reprocess_Sub_List ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : Reprocess_Sub_List : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub get_SubChangeData()
+        Try
+            Label67.BackColor = Color.Transparent
+            Label66.BackColor = Color.Transparent
+            Label65.BackColor = Color.Transparent
+
+
+            Dim _Change As String
+            If radSubDemotion.Checked Then
+                _Change = "Demotion"
+                'ElseIf radDoubleDemotion.Checked Then
+                '    _Change = "DoubleDemotion"
+                'ElseIf radPromotion.Checked Then
+                '    _Change = "Promotion"
+                'ElseIf radAddition.Checked Then
+                '    _Change = "Addition"
+            ElseIf radSubDelete.Checked Then
+                _Change = "Delete"
+            End If
+
+            dsSubChangeRecords = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_subChange_Data", cmbSubList.SelectedValue(0), _Change)
+
+            If dsSubChangeRecords.Tables(0).Rows.Count > 0 Then
+
+                GroupBox7.Text = "Current (" + CStr(cmbSubList.SelectedValue(0)) + ")"
+
+                TextBox101.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("EIN"))
+                TextBox100.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("DOLRecord"))
+
+                TextBox137.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Duns"))
+                TextBox136.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Business Name"))
+                TextBox109.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Line of Business"))
+                TextBox135.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Address"))
+                TextBox134.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("City"))
+                TextBox133.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("State"))
+                TextBox132.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Employees Here"))
+                TextBox131.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Employees Total"))
+                TextBox105.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("SIC"))
+
+                TextBox124.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("HQ Employees Total"))
+                TextBox125.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("HQ Employees Here"))
+                TextBox126.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("HQ State"))
+                TextBox127.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("HQ City"))
+                TextBox128.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("HQ Address"))
+                TextBox108.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("HQ Line of Business"))
+                TextBox129.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("HQ Business Name"))
+                TextBox130.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("HQ Duns"))
+                TextBox104.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("HQ SIC"))
+
+                TextBox123.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Domestic Duns"))
+                TextBox122.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Domestic Business Name"))
+                TextBox107.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Domestic Line of Business"))
+                TextBox103.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Domestic SIC"))
+                TextBox121.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Domestic Address"))
+                TextBox120.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Domestic City"))
+                TextBox119.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Domestic State"))
+                TextBox118.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Domestic Employees Here"))
+                TextBox117.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Domestic Employees Total"))
+
+                TextBox110.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Global Employees Total"))
+                TextBox111.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Global Employees Here"))
+                TextBox112.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Global State"))
+                TextBox113.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Global City"))
+                TextBox114.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Global Address"))
+                TextBox106.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Global Line of Business"))
+                TextBox115.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Global Business Name"))
+                TextBox116.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Global Duns"))
+                TextBox102.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Global SIC"))
+
+                TextBox167.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Employees Total"))
+                TextBox168.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Employees Here"))
+                TextBox169.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior State"))
+                TextBox170.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior City"))
+                TextBox145.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Line of Business"))
+                TextBox171.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Address"))
+                TextBox172.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Business Name"))
+                TextBox173.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Duns"))
+                TextBox141.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior SIC"))
+
+                TextBox160.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior HQ Employees Total"))
+                TextBox161.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior HQ Employees Here"))
+                TextBox162.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior HQ State"))
+                TextBox163.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior HQ City"))
+                TextBox164.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior HQ Address"))
+                TextBox144.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior HQ Line of Business"))
+                TextBox165.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior HQ Business Name"))
+                TextBox166.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior HQ Duns"))
+                TextBox140.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior HQ SIC"))
+
+                TextBox153.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Domestic Employees Total"))
+                TextBox154.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Domestic Employees Here"))
+                TextBox155.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Domestic State"))
+                TextBox156.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Domestic City"))
+                TextBox157.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Domestic Address"))
+                TextBox143.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Domestic Line of Business"))
+                TextBox158.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Domestic Business Name"))
+                TextBox159.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Domestic Duns"))
+                TextBox139.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Domestic SIC"))
+
+                TextBox146.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Global Employees Total"))
+                TextBox147.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Global Employees Here"))
+                TextBox148.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Global State"))
+                TextBox149.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Global City"))
+                TextBox150.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Global Address"))
+                TextBox142.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Global Line of Business"))
+                TextBox151.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Global Business Name"))
+                TextBox152.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Global Duns"))
+                TextBox138.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Prior Global SIC"))
+                'LinkLabel1.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("URL"))
+                TextBox174.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("Existing Parent"))
+
+                If TextBox130.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("ParentDuns")) And (radSubDemotion.Checked) Then 'Or radDoubleDemotion.Checked
+                    Label67.BackColor = Color.Red
+                End If
+
+                If TextBox123.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("ParentDuns")) And (radSubDemotion.Checked) Then ' Or radDoubleDemotion.Checked
+                    Label66.BackColor = Color.Red
+                End If
+
+                If TextBox116.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("ParentDuns")) And (radSubDemotion.Checked) Then 'Or radDoubleDemotion.Checked
+                    Label65.BackColor = Color.Red
+                End If
+
+                'If TextBox63.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("ParentDuns")) And (radPromotion.Checked) Then
+                '    Label30.BackColor = Color.Green
+                'Else
+                '    Label30.BackColor = Color.Transparent
+                'End If
+
+                'If TextBox56.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("ParentDuns")) And (radPromotion.Checked) Then
+                '    Label29.BackColor = Color.Green
+                'Else
+                '    Label29.BackColor = Color.Transparent
+                'End If
+
+                'If TextBox49.Text = isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("ParentDuns")) And (radPromotion.Checked) Then
+                '    Label28.BackColor = Color.Green
+                'Else
+                '    Label28.BackColor = Color.Transparent
+                'End If
+
+
+
+
+            Else
+                'Label25.BackColor = Color.Transparent
+                'Label26.BackColor = Color.Transparent
+                'Label27.BackColor = Color.Transparent
+                'GroupBox2.Text = "Current"
+                TextBox129.Clear()
+                TextBox108.Clear()
+                TextBox104.Clear()
+                TextBox128.Clear()
+                TextBox127.Clear()
+
+                TextBox137.Clear()
+                TextBox136.Clear()
+                TextBox109.Clear()
+                TextBox105.Clear()
+                TextBox135.Clear()
+                TextBox134.Clear()
+                TextBox133.Clear()
+                TextBox132.Clear()
+                TextBox131.Clear()
+                TextBox130.Clear()
+
+                TextBox126.Clear()
+                TextBox125.Clear()
+                TextBox124.Clear()
+                TextBox123.Clear()
+                TextBox122.Clear()
+                TextBox107.Clear()
+                TextBox103.Clear()
+                TextBox121.Clear()
+                TextBox120.Clear()
+                TextBox119.Clear()
+
+                TextBox118.Clear()
+                TextBox117.Clear()
+                TextBox116.Clear()
+                TextBox115.Clear()
+                TextBox106.Clear()
+                TextBox102.Clear()
+                TextBox114.Clear()
+                TextBox113.Clear()
+                TextBox112.Clear()
+                TextBox111.Clear()
+
+                TextBox110.Clear()
+                TextBox173.Clear()
+                TextBox172.Clear()
+                TextBox145.Clear()
+                TextBox141.Clear()
+                TextBox171.Clear()
+                TextBox170.Clear()
+                TextBox169.Clear()
+                TextBox168.Clear()
+                TextBox167.Clear()
+
+                TextBox166.Clear()
+                TextBox165.Clear()
+                TextBox144.Clear()
+                TextBox140.Clear()
+                TextBox164.Clear()
+                TextBox163.Clear()
+                TextBox162.Clear()
+                TextBox161.Clear()
+                TextBox160.Clear()
+                TextBox159.Clear()
+
+                TextBox158.Clear()
+                TextBox143.Clear()
+                TextBox139.Clear()
+                TextBox157.Clear()
+                TextBox156.Clear()
+                TextBox155.Clear()
+                TextBox154.Clear()
+                TextBox153.Clear()
+                TextBox152.Clear()
+                TextBox79.Clear()
+
+                TextBox80.Clear()
+                TextBox151.Clear()
+                TextBox142.Clear()
+                TextBox138.Clear()
+                TextBox150.Clear()
+                TextBox149.Clear()
+                TextBox148.Clear()
+
+                TextBox147.Clear()
+                TextBox146.Clear()
+            End If
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "get_ChangeData ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : get_ChangeData : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
     Private Sub radDoubleDemotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radDoubleDemotion.CheckedChanged
         If radDoubleDemotion.Checked And Not bInitial Then
             Label44.Visible = True
@@ -1169,5 +1481,297 @@ Public Class Form1
         End Try
     End Sub
 
+   
+    Private Sub radSubDemotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubDemotion.CheckedChanged
+        If radSubDemotion.Checked And Not bInitial Then
+            btnAcceptSubChange.Visible = True
+            btnRejectSubChange.Visible = True
+            Label90.Visible = True
+            ToolTip1.SetToolTip(btnAcceptSubChange, "Accept the analysis for a demotion (from corporate to second tier)")
+            ToolTip1.SetToolTip(btnRejectSubChange, "Reject the analysis for a demotion (from corporate to second tier)")
+            Try
+                ' change combobox to be filled with Demotion list.
+                bInitial = True
+                Reprocess_Sub_List()
+                bInitial = False
+            Catch ex As Exception
+                bInitial = False
+                'Functions.Sendmail(ex.Message, "radSubDemotion_CheckedChanged ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
+                MsgBox("Employer Maintenance : radSubDemotion_CheckedChanged : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
+            End Try
 
+        End If
+    End Sub
+
+    Private Sub cmbSubList_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbSubList.SelectedIndexChanged
+        Try
+            If Not bInitial And cmbSubList.SelectedIndex > 0 Then
+                bInitial = True
+                get_SubChangeData()
+                bInitial = False
+            End If
+        Catch ex As Exception
+            bInitial = False
+            'Functions.Sendmail(ex.Message, "cmbChangeList_SelectedIndexChanged ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : cmbChangeList_SelectedIndexChanged : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnAcceptSubChange_Click(sender As System.Object, e As System.EventArgs) Handles btnAcceptSubChange.Click
+        Dim iresult As Integer
+        Dim indexpointer As Int16
+        Try
+            bInitial = True
+            indexpointer = cmbSubList.SelectedIndex
+
+
+
+            If radSubDemotion.Checked Or radSubDoubleDemotion.Checked Then
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_SubDemotion", cmbSubList.SelectedValue(0), strCurrentUser)
+                Using sw As StreamWriter = File.AppendText(path)
+                    sw.WriteLine("EMP.s_Accept_SubDemotion " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
+                    sw.WriteLine("Go")
+                End Using
+                'ElseIf radPromotion.Checked Then
+                '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Promotion", cmbChangeList.SelectedValue(0), strCurrentUser)
+                '    'objWriter.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                '    Using sw As StreamWriter = File.AppendText(path)
+                '        sw.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                '        sw.WriteLine("Go")
+                '    End Using
+            ElseIf radSubDelete.Checked Then
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_SubDelete", cmbSubList.SelectedValue(0), strCurrentUser)
+                'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                Using sw As StreamWriter = File.AppendText(path)
+                    sw.WriteLine("EMP.s_Accept_SubDelete " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
+                    sw.WriteLine("Go")
+                End Using
+                'ElseIf radAddition.Checked Then
+                '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
+                '    'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                '    Using sw As StreamWriter = File.AppendText(path)
+                '        sw.WriteLine("EMP.s_Accept_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                '        sw.WriteLine("Go")
+                '    End Using
+            End If
+
+            If iresult = 0 Then
+                Reprocess_Sub_List()
+            End If
+
+            bInitial = False
+
+        Catch ex As Exception
+            bInitial = False
+            'Functions.Sendmail(ex.Message, "btnAccepttheChange_Click ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnAccepttheChange_Click : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnRejectSubChange_Click(sender As System.Object, e As System.EventArgs) Handles btnRejectSubChange.Click
+        Dim iresult As Integer
+        Try
+            bInitial = True
+            If radSubDemotion.Checked Then
+                MsgBox("There currently is no solution for this.  Please contact the DBA/Developer for a solution")
+            ElseIf radSubDoubleDemotion.Checked Then
+                MsgBox("There currently is no solution for this.  Please contact the DBA/Developer for a solution")
+            ElseIf radSubDelete.Checked Then
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_SubDelete", cmbSubList.SelectedValue(0), strCurrentUser)
+                If iresult = 0 Then
+                    Using sw As StreamWriter = File.AppendText(path)
+                        sw.WriteLine("EMP.s_Reject_SubDelete " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
+                        sw.WriteLine("Go")
+                    End Using
+                End If
+            End If
+            'If radAddition.Checked Then
+            '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
+            '    If iresult = 0 Then
+            '        Using sw As StreamWriter = File.AppendText(path)
+            '            sw.WriteLine("EMP.s_Reject_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+            '            sw.WriteLine("Go")
+            '        End Using
+            '    End If
+            'Else
+            '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Demotion", cmbChangeList.SelectedValue(0), strCurrentUser)
+            '    If iresult = 0 Then
+            '        Using sw As StreamWriter = File.AppendText(path)
+            '            sw.WriteLine("EMP.s_Reject_Demotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+            '            sw.WriteLine("Go")
+            '        End Using
+            '    End If
+            'End If
+
+            Reprocess_Sub_List()
+            bInitial = False
+
+        Catch ex As Exception
+            bInitial = False
+            'Functions.Sendmail(ex.Message, "btnRejectChange_Click ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnRejectChange_Click : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnRefresh_Click(sender As System.Object, e As System.EventArgs) Handles btnRefresh.Click
+        dsStats = SQLHelper.ExecuteDataset(CN, "emp.s_Get_Stats")
+        fillstats()
+    End Sub
+
+
+    Private Sub radSubPromotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubPromotion.CheckedChanged
+        If radSubPromotion.Checked And Not bInitial Then
+            btnAcceptSubChange.Visible = False
+            btnRejectSubChange.Visible = False
+            MsgBox("There currently is no code to handle this.  If the Stats page shows Subsidiary Promotion, then contact the DBA/Developer for a solution")
+        End If
+
+    End Sub
+
+    Private Sub radSubAddition_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubAddition.CheckedChanged
+        If radSubAddition.Checked And Not bInitial Then
+            btnAcceptSubChange.Visible = False
+            btnRejectSubChange.Visible = False
+            MsgBox("There currently is no code to handle this.  If the Stats page shows Subsidiary Addition and you really want to evalute these, then contact the DBA/Developer for a solution")
+        End If
+     End Sub
+
+    Private Sub radSubDelete_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubDelete.CheckedChanged
+        If radSubDelete.Checked And Not bInitial Then
+            'GroupBox7.Visible = False
+            'GroupBox9.Visible = False
+            Label90.Visible = False
+            'Label89.Visible = False
+            btnMatchSubDelete.Visible = True
+            MsgBox("There tend to be thousands of these. You have the Match Deletes button and you have a partial list to work with.")
+            btnAcceptSubChange.Visible = True
+            btnRejectSubChange.Visible = True
+            btnRejectAllChanges.Visible = True
+            btnAcceptAllChanges.Visible = True
+            ckbExpandedList.Visible = True
+            LinkLabel3.Visible = True
+            ckbSortAlpha.Visible = True
+            Label91.Visible = True
+            TextBox174.Visible = True
+            ToolTip1.SetToolTip(btnAcceptSubChange, "Accept the analysis for a Deletion")
+            ToolTip1.SetToolTip(btnRejectSubChange, "Reject the analysis for a Deletion")
+            Try
+                ' change combobox to be filled with Demotion list.
+                bInitial = True
+                Reprocess_Sub_List()
+                bInitial = False
+            Catch ex As Exception
+                bInitial = False
+                'Functions.Sendmail(ex.Message, "radSubDemotion_CheckedChanged ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
+                MsgBox("Employer Maintenance : radSubDemotion_CheckedChanged : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
+            End Try
+        ElseIf Not radSubDelete.Checked And Not bInitial Then
+            'GroupBox7.Visible = True
+            'GroupBox9.Visible = True
+            Label90.Visible = True
+            Label91.Visible = False
+            TextBox174.Visible = False
+            btnRejectAllChanges.Visible = False
+            btnAcceptAllChanges.Visible = False
+            ckbExpandedList.Visible = False
+            LinkLabel3.Visible = False
+            ckbSortAlpha.Visible = False
+            'Label89.Visible = True
+            'btnAcceptSubChange.Visible = True
+            'btnRejectSubChange.Visible = True
+            btnMatchSubDelete.Visible = False
+        End If
+     End Sub
+
+
+
+    Private Sub radSubDoubleDemotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubDoubleDemotion.CheckedChanged
+        If radSubDoubleDemotion.Checked And Not bInitial Then
+            btnAcceptSubChange.Visible = True
+            btnRejectSubChange.Visible = True
+            Label90.Visible = True
+            ToolTip1.SetToolTip(btnAcceptSubChange, "Accept the analysis for a double demotion (from corporate to third tier or lower)")
+            ToolTip1.SetToolTip(btnRejectSubChange, "Reject the analysis for a double demotion (from corporate to third tier or lower)")
+            Try
+                ' change combobox to be filled with Demotion list.
+                bInitial = True
+                Reprocess_Sub_List()
+                bInitial = False
+            Catch ex As Exception
+                bInitial = False
+                'Functions.Sendmail(ex.Message, "radSubDemotion_CheckedChanged ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
+                MsgBox("Employer Maintenance : radSubDemotion_CheckedChanged : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
+            End Try
+
+        End If
+    End Sub
+
+    Private Sub btnMatchSubDelete_Click(sender As System.Object, e As System.EventArgs) Handles btnMatchSubDelete.Click
+
+        Try
+            SQLHelper.ExecuteDataset(CN, "emp.s_MatchDeletionstoAdditions")
+            MsgBox("Records removed.  Please review in the stats tab to see the effect")
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "btnMatchSubDelete_Click ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnMatchSubDelete_Click : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnRejectAllChanges_Click(sender As System.Object, e As System.EventArgs) Handles btnRejectAllChanges.Click
+        Dim iresult As Integer
+        Try
+            bInitial = True
+
+            iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_AllChanges", isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid")), strCurrentUser)
+            If iresult = 0 Then
+                Using sw As StreamWriter = File.AppendText(path)
+                    sw.WriteLine("EMP.s_Reject_AllChanges " + CStr(isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid"))) + ", " + strCurrentUser)
+                    sw.WriteLine("Go")
+                End Using
+            End If
+
+            Reprocess_Sub_List()
+            bInitial = False
+
+        Catch ex As Exception
+            bInitial = False
+            'Functions.Sendmail(ex.Message, "btnRejectAllChanges_Click ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnRejectAllChanges_Click : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnAcceptAllChanges_Click(sender As System.Object, e As System.EventArgs) Handles btnAcceptAllChanges.Click
+        Dim iresult As Integer
+        Try
+            bInitial = True
+
+            iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_AllChanges", isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid")), strCurrentUser)
+            If iresult = 0 Then
+                Using sw As StreamWriter = File.AppendText(path)
+                    sw.WriteLine("EMP.s_Accept_AllChanges " + CStr(isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid"))) + ", " + strCurrentUser)
+                    sw.WriteLine("Go")
+                End Using
+            End If
+
+            Reprocess_Sub_List()
+            bInitial = False
+
+        Catch ex As Exception
+            bInitial = False
+            'Functions.Sendmail(ex.Message, "btnAcceptAllChanges_Click ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnAcceptAllChanges_Click : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub ckbSortAlpha_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles ckbSortAlpha.CheckedChanged
+        Reprocess_Sub_List()
+    End Sub
+
+    Private Sub LinkLabel3_LinkClicked(sender As System.Object, e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles LinkLabel3.LinkClicked
+        System.Diagnostics.Process.Start("http://myreports/DRG/Pages/Report.aspx?ItemPath=%2fProd%2fEV+Validation%2fCorporations+that+ALL+Subsidiaries+were+marked+for+Delete+(not+found+in+the+incoming+list)")
+    End Sub
+
+    Private Sub ckbExpandedList_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles ckbExpandedList.CheckedChanged
+
+    End Sub
 End Class

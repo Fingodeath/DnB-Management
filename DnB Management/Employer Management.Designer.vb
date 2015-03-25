@@ -149,6 +149,130 @@ Partial Class Form1
         Me.radDoubleDemotion = New System.Windows.Forms.RadioButton()
         Me.radDemotion = New System.Windows.Forms.RadioButton()
         Me.cmbChangeList = New System.Windows.Forms.ComboBox()
+        Me.TabPage2 = New System.Windows.Forms.TabPage()
+        Me.btnAcceptAllChanges = New System.Windows.Forms.Button()
+        Me.btnRejectAllChanges = New System.Windows.Forms.Button()
+        Me.TextBox174 = New System.Windows.Forms.TextBox()
+        Me.Label91 = New System.Windows.Forms.Label()
+        Me.btnMatchSubDelete = New System.Windows.Forms.Button()
+        Me.Label90 = New System.Windows.Forms.Label()
+        Me.Label89 = New System.Windows.Forms.Label()
+        Me.GroupBox9 = New System.Windows.Forms.GroupBox()
+        Me.Label76 = New System.Windows.Forms.Label()
+        Me.TextBox138 = New System.Windows.Forms.TextBox()
+        Me.TextBox139 = New System.Windows.Forms.TextBox()
+        Me.TextBox140 = New System.Windows.Forms.TextBox()
+        Me.TextBox141 = New System.Windows.Forms.TextBox()
+        Me.Label77 = New System.Windows.Forms.Label()
+        Me.Label78 = New System.Windows.Forms.Label()
+        Me.TextBox142 = New System.Windows.Forms.TextBox()
+        Me.TextBox143 = New System.Windows.Forms.TextBox()
+        Me.TextBox144 = New System.Windows.Forms.TextBox()
+        Me.TextBox145 = New System.Windows.Forms.TextBox()
+        Me.Label79 = New System.Windows.Forms.Label()
+        Me.TextBox146 = New System.Windows.Forms.TextBox()
+        Me.TextBox147 = New System.Windows.Forms.TextBox()
+        Me.TextBox148 = New System.Windows.Forms.TextBox()
+        Me.TextBox149 = New System.Windows.Forms.TextBox()
+        Me.TextBox150 = New System.Windows.Forms.TextBox()
+        Me.TextBox151 = New System.Windows.Forms.TextBox()
+        Me.TextBox152 = New System.Windows.Forms.TextBox()
+        Me.TextBox153 = New System.Windows.Forms.TextBox()
+        Me.TextBox154 = New System.Windows.Forms.TextBox()
+        Me.TextBox155 = New System.Windows.Forms.TextBox()
+        Me.TextBox156 = New System.Windows.Forms.TextBox()
+        Me.TextBox157 = New System.Windows.Forms.TextBox()
+        Me.TextBox158 = New System.Windows.Forms.TextBox()
+        Me.TextBox159 = New System.Windows.Forms.TextBox()
+        Me.TextBox160 = New System.Windows.Forms.TextBox()
+        Me.TextBox161 = New System.Windows.Forms.TextBox()
+        Me.TextBox162 = New System.Windows.Forms.TextBox()
+        Me.TextBox163 = New System.Windows.Forms.TextBox()
+        Me.TextBox164 = New System.Windows.Forms.TextBox()
+        Me.TextBox165 = New System.Windows.Forms.TextBox()
+        Me.TextBox166 = New System.Windows.Forms.TextBox()
+        Me.Label80 = New System.Windows.Forms.Label()
+        Me.Label81 = New System.Windows.Forms.Label()
+        Me.Label82 = New System.Windows.Forms.Label()
+        Me.Label83 = New System.Windows.Forms.Label()
+        Me.TextBox167 = New System.Windows.Forms.TextBox()
+        Me.TextBox168 = New System.Windows.Forms.TextBox()
+        Me.TextBox169 = New System.Windows.Forms.TextBox()
+        Me.TextBox170 = New System.Windows.Forms.TextBox()
+        Me.TextBox171 = New System.Windows.Forms.TextBox()
+        Me.TextBox172 = New System.Windows.Forms.TextBox()
+        Me.Label84 = New System.Windows.Forms.Label()
+        Me.Label85 = New System.Windows.Forms.Label()
+        Me.Label86 = New System.Windows.Forms.Label()
+        Me.Label87 = New System.Windows.Forms.Label()
+        Me.Label88 = New System.Windows.Forms.Label()
+        Me.TextBox173 = New System.Windows.Forms.TextBox()
+        Me.TextBox100 = New System.Windows.Forms.TextBox()
+        Me.Label59 = New System.Windows.Forms.Label()
+        Me.TextBox101 = New System.Windows.Forms.TextBox()
+        Me.Label60 = New System.Windows.Forms.Label()
+        Me.Label61 = New System.Windows.Forms.Label()
+        Me.LinkLabel2 = New System.Windows.Forms.LinkLabel()
+        Me.Label62 = New System.Windows.Forms.Label()
+        Me.btnRejectSubChange = New System.Windows.Forms.Button()
+        Me.btnAcceptSubChange = New System.Windows.Forms.Button()
+        Me.GroupBox7 = New System.Windows.Forms.GroupBox()
+        Me.Label63 = New System.Windows.Forms.Label()
+        Me.TextBox102 = New System.Windows.Forms.TextBox()
+        Me.TextBox103 = New System.Windows.Forms.TextBox()
+        Me.TextBox104 = New System.Windows.Forms.TextBox()
+        Me.TextBox105 = New System.Windows.Forms.TextBox()
+        Me.TextBox106 = New System.Windows.Forms.TextBox()
+        Me.TextBox107 = New System.Windows.Forms.TextBox()
+        Me.TextBox108 = New System.Windows.Forms.TextBox()
+        Me.TextBox109 = New System.Windows.Forms.TextBox()
+        Me.Label64 = New System.Windows.Forms.Label()
+        Me.TextBox110 = New System.Windows.Forms.TextBox()
+        Me.TextBox111 = New System.Windows.Forms.TextBox()
+        Me.TextBox112 = New System.Windows.Forms.TextBox()
+        Me.TextBox113 = New System.Windows.Forms.TextBox()
+        Me.TextBox114 = New System.Windows.Forms.TextBox()
+        Me.TextBox115 = New System.Windows.Forms.TextBox()
+        Me.TextBox116 = New System.Windows.Forms.TextBox()
+        Me.TextBox117 = New System.Windows.Forms.TextBox()
+        Me.TextBox118 = New System.Windows.Forms.TextBox()
+        Me.TextBox119 = New System.Windows.Forms.TextBox()
+        Me.TextBox120 = New System.Windows.Forms.TextBox()
+        Me.TextBox121 = New System.Windows.Forms.TextBox()
+        Me.TextBox122 = New System.Windows.Forms.TextBox()
+        Me.TextBox123 = New System.Windows.Forms.TextBox()
+        Me.TextBox124 = New System.Windows.Forms.TextBox()
+        Me.TextBox125 = New System.Windows.Forms.TextBox()
+        Me.TextBox126 = New System.Windows.Forms.TextBox()
+        Me.TextBox127 = New System.Windows.Forms.TextBox()
+        Me.TextBox128 = New System.Windows.Forms.TextBox()
+        Me.TextBox129 = New System.Windows.Forms.TextBox()
+        Me.TextBox130 = New System.Windows.Forms.TextBox()
+        Me.Label65 = New System.Windows.Forms.Label()
+        Me.Label66 = New System.Windows.Forms.Label()
+        Me.Label67 = New System.Windows.Forms.Label()
+        Me.Label68 = New System.Windows.Forms.Label()
+        Me.TextBox131 = New System.Windows.Forms.TextBox()
+        Me.TextBox132 = New System.Windows.Forms.TextBox()
+        Me.TextBox133 = New System.Windows.Forms.TextBox()
+        Me.TextBox134 = New System.Windows.Forms.TextBox()
+        Me.TextBox135 = New System.Windows.Forms.TextBox()
+        Me.TextBox136 = New System.Windows.Forms.TextBox()
+        Me.Label69 = New System.Windows.Forms.Label()
+        Me.Label70 = New System.Windows.Forms.Label()
+        Me.Label71 = New System.Windows.Forms.Label()
+        Me.Label72 = New System.Windows.Forms.Label()
+        Me.Label73 = New System.Windows.Forms.Label()
+        Me.Label74 = New System.Windows.Forms.Label()
+        Me.Label75 = New System.Windows.Forms.Label()
+        Me.TextBox137 = New System.Windows.Forms.TextBox()
+        Me.GroupBox8 = New System.Windows.Forms.GroupBox()
+        Me.radSubDelete = New System.Windows.Forms.RadioButton()
+        Me.radSubAddition = New System.Windows.Forms.RadioButton()
+        Me.radSubPromotion = New System.Windows.Forms.RadioButton()
+        Me.radSubDoubleDemotion = New System.Windows.Forms.RadioButton()
+        Me.radSubDemotion = New System.Windows.Forms.RadioButton()
+        Me.cmbSubList = New System.Windows.Forms.ComboBox()
         Me.TabPage5 = New System.Windows.Forms.TabPage()
         Me.btnFilter = New System.Windows.Forms.Button()
         Me.TextBox89 = New System.Windows.Forms.TextBox()
@@ -161,25 +285,83 @@ Partial Class Form1
         Me.dgvSubsidiaryBrowser = New System.Windows.Forms.DataGridView()
         Me.Label49 = New System.Windows.Forms.Label()
         Me.cmbSubsidiaryBrowser = New System.Windows.Forms.ComboBox()
+        Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.btnRefresh = New System.Windows.Forms.Button()
+        Me.TextBox95 = New System.Windows.Forms.TextBox()
+        Me.TextBox94 = New System.Windows.Forms.TextBox()
+        Me.TextBox93 = New System.Windows.Forms.TextBox()
+        Me.TextBox14 = New System.Windows.Forms.TextBox()
+        Me.Label54 = New System.Windows.Forms.Label()
+        Me.Label53 = New System.Windows.Forms.Label()
+        Me.Label16 = New System.Windows.Forms.Label()
+        Me.Label15 = New System.Windows.Forms.Label()
+        Me.TextBox13 = New System.Windows.Forms.TextBox()
+        Me.TextBox12 = New System.Windows.Forms.TextBox()
+        Me.GroupBox6 = New System.Windows.Forms.GroupBox()
+        Me.TextBox98 = New System.Windows.Forms.TextBox()
+        Me.TextBox99 = New System.Windows.Forms.TextBox()
+        Me.Label57 = New System.Windows.Forms.Label()
+        Me.Label58 = New System.Windows.Forms.Label()
+        Me.TextBox11 = New System.Windows.Forms.TextBox()
+        Me.TextBox10 = New System.Windows.Forms.TextBox()
+        Me.TextBox9 = New System.Windows.Forms.TextBox()
+        Me.TextBox8 = New System.Windows.Forms.TextBox()
+        Me.TextBox7 = New System.Windows.Forms.TextBox()
+        Me.Label11 = New System.Windows.Forms.Label()
+        Me.Label14 = New System.Windows.Forms.Label()
+        Me.Label10 = New System.Windows.Forms.Label()
+        Me.Label13 = New System.Windows.Forms.Label()
+        Me.Label12 = New System.Windows.Forms.Label()
+        Me.GroupBox5 = New System.Windows.Forms.GroupBox()
+        Me.TextBox96 = New System.Windows.Forms.TextBox()
+        Me.TextBox97 = New System.Windows.Forms.TextBox()
+        Me.Label55 = New System.Windows.Forms.Label()
+        Me.Label56 = New System.Windows.Forms.Label()
+        Me.TextBox6 = New System.Windows.Forms.TextBox()
+        Me.TextBox5 = New System.Windows.Forms.TextBox()
+        Me.TextBox4 = New System.Windows.Forms.TextBox()
+        Me.TextBox3 = New System.Windows.Forms.TextBox()
+        Me.TextBox2 = New System.Windows.Forms.TextBox()
+        Me.Label6 = New System.Windows.Forms.Label()
+        Me.Label5 = New System.Windows.Forms.Label()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.Label8 = New System.Windows.Forms.Label()
+        Me.Label9 = New System.Windows.Forms.Label()
+        Me.Label4 = New System.Windows.Forms.Label()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.TextBox1 = New System.Windows.Forms.TextBox()
+        Me.Label2 = New System.Windows.Forms.Label()
         Me.TabPage4 = New System.Windows.Forms.TabPage()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.ckbSortAlpha = New System.Windows.Forms.CheckBox()
+        Me.LinkLabel3 = New System.Windows.Forms.LinkLabel()
+        Me.ckbExpandedList = New System.Windows.Forms.CheckBox()
         Me.TabControl1.SuspendLayout()
         Me.TabPage3.SuspendLayout()
         Me.GroupBox4.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
+        Me.TabPage2.SuspendLayout()
+        Me.GroupBox9.SuspendLayout()
+        Me.GroupBox7.SuspendLayout()
+        Me.GroupBox8.SuspendLayout()
         Me.TabPage5.SuspendLayout()
         CType(Me.dgvCorporate, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage6.SuspendLayout()
         CType(Me.dgvSubsidiaryBrowser, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPage1.SuspendLayout()
+        Me.GroupBox6.SuspendLayout()
+        Me.GroupBox5.SuspendLayout()
         Me.SuspendLayout()
         '
         'TabControl1
         '
         Me.TabControl1.Controls.Add(Me.TabPage3)
+        Me.TabControl1.Controls.Add(Me.TabPage2)
         Me.TabControl1.Controls.Add(Me.TabPage5)
         Me.TabControl1.Controls.Add(Me.TabPage6)
+        Me.TabControl1.Controls.Add(Me.TabPage1)
         Me.TabControl1.Controls.Add(Me.TabPage4)
         Me.TabControl1.Location = New System.Drawing.Point(12, 12)
         Me.TabControl1.Name = "TabControl1"
@@ -211,7 +393,7 @@ Partial Class Form1
         Me.TabPage3.Name = "TabPage3"
         Me.TabPage3.Size = New System.Drawing.Size(1254, 735)
         Me.TabPage3.TabIndex = 2
-        Me.TabPage3.Text = "Changed Records"
+        Me.TabPage3.Text = "Corporate Changed Records"
         Me.TabPage3.UseVisualStyleBackColor = True
         '
         'GroupBox4
@@ -1370,6 +1552,1194 @@ Partial Class Form1
         Me.cmbChangeList.Size = New System.Drawing.Size(338, 21)
         Me.cmbChangeList.TabIndex = 0
         '
+        'TabPage2
+        '
+        Me.TabPage2.Controls.Add(Me.ckbExpandedList)
+        Me.TabPage2.Controls.Add(Me.LinkLabel3)
+        Me.TabPage2.Controls.Add(Me.ckbSortAlpha)
+        Me.TabPage2.Controls.Add(Me.btnAcceptAllChanges)
+        Me.TabPage2.Controls.Add(Me.btnRejectAllChanges)
+        Me.TabPage2.Controls.Add(Me.TextBox174)
+        Me.TabPage2.Controls.Add(Me.Label91)
+        Me.TabPage2.Controls.Add(Me.btnMatchSubDelete)
+        Me.TabPage2.Controls.Add(Me.Label90)
+        Me.TabPage2.Controls.Add(Me.Label89)
+        Me.TabPage2.Controls.Add(Me.GroupBox9)
+        Me.TabPage2.Controls.Add(Me.TextBox100)
+        Me.TabPage2.Controls.Add(Me.Label59)
+        Me.TabPage2.Controls.Add(Me.TextBox101)
+        Me.TabPage2.Controls.Add(Me.Label60)
+        Me.TabPage2.Controls.Add(Me.Label61)
+        Me.TabPage2.Controls.Add(Me.LinkLabel2)
+        Me.TabPage2.Controls.Add(Me.Label62)
+        Me.TabPage2.Controls.Add(Me.btnRejectSubChange)
+        Me.TabPage2.Controls.Add(Me.btnAcceptSubChange)
+        Me.TabPage2.Controls.Add(Me.GroupBox7)
+        Me.TabPage2.Controls.Add(Me.GroupBox8)
+        Me.TabPage2.Controls.Add(Me.cmbSubList)
+        Me.TabPage2.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage2.Name = "TabPage2"
+        Me.TabPage2.Size = New System.Drawing.Size(1254, 735)
+        Me.TabPage2.TabIndex = 7
+        Me.TabPage2.Text = "Subsidiary Changed Records"
+        Me.TabPage2.UseVisualStyleBackColor = True
+        '
+        'btnAcceptAllChanges
+        '
+        Me.btnAcceptAllChanges.Location = New System.Drawing.Point(382, 88)
+        Me.btnAcceptAllChanges.Name = "btnAcceptAllChanges"
+        Me.btnAcceptAllChanges.Size = New System.Drawing.Size(202, 23)
+        Me.btnAcceptAllChanges.TabIndex = 36
+        Me.btnAcceptAllChanges.Text = "Accept all Changes for Corporation"
+        Me.btnAcceptAllChanges.UseVisualStyleBackColor = True
+        Me.btnAcceptAllChanges.Visible = False
+        '
+        'btnRejectAllChanges
+        '
+        Me.btnRejectAllChanges.Location = New System.Drawing.Point(590, 88)
+        Me.btnRejectAllChanges.Name = "btnRejectAllChanges"
+        Me.btnRejectAllChanges.Size = New System.Drawing.Size(202, 23)
+        Me.btnRejectAllChanges.TabIndex = 35
+        Me.btnRejectAllChanges.Text = "Reject all Changes for Corporation"
+        Me.btnRejectAllChanges.UseVisualStyleBackColor = True
+        Me.btnRejectAllChanges.Visible = False
+        '
+        'TextBox174
+        '
+        Me.TextBox174.Location = New System.Drawing.Point(281, 147)
+        Me.TextBox174.Name = "TextBox174"
+        Me.TextBox174.Size = New System.Drawing.Size(300, 20)
+        Me.TextBox174.TabIndex = 34
+        Me.TextBox174.Visible = False
+        '
+        'Label91
+        '
+        Me.Label91.AutoSize = True
+        Me.Label91.Location = New System.Drawing.Point(190, 154)
+        Me.Label91.Name = "Label91"
+        Me.Label91.Size = New System.Drawing.Size(75, 13)
+        Me.Label91.TabIndex = 33
+        Me.Label91.Text = "Current Parent"
+        Me.Label91.Visible = False
+        '
+        'btnMatchSubDelete
+        '
+        Me.btnMatchSubDelete.Location = New System.Drawing.Point(737, 59)
+        Me.btnMatchSubDelete.Name = "btnMatchSubDelete"
+        Me.btnMatchSubDelete.Size = New System.Drawing.Size(92, 23)
+        Me.btnMatchSubDelete.TabIndex = 32
+        Me.btnMatchSubDelete.Text = "Match Deletes"
+        Me.btnMatchSubDelete.UseVisualStyleBackColor = True
+        Me.btnMatchSubDelete.Visible = False
+        '
+        'Label90
+        '
+        Me.Label90.AutoSize = True
+        Me.Label90.ForeColor = System.Drawing.Color.Red
+        Me.Label90.Location = New System.Drawing.Point(25, 564)
+        Me.Label90.Name = "Label90"
+        Me.Label90.Size = New System.Drawing.Size(239, 13)
+        Me.Label90.TabIndex = 31
+        Me.Label90.Text = "* Highlighted cells will become the new Corporate"
+        Me.Label90.Visible = False
+        '
+        'Label89
+        '
+        Me.Label89.AutoSize = True
+        Me.Label89.ForeColor = System.Drawing.Color.Red
+        Me.Label89.Location = New System.Drawing.Point(708, 564)
+        Me.Label89.Name = "Label89"
+        Me.Label89.Size = New System.Drawing.Size(268, 13)
+        Me.Label89.TabIndex = 30
+        Me.Label89.Text = "* Note  SIC's in the 6700's represent holding companies"
+        '
+        'GroupBox9
+        '
+        Me.GroupBox9.Controls.Add(Me.Label76)
+        Me.GroupBox9.Controls.Add(Me.TextBox138)
+        Me.GroupBox9.Controls.Add(Me.TextBox139)
+        Me.GroupBox9.Controls.Add(Me.TextBox140)
+        Me.GroupBox9.Controls.Add(Me.TextBox141)
+        Me.GroupBox9.Controls.Add(Me.Label77)
+        Me.GroupBox9.Controls.Add(Me.Label78)
+        Me.GroupBox9.Controls.Add(Me.TextBox142)
+        Me.GroupBox9.Controls.Add(Me.TextBox143)
+        Me.GroupBox9.Controls.Add(Me.TextBox144)
+        Me.GroupBox9.Controls.Add(Me.TextBox145)
+        Me.GroupBox9.Controls.Add(Me.Label79)
+        Me.GroupBox9.Controls.Add(Me.TextBox146)
+        Me.GroupBox9.Controls.Add(Me.TextBox147)
+        Me.GroupBox9.Controls.Add(Me.TextBox148)
+        Me.GroupBox9.Controls.Add(Me.TextBox149)
+        Me.GroupBox9.Controls.Add(Me.TextBox150)
+        Me.GroupBox9.Controls.Add(Me.TextBox151)
+        Me.GroupBox9.Controls.Add(Me.TextBox152)
+        Me.GroupBox9.Controls.Add(Me.TextBox153)
+        Me.GroupBox9.Controls.Add(Me.TextBox154)
+        Me.GroupBox9.Controls.Add(Me.TextBox155)
+        Me.GroupBox9.Controls.Add(Me.TextBox156)
+        Me.GroupBox9.Controls.Add(Me.TextBox157)
+        Me.GroupBox9.Controls.Add(Me.TextBox158)
+        Me.GroupBox9.Controls.Add(Me.TextBox159)
+        Me.GroupBox9.Controls.Add(Me.TextBox160)
+        Me.GroupBox9.Controls.Add(Me.TextBox161)
+        Me.GroupBox9.Controls.Add(Me.TextBox162)
+        Me.GroupBox9.Controls.Add(Me.TextBox163)
+        Me.GroupBox9.Controls.Add(Me.TextBox164)
+        Me.GroupBox9.Controls.Add(Me.TextBox165)
+        Me.GroupBox9.Controls.Add(Me.TextBox166)
+        Me.GroupBox9.Controls.Add(Me.Label80)
+        Me.GroupBox9.Controls.Add(Me.Label81)
+        Me.GroupBox9.Controls.Add(Me.Label82)
+        Me.GroupBox9.Controls.Add(Me.Label83)
+        Me.GroupBox9.Controls.Add(Me.TextBox167)
+        Me.GroupBox9.Controls.Add(Me.TextBox168)
+        Me.GroupBox9.Controls.Add(Me.TextBox169)
+        Me.GroupBox9.Controls.Add(Me.TextBox170)
+        Me.GroupBox9.Controls.Add(Me.TextBox171)
+        Me.GroupBox9.Controls.Add(Me.TextBox172)
+        Me.GroupBox9.Controls.Add(Me.Label84)
+        Me.GroupBox9.Controls.Add(Me.Label85)
+        Me.GroupBox9.Controls.Add(Me.Label86)
+        Me.GroupBox9.Controls.Add(Me.Label87)
+        Me.GroupBox9.Controls.Add(Me.Label88)
+        Me.GroupBox9.Controls.Add(Me.TextBox173)
+        Me.GroupBox9.Location = New System.Drawing.Point(22, 375)
+        Me.GroupBox9.Name = "GroupBox9"
+        Me.GroupBox9.Size = New System.Drawing.Size(1221, 175)
+        Me.GroupBox9.TabIndex = 29
+        Me.GroupBox9.TabStop = False
+        Me.GroupBox9.Text = "Prior"
+        '
+        'Label76
+        '
+        Me.Label76.AutoSize = True
+        Me.Label76.Location = New System.Drawing.Point(686, 22)
+        Me.Label76.Name = "Label76"
+        Me.Label76.Size = New System.Drawing.Size(24, 13)
+        Me.Label76.TabIndex = 89
+        Me.Label76.Text = "SIC"
+        '
+        'TextBox138
+        '
+        Me.TextBox138.Location = New System.Drawing.Point(677, 137)
+        Me.TextBox138.Name = "TextBox138"
+        Me.TextBox138.ReadOnly = True
+        Me.TextBox138.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox138.TabIndex = 88
+        '
+        'TextBox139
+        '
+        Me.TextBox139.Location = New System.Drawing.Point(677, 108)
+        Me.TextBox139.Name = "TextBox139"
+        Me.TextBox139.ReadOnly = True
+        Me.TextBox139.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox139.TabIndex = 87
+        '
+        'TextBox140
+        '
+        Me.TextBox140.Location = New System.Drawing.Point(677, 76)
+        Me.TextBox140.Name = "TextBox140"
+        Me.TextBox140.ReadOnly = True
+        Me.TextBox140.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox140.TabIndex = 86
+        '
+        'TextBox141
+        '
+        Me.TextBox141.Location = New System.Drawing.Point(677, 46)
+        Me.TextBox141.Name = "TextBox141"
+        Me.TextBox141.ReadOnly = True
+        Me.TextBox141.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox141.TabIndex = 85
+        '
+        'Label77
+        '
+        Me.Label77.AutoSize = True
+        Me.Label77.Location = New System.Drawing.Point(1146, 9)
+        Me.Label77.MaximumSize = New System.Drawing.Size(60, 26)
+        Me.Label77.Name = "Label77"
+        Me.Label77.Size = New System.Drawing.Size(58, 26)
+        Me.Label77.TabIndex = 84
+        Me.Label77.Text = "Employees Total"
+        '
+        'Label78
+        '
+        Me.Label78.AutoSize = True
+        Me.Label78.Location = New System.Drawing.Point(1081, 9)
+        Me.Label78.MaximumSize = New System.Drawing.Size(60, 26)
+        Me.Label78.Name = "Label78"
+        Me.Label78.Size = New System.Drawing.Size(58, 26)
+        Me.Label78.TabIndex = 83
+        Me.Label78.Text = "Employees Here"
+        '
+        'TextBox142
+        '
+        Me.TextBox142.Location = New System.Drawing.Point(437, 137)
+        Me.TextBox142.Name = "TextBox142"
+        Me.TextBox142.ReadOnly = True
+        Me.TextBox142.Size = New System.Drawing.Size(234, 20)
+        Me.TextBox142.TabIndex = 82
+        '
+        'TextBox143
+        '
+        Me.TextBox143.Location = New System.Drawing.Point(437, 108)
+        Me.TextBox143.Name = "TextBox143"
+        Me.TextBox143.ReadOnly = True
+        Me.TextBox143.Size = New System.Drawing.Size(234, 20)
+        Me.TextBox143.TabIndex = 81
+        '
+        'TextBox144
+        '
+        Me.TextBox144.Location = New System.Drawing.Point(437, 76)
+        Me.TextBox144.Name = "TextBox144"
+        Me.TextBox144.ReadOnly = True
+        Me.TextBox144.Size = New System.Drawing.Size(234, 20)
+        Me.TextBox144.TabIndex = 80
+        '
+        'TextBox145
+        '
+        Me.TextBox145.Location = New System.Drawing.Point(437, 46)
+        Me.TextBox145.Name = "TextBox145"
+        Me.TextBox145.ReadOnly = True
+        Me.TextBox145.Size = New System.Drawing.Size(234, 20)
+        Me.TextBox145.TabIndex = 79
+        '
+        'Label79
+        '
+        Me.Label79.AutoSize = True
+        Me.Label79.Location = New System.Drawing.Point(475, 22)
+        Me.Label79.Name = "Label79"
+        Me.Label79.Size = New System.Drawing.Size(84, 13)
+        Me.Label79.TabIndex = 78
+        Me.Label79.Text = "Line of Business"
+        '
+        'TextBox146
+        '
+        Me.TextBox146.Location = New System.Drawing.Point(1149, 137)
+        Me.TextBox146.Name = "TextBox146"
+        Me.TextBox146.ReadOnly = True
+        Me.TextBox146.Size = New System.Drawing.Size(44, 20)
+        Me.TextBox146.TabIndex = 77
+        '
+        'TextBox147
+        '
+        Me.TextBox147.Location = New System.Drawing.Point(1084, 137)
+        Me.TextBox147.Name = "TextBox147"
+        Me.TextBox147.ReadOnly = True
+        Me.TextBox147.Size = New System.Drawing.Size(55, 20)
+        Me.TextBox147.TabIndex = 76
+        '
+        'TextBox148
+        '
+        Me.TextBox148.Location = New System.Drawing.Point(1036, 137)
+        Me.TextBox148.Name = "TextBox148"
+        Me.TextBox148.ReadOnly = True
+        Me.TextBox148.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox148.TabIndex = 75
+        '
+        'TextBox149
+        '
+        Me.TextBox149.Location = New System.Drawing.Point(919, 137)
+        Me.TextBox149.Name = "TextBox149"
+        Me.TextBox149.ReadOnly = True
+        Me.TextBox149.Size = New System.Drawing.Size(106, 20)
+        Me.TextBox149.TabIndex = 74
+        '
+        'TextBox150
+        '
+        Me.TextBox150.Location = New System.Drawing.Point(725, 137)
+        Me.TextBox150.Name = "TextBox150"
+        Me.TextBox150.ReadOnly = True
+        Me.TextBox150.Size = New System.Drawing.Size(186, 20)
+        Me.TextBox150.TabIndex = 73
+        '
+        'TextBox151
+        '
+        Me.TextBox151.Location = New System.Drawing.Point(155, 137)
+        Me.TextBox151.Name = "TextBox151"
+        Me.TextBox151.ReadOnly = True
+        Me.TextBox151.Size = New System.Drawing.Size(273, 20)
+        Me.TextBox151.TabIndex = 72
+        '
+        'TextBox152
+        '
+        Me.TextBox152.Location = New System.Drawing.Point(67, 137)
+        Me.TextBox152.Name = "TextBox152"
+        Me.TextBox152.ReadOnly = True
+        Me.TextBox152.Size = New System.Drawing.Size(79, 20)
+        Me.TextBox152.TabIndex = 71
+        '
+        'TextBox153
+        '
+        Me.TextBox153.Location = New System.Drawing.Point(1149, 108)
+        Me.TextBox153.Name = "TextBox153"
+        Me.TextBox153.ReadOnly = True
+        Me.TextBox153.Size = New System.Drawing.Size(44, 20)
+        Me.TextBox153.TabIndex = 70
+        '
+        'TextBox154
+        '
+        Me.TextBox154.Location = New System.Drawing.Point(1084, 108)
+        Me.TextBox154.Name = "TextBox154"
+        Me.TextBox154.ReadOnly = True
+        Me.TextBox154.Size = New System.Drawing.Size(55, 20)
+        Me.TextBox154.TabIndex = 69
+        '
+        'TextBox155
+        '
+        Me.TextBox155.Location = New System.Drawing.Point(1036, 108)
+        Me.TextBox155.Name = "TextBox155"
+        Me.TextBox155.ReadOnly = True
+        Me.TextBox155.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox155.TabIndex = 68
+        '
+        'TextBox156
+        '
+        Me.TextBox156.Location = New System.Drawing.Point(919, 108)
+        Me.TextBox156.Name = "TextBox156"
+        Me.TextBox156.ReadOnly = True
+        Me.TextBox156.Size = New System.Drawing.Size(106, 20)
+        Me.TextBox156.TabIndex = 67
+        '
+        'TextBox157
+        '
+        Me.TextBox157.Location = New System.Drawing.Point(725, 108)
+        Me.TextBox157.Name = "TextBox157"
+        Me.TextBox157.ReadOnly = True
+        Me.TextBox157.Size = New System.Drawing.Size(186, 20)
+        Me.TextBox157.TabIndex = 66
+        '
+        'TextBox158
+        '
+        Me.TextBox158.Location = New System.Drawing.Point(155, 108)
+        Me.TextBox158.Name = "TextBox158"
+        Me.TextBox158.ReadOnly = True
+        Me.TextBox158.Size = New System.Drawing.Size(273, 20)
+        Me.TextBox158.TabIndex = 65
+        '
+        'TextBox159
+        '
+        Me.TextBox159.Location = New System.Drawing.Point(67, 108)
+        Me.TextBox159.Name = "TextBox159"
+        Me.TextBox159.ReadOnly = True
+        Me.TextBox159.Size = New System.Drawing.Size(79, 20)
+        Me.TextBox159.TabIndex = 64
+        '
+        'TextBox160
+        '
+        Me.TextBox160.Location = New System.Drawing.Point(1149, 76)
+        Me.TextBox160.Name = "TextBox160"
+        Me.TextBox160.ReadOnly = True
+        Me.TextBox160.Size = New System.Drawing.Size(44, 20)
+        Me.TextBox160.TabIndex = 63
+        '
+        'TextBox161
+        '
+        Me.TextBox161.Location = New System.Drawing.Point(1084, 76)
+        Me.TextBox161.Name = "TextBox161"
+        Me.TextBox161.ReadOnly = True
+        Me.TextBox161.Size = New System.Drawing.Size(55, 20)
+        Me.TextBox161.TabIndex = 62
+        '
+        'TextBox162
+        '
+        Me.TextBox162.Location = New System.Drawing.Point(1036, 76)
+        Me.TextBox162.Name = "TextBox162"
+        Me.TextBox162.ReadOnly = True
+        Me.TextBox162.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox162.TabIndex = 61
+        '
+        'TextBox163
+        '
+        Me.TextBox163.Location = New System.Drawing.Point(919, 76)
+        Me.TextBox163.Name = "TextBox163"
+        Me.TextBox163.ReadOnly = True
+        Me.TextBox163.Size = New System.Drawing.Size(106, 20)
+        Me.TextBox163.TabIndex = 60
+        '
+        'TextBox164
+        '
+        Me.TextBox164.Location = New System.Drawing.Point(725, 76)
+        Me.TextBox164.Name = "TextBox164"
+        Me.TextBox164.ReadOnly = True
+        Me.TextBox164.Size = New System.Drawing.Size(186, 20)
+        Me.TextBox164.TabIndex = 59
+        '
+        'TextBox165
+        '
+        Me.TextBox165.Location = New System.Drawing.Point(155, 76)
+        Me.TextBox165.Name = "TextBox165"
+        Me.TextBox165.ReadOnly = True
+        Me.TextBox165.Size = New System.Drawing.Size(273, 20)
+        Me.TextBox165.TabIndex = 58
+        '
+        'TextBox166
+        '
+        Me.TextBox166.Location = New System.Drawing.Point(67, 76)
+        Me.TextBox166.Name = "TextBox166"
+        Me.TextBox166.ReadOnly = True
+        Me.TextBox166.Size = New System.Drawing.Size(79, 20)
+        Me.TextBox166.TabIndex = 57
+        '
+        'Label80
+        '
+        Me.Label80.AutoSize = True
+        Me.Label80.Location = New System.Drawing.Point(14, 140)
+        Me.Label80.Name = "Label80"
+        Me.Label80.Size = New System.Drawing.Size(37, 13)
+        Me.Label80.TabIndex = 56
+        Me.Label80.Text = "Global"
+        '
+        'Label81
+        '
+        Me.Label81.AutoSize = True
+        Me.Label81.Location = New System.Drawing.Point(3, 111)
+        Me.Label81.Name = "Label81"
+        Me.Label81.Size = New System.Drawing.Size(51, 13)
+        Me.Label81.TabIndex = 55
+        Me.Label81.Text = "Domestic"
+        '
+        'Label82
+        '
+        Me.Label82.AutoSize = True
+        Me.Label82.Location = New System.Drawing.Point(18, 79)
+        Me.Label82.Name = "Label82"
+        Me.Label82.Size = New System.Drawing.Size(23, 13)
+        Me.Label82.TabIndex = 54
+        Me.Label82.Text = "HQ"
+        '
+        'Label83
+        '
+        Me.Label83.AutoSize = True
+        Me.Label83.Location = New System.Drawing.Point(14, 49)
+        Me.Label83.Name = "Label83"
+        Me.Label83.Size = New System.Drawing.Size(27, 13)
+        Me.Label83.TabIndex = 53
+        Me.Label83.Text = "This"
+        '
+        'TextBox167
+        '
+        Me.TextBox167.Location = New System.Drawing.Point(1149, 46)
+        Me.TextBox167.Name = "TextBox167"
+        Me.TextBox167.ReadOnly = True
+        Me.TextBox167.Size = New System.Drawing.Size(44, 20)
+        Me.TextBox167.TabIndex = 52
+        '
+        'TextBox168
+        '
+        Me.TextBox168.Location = New System.Drawing.Point(1084, 46)
+        Me.TextBox168.Name = "TextBox168"
+        Me.TextBox168.ReadOnly = True
+        Me.TextBox168.Size = New System.Drawing.Size(55, 20)
+        Me.TextBox168.TabIndex = 51
+        '
+        'TextBox169
+        '
+        Me.TextBox169.Location = New System.Drawing.Point(1036, 46)
+        Me.TextBox169.Name = "TextBox169"
+        Me.TextBox169.ReadOnly = True
+        Me.TextBox169.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox169.TabIndex = 50
+        '
+        'TextBox170
+        '
+        Me.TextBox170.Location = New System.Drawing.Point(919, 46)
+        Me.TextBox170.Name = "TextBox170"
+        Me.TextBox170.ReadOnly = True
+        Me.TextBox170.Size = New System.Drawing.Size(106, 20)
+        Me.TextBox170.TabIndex = 49
+        '
+        'TextBox171
+        '
+        Me.TextBox171.Location = New System.Drawing.Point(725, 46)
+        Me.TextBox171.Name = "TextBox171"
+        Me.TextBox171.ReadOnly = True
+        Me.TextBox171.Size = New System.Drawing.Size(186, 20)
+        Me.TextBox171.TabIndex = 48
+        '
+        'TextBox172
+        '
+        Me.TextBox172.Location = New System.Drawing.Point(155, 46)
+        Me.TextBox172.Name = "TextBox172"
+        Me.TextBox172.ReadOnly = True
+        Me.TextBox172.Size = New System.Drawing.Size(273, 20)
+        Me.TextBox172.TabIndex = 47
+        '
+        'Label84
+        '
+        Me.Label84.AutoSize = True
+        Me.Label84.Location = New System.Drawing.Point(1038, 22)
+        Me.Label84.Name = "Label84"
+        Me.Label84.Size = New System.Drawing.Size(32, 13)
+        Me.Label84.TabIndex = 44
+        Me.Label84.Text = "State"
+        '
+        'Label85
+        '
+        Me.Label85.AutoSize = True
+        Me.Label85.Location = New System.Drawing.Point(951, 22)
+        Me.Label85.Name = "Label85"
+        Me.Label85.Size = New System.Drawing.Size(24, 13)
+        Me.Label85.TabIndex = 43
+        Me.Label85.Text = "City"
+        '
+        'Label86
+        '
+        Me.Label86.AutoSize = True
+        Me.Label86.Location = New System.Drawing.Point(765, 22)
+        Me.Label86.Name = "Label86"
+        Me.Label86.Size = New System.Drawing.Size(45, 13)
+        Me.Label86.TabIndex = 42
+        Me.Label86.Text = "Address"
+        '
+        'Label87
+        '
+        Me.Label87.AutoSize = True
+        Me.Label87.Location = New System.Drawing.Point(270, 22)
+        Me.Label87.Name = "Label87"
+        Me.Label87.Size = New System.Drawing.Size(35, 13)
+        Me.Label87.TabIndex = 41
+        Me.Label87.Text = "Name"
+        '
+        'Label88
+        '
+        Me.Label88.AutoSize = True
+        Me.Label88.Location = New System.Drawing.Point(99, 22)
+        Me.Label88.Name = "Label88"
+        Me.Label88.Size = New System.Drawing.Size(32, 13)
+        Me.Label88.TabIndex = 40
+        Me.Label88.Text = "Duns"
+        '
+        'TextBox173
+        '
+        Me.TextBox173.Location = New System.Drawing.Point(67, 46)
+        Me.TextBox173.Name = "TextBox173"
+        Me.TextBox173.ReadOnly = True
+        Me.TextBox173.Size = New System.Drawing.Size(79, 20)
+        Me.TextBox173.TabIndex = 39
+        '
+        'TextBox100
+        '
+        Me.TextBox100.Location = New System.Drawing.Point(281, 122)
+        Me.TextBox100.Name = "TextBox100"
+        Me.TextBox100.ReadOnly = True
+        Me.TextBox100.Size = New System.Drawing.Size(526, 20)
+        Me.TextBox100.TabIndex = 28
+        '
+        'Label59
+        '
+        Me.Label59.AutoSize = True
+        Me.Label59.Location = New System.Drawing.Point(187, 126)
+        Me.Label59.Name = "Label59"
+        Me.Label59.Size = New System.Drawing.Size(77, 13)
+        Me.Label59.TabIndex = 27
+        Me.Label59.Text = "Available 5500"
+        '
+        'TextBox101
+        '
+        Me.TextBox101.Location = New System.Drawing.Point(66, 122)
+        Me.TextBox101.Name = "TextBox101"
+        Me.TextBox101.ReadOnly = True
+        Me.TextBox101.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox101.TabIndex = 26
+        '
+        'Label60
+        '
+        Me.Label60.AutoSize = True
+        Me.Label60.Location = New System.Drawing.Point(25, 126)
+        Me.Label60.Name = "Label60"
+        Me.Label60.Size = New System.Drawing.Size(25, 13)
+        Me.Label60.TabIndex = 25
+        Me.Label60.Text = "EIN"
+        '
+        'Label61
+        '
+        Me.Label61.AutoSize = True
+        Me.Label61.Location = New System.Drawing.Point(957, 126)
+        Me.Label61.Name = "Label61"
+        Me.Label61.Size = New System.Drawing.Size(29, 13)
+        Me.Label61.TabIndex = 24
+        Me.Label61.Text = "URL"
+        '
+        'LinkLabel2
+        '
+        Me.LinkLabel2.AutoSize = True
+        Me.LinkLabel2.Location = New System.Drawing.Point(992, 126)
+        Me.LinkLabel2.Name = "LinkLabel2"
+        Me.LinkLabel2.Size = New System.Drawing.Size(10, 13)
+        Me.LinkLabel2.TabIndex = 23
+        Me.LinkLabel2.TabStop = True
+        Me.LinkLabel2.Text = " "
+        '
+        'Label62
+        '
+        Me.Label62.AutoSize = True
+        Me.Label62.Location = New System.Drawing.Point(63, 32)
+        Me.Label62.Name = "Label62"
+        Me.Label62.Size = New System.Drawing.Size(13, 13)
+        Me.Label62.TabIndex = 22
+        Me.Label62.Text = "0"
+        '
+        'btnRejectSubChange
+        '
+        Me.btnRejectSubChange.Location = New System.Drawing.Point(590, 59)
+        Me.btnRejectSubChange.Name = "btnRejectSubChange"
+        Me.btnRejectSubChange.Size = New System.Drawing.Size(127, 23)
+        Me.btnRejectSubChange.TabIndex = 21
+        Me.btnRejectSubChange.Text = "Reject the Change"
+        Me.btnRejectSubChange.UseVisualStyleBackColor = True
+        '
+        'btnAcceptSubChange
+        '
+        Me.btnAcceptSubChange.Location = New System.Drawing.Point(442, 59)
+        Me.btnAcceptSubChange.Name = "btnAcceptSubChange"
+        Me.btnAcceptSubChange.Size = New System.Drawing.Size(127, 23)
+        Me.btnAcceptSubChange.TabIndex = 20
+        Me.btnAcceptSubChange.Text = "Accept the Change"
+        Me.btnAcceptSubChange.UseVisualStyleBackColor = True
+        '
+        'GroupBox7
+        '
+        Me.GroupBox7.Controls.Add(Me.Label63)
+        Me.GroupBox7.Controls.Add(Me.TextBox102)
+        Me.GroupBox7.Controls.Add(Me.TextBox103)
+        Me.GroupBox7.Controls.Add(Me.TextBox104)
+        Me.GroupBox7.Controls.Add(Me.TextBox105)
+        Me.GroupBox7.Controls.Add(Me.TextBox106)
+        Me.GroupBox7.Controls.Add(Me.TextBox107)
+        Me.GroupBox7.Controls.Add(Me.TextBox108)
+        Me.GroupBox7.Controls.Add(Me.TextBox109)
+        Me.GroupBox7.Controls.Add(Me.Label64)
+        Me.GroupBox7.Controls.Add(Me.TextBox110)
+        Me.GroupBox7.Controls.Add(Me.TextBox111)
+        Me.GroupBox7.Controls.Add(Me.TextBox112)
+        Me.GroupBox7.Controls.Add(Me.TextBox113)
+        Me.GroupBox7.Controls.Add(Me.TextBox114)
+        Me.GroupBox7.Controls.Add(Me.TextBox115)
+        Me.GroupBox7.Controls.Add(Me.TextBox116)
+        Me.GroupBox7.Controls.Add(Me.TextBox117)
+        Me.GroupBox7.Controls.Add(Me.TextBox118)
+        Me.GroupBox7.Controls.Add(Me.TextBox119)
+        Me.GroupBox7.Controls.Add(Me.TextBox120)
+        Me.GroupBox7.Controls.Add(Me.TextBox121)
+        Me.GroupBox7.Controls.Add(Me.TextBox122)
+        Me.GroupBox7.Controls.Add(Me.TextBox123)
+        Me.GroupBox7.Controls.Add(Me.TextBox124)
+        Me.GroupBox7.Controls.Add(Me.TextBox125)
+        Me.GroupBox7.Controls.Add(Me.TextBox126)
+        Me.GroupBox7.Controls.Add(Me.TextBox127)
+        Me.GroupBox7.Controls.Add(Me.TextBox128)
+        Me.GroupBox7.Controls.Add(Me.TextBox129)
+        Me.GroupBox7.Controls.Add(Me.TextBox130)
+        Me.GroupBox7.Controls.Add(Me.Label65)
+        Me.GroupBox7.Controls.Add(Me.Label66)
+        Me.GroupBox7.Controls.Add(Me.Label67)
+        Me.GroupBox7.Controls.Add(Me.Label68)
+        Me.GroupBox7.Controls.Add(Me.TextBox131)
+        Me.GroupBox7.Controls.Add(Me.TextBox132)
+        Me.GroupBox7.Controls.Add(Me.TextBox133)
+        Me.GroupBox7.Controls.Add(Me.TextBox134)
+        Me.GroupBox7.Controls.Add(Me.TextBox135)
+        Me.GroupBox7.Controls.Add(Me.TextBox136)
+        Me.GroupBox7.Controls.Add(Me.Label69)
+        Me.GroupBox7.Controls.Add(Me.Label70)
+        Me.GroupBox7.Controls.Add(Me.Label71)
+        Me.GroupBox7.Controls.Add(Me.Label72)
+        Me.GroupBox7.Controls.Add(Me.Label73)
+        Me.GroupBox7.Controls.Add(Me.Label74)
+        Me.GroupBox7.Controls.Add(Me.Label75)
+        Me.GroupBox7.Controls.Add(Me.TextBox137)
+        Me.GroupBox7.Location = New System.Drawing.Point(19, 173)
+        Me.GroupBox7.Name = "GroupBox7"
+        Me.GroupBox7.Size = New System.Drawing.Size(1224, 185)
+        Me.GroupBox7.TabIndex = 19
+        Me.GroupBox7.TabStop = False
+        Me.GroupBox7.Text = "Current"
+        '
+        'Label63
+        '
+        Me.Label63.AutoSize = True
+        Me.Label63.Location = New System.Drawing.Point(689, 24)
+        Me.Label63.Name = "Label63"
+        Me.Label63.Size = New System.Drawing.Size(24, 13)
+        Me.Label63.TabIndex = 48
+        Me.Label63.Text = "SIC"
+        '
+        'TextBox102
+        '
+        Me.TextBox102.Location = New System.Drawing.Point(680, 140)
+        Me.TextBox102.Name = "TextBox102"
+        Me.TextBox102.ReadOnly = True
+        Me.TextBox102.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox102.TabIndex = 47
+        '
+        'TextBox103
+        '
+        Me.TextBox103.Location = New System.Drawing.Point(680, 111)
+        Me.TextBox103.Name = "TextBox103"
+        Me.TextBox103.ReadOnly = True
+        Me.TextBox103.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox103.TabIndex = 46
+        '
+        'TextBox104
+        '
+        Me.TextBox104.Location = New System.Drawing.Point(680, 79)
+        Me.TextBox104.Name = "TextBox104"
+        Me.TextBox104.ReadOnly = True
+        Me.TextBox104.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox104.TabIndex = 45
+        '
+        'TextBox105
+        '
+        Me.TextBox105.Location = New System.Drawing.Point(680, 49)
+        Me.TextBox105.Name = "TextBox105"
+        Me.TextBox105.ReadOnly = True
+        Me.TextBox105.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox105.TabIndex = 44
+        '
+        'TextBox106
+        '
+        Me.TextBox106.Location = New System.Drawing.Point(437, 140)
+        Me.TextBox106.Name = "TextBox106"
+        Me.TextBox106.ReadOnly = True
+        Me.TextBox106.Size = New System.Drawing.Size(234, 20)
+        Me.TextBox106.TabIndex = 43
+        '
+        'TextBox107
+        '
+        Me.TextBox107.Location = New System.Drawing.Point(437, 111)
+        Me.TextBox107.Name = "TextBox107"
+        Me.TextBox107.ReadOnly = True
+        Me.TextBox107.Size = New System.Drawing.Size(234, 20)
+        Me.TextBox107.TabIndex = 42
+        '
+        'TextBox108
+        '
+        Me.TextBox108.Location = New System.Drawing.Point(437, 79)
+        Me.TextBox108.Name = "TextBox108"
+        Me.TextBox108.ReadOnly = True
+        Me.TextBox108.Size = New System.Drawing.Size(234, 20)
+        Me.TextBox108.TabIndex = 41
+        '
+        'TextBox109
+        '
+        Me.TextBox109.Location = New System.Drawing.Point(437, 49)
+        Me.TextBox109.Name = "TextBox109"
+        Me.TextBox109.ReadOnly = True
+        Me.TextBox109.Size = New System.Drawing.Size(234, 20)
+        Me.TextBox109.TabIndex = 40
+        '
+        'Label64
+        '
+        Me.Label64.AutoSize = True
+        Me.Label64.Location = New System.Drawing.Point(478, 24)
+        Me.Label64.Name = "Label64"
+        Me.Label64.Size = New System.Drawing.Size(84, 13)
+        Me.Label64.TabIndex = 39
+        Me.Label64.Text = "Line of Business"
+        '
+        'TextBox110
+        '
+        Me.TextBox110.Location = New System.Drawing.Point(1152, 140)
+        Me.TextBox110.Name = "TextBox110"
+        Me.TextBox110.ReadOnly = True
+        Me.TextBox110.Size = New System.Drawing.Size(44, 20)
+        Me.TextBox110.TabIndex = 38
+        '
+        'TextBox111
+        '
+        Me.TextBox111.Location = New System.Drawing.Point(1087, 140)
+        Me.TextBox111.Name = "TextBox111"
+        Me.TextBox111.ReadOnly = True
+        Me.TextBox111.Size = New System.Drawing.Size(55, 20)
+        Me.TextBox111.TabIndex = 37
+        '
+        'TextBox112
+        '
+        Me.TextBox112.Location = New System.Drawing.Point(1040, 140)
+        Me.TextBox112.Name = "TextBox112"
+        Me.TextBox112.ReadOnly = True
+        Me.TextBox112.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox112.TabIndex = 36
+        '
+        'TextBox113
+        '
+        Me.TextBox113.Location = New System.Drawing.Point(923, 140)
+        Me.TextBox113.Name = "TextBox113"
+        Me.TextBox113.ReadOnly = True
+        Me.TextBox113.Size = New System.Drawing.Size(106, 20)
+        Me.TextBox113.TabIndex = 35
+        '
+        'TextBox114
+        '
+        Me.TextBox114.Location = New System.Drawing.Point(726, 140)
+        Me.TextBox114.Name = "TextBox114"
+        Me.TextBox114.ReadOnly = True
+        Me.TextBox114.Size = New System.Drawing.Size(186, 20)
+        Me.TextBox114.TabIndex = 34
+        '
+        'TextBox115
+        '
+        Me.TextBox115.Location = New System.Drawing.Point(158, 140)
+        Me.TextBox115.Name = "TextBox115"
+        Me.TextBox115.ReadOnly = True
+        Me.TextBox115.Size = New System.Drawing.Size(273, 20)
+        Me.TextBox115.TabIndex = 33
+        '
+        'TextBox116
+        '
+        Me.TextBox116.Location = New System.Drawing.Point(70, 140)
+        Me.TextBox116.Name = "TextBox116"
+        Me.TextBox116.ReadOnly = True
+        Me.TextBox116.Size = New System.Drawing.Size(79, 20)
+        Me.TextBox116.TabIndex = 32
+        '
+        'TextBox117
+        '
+        Me.TextBox117.Location = New System.Drawing.Point(1152, 111)
+        Me.TextBox117.Name = "TextBox117"
+        Me.TextBox117.ReadOnly = True
+        Me.TextBox117.Size = New System.Drawing.Size(44, 20)
+        Me.TextBox117.TabIndex = 31
+        '
+        'TextBox118
+        '
+        Me.TextBox118.Location = New System.Drawing.Point(1087, 111)
+        Me.TextBox118.Name = "TextBox118"
+        Me.TextBox118.ReadOnly = True
+        Me.TextBox118.Size = New System.Drawing.Size(55, 20)
+        Me.TextBox118.TabIndex = 30
+        '
+        'TextBox119
+        '
+        Me.TextBox119.Location = New System.Drawing.Point(1040, 111)
+        Me.TextBox119.Name = "TextBox119"
+        Me.TextBox119.ReadOnly = True
+        Me.TextBox119.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox119.TabIndex = 29
+        '
+        'TextBox120
+        '
+        Me.TextBox120.Location = New System.Drawing.Point(923, 111)
+        Me.TextBox120.Name = "TextBox120"
+        Me.TextBox120.ReadOnly = True
+        Me.TextBox120.Size = New System.Drawing.Size(106, 20)
+        Me.TextBox120.TabIndex = 28
+        '
+        'TextBox121
+        '
+        Me.TextBox121.Location = New System.Drawing.Point(726, 111)
+        Me.TextBox121.Name = "TextBox121"
+        Me.TextBox121.ReadOnly = True
+        Me.TextBox121.Size = New System.Drawing.Size(186, 20)
+        Me.TextBox121.TabIndex = 27
+        '
+        'TextBox122
+        '
+        Me.TextBox122.Location = New System.Drawing.Point(158, 111)
+        Me.TextBox122.Name = "TextBox122"
+        Me.TextBox122.ReadOnly = True
+        Me.TextBox122.Size = New System.Drawing.Size(273, 20)
+        Me.TextBox122.TabIndex = 26
+        '
+        'TextBox123
+        '
+        Me.TextBox123.Location = New System.Drawing.Point(70, 111)
+        Me.TextBox123.Name = "TextBox123"
+        Me.TextBox123.ReadOnly = True
+        Me.TextBox123.Size = New System.Drawing.Size(79, 20)
+        Me.TextBox123.TabIndex = 25
+        '
+        'TextBox124
+        '
+        Me.TextBox124.Location = New System.Drawing.Point(1152, 79)
+        Me.TextBox124.Name = "TextBox124"
+        Me.TextBox124.ReadOnly = True
+        Me.TextBox124.Size = New System.Drawing.Size(44, 20)
+        Me.TextBox124.TabIndex = 24
+        '
+        'TextBox125
+        '
+        Me.TextBox125.Location = New System.Drawing.Point(1087, 79)
+        Me.TextBox125.Name = "TextBox125"
+        Me.TextBox125.ReadOnly = True
+        Me.TextBox125.Size = New System.Drawing.Size(55, 20)
+        Me.TextBox125.TabIndex = 23
+        '
+        'TextBox126
+        '
+        Me.TextBox126.Location = New System.Drawing.Point(1040, 79)
+        Me.TextBox126.Name = "TextBox126"
+        Me.TextBox126.ReadOnly = True
+        Me.TextBox126.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox126.TabIndex = 22
+        '
+        'TextBox127
+        '
+        Me.TextBox127.Location = New System.Drawing.Point(923, 79)
+        Me.TextBox127.Name = "TextBox127"
+        Me.TextBox127.ReadOnly = True
+        Me.TextBox127.Size = New System.Drawing.Size(106, 20)
+        Me.TextBox127.TabIndex = 21
+        '
+        'TextBox128
+        '
+        Me.TextBox128.Location = New System.Drawing.Point(726, 79)
+        Me.TextBox128.Name = "TextBox128"
+        Me.TextBox128.ReadOnly = True
+        Me.TextBox128.Size = New System.Drawing.Size(186, 20)
+        Me.TextBox128.TabIndex = 20
+        '
+        'TextBox129
+        '
+        Me.TextBox129.Location = New System.Drawing.Point(158, 79)
+        Me.TextBox129.Name = "TextBox129"
+        Me.TextBox129.ReadOnly = True
+        Me.TextBox129.Size = New System.Drawing.Size(273, 20)
+        Me.TextBox129.TabIndex = 19
+        '
+        'TextBox130
+        '
+        Me.TextBox130.Location = New System.Drawing.Point(71, 79)
+        Me.TextBox130.Name = "TextBox130"
+        Me.TextBox130.ReadOnly = True
+        Me.TextBox130.Size = New System.Drawing.Size(79, 20)
+        Me.TextBox130.TabIndex = 18
+        '
+        'Label65
+        '
+        Me.Label65.AutoSize = True
+        Me.Label65.Location = New System.Drawing.Point(17, 143)
+        Me.Label65.Name = "Label65"
+        Me.Label65.Size = New System.Drawing.Size(37, 13)
+        Me.Label65.TabIndex = 17
+        Me.Label65.Text = "Global"
+        '
+        'Label66
+        '
+        Me.Label66.AutoSize = True
+        Me.Label66.Location = New System.Drawing.Point(6, 114)
+        Me.Label66.Name = "Label66"
+        Me.Label66.Size = New System.Drawing.Size(51, 13)
+        Me.Label66.TabIndex = 16
+        Me.Label66.Text = "Domestic"
+        '
+        'Label67
+        '
+        Me.Label67.AutoSize = True
+        Me.Label67.Location = New System.Drawing.Point(21, 82)
+        Me.Label67.Name = "Label67"
+        Me.Label67.Size = New System.Drawing.Size(23, 13)
+        Me.Label67.TabIndex = 15
+        Me.Label67.Text = "HQ"
+        '
+        'Label68
+        '
+        Me.Label68.AutoSize = True
+        Me.Label68.Location = New System.Drawing.Point(17, 52)
+        Me.Label68.Name = "Label68"
+        Me.Label68.Size = New System.Drawing.Size(27, 13)
+        Me.Label68.TabIndex = 14
+        Me.Label68.Text = "This"
+        '
+        'TextBox131
+        '
+        Me.TextBox131.Location = New System.Drawing.Point(1152, 49)
+        Me.TextBox131.Name = "TextBox131"
+        Me.TextBox131.ReadOnly = True
+        Me.TextBox131.Size = New System.Drawing.Size(44, 20)
+        Me.TextBox131.TabIndex = 13
+        '
+        'TextBox132
+        '
+        Me.TextBox132.Location = New System.Drawing.Point(1087, 49)
+        Me.TextBox132.Name = "TextBox132"
+        Me.TextBox132.ReadOnly = True
+        Me.TextBox132.Size = New System.Drawing.Size(55, 20)
+        Me.TextBox132.TabIndex = 12
+        '
+        'TextBox133
+        '
+        Me.TextBox133.Location = New System.Drawing.Point(1040, 49)
+        Me.TextBox133.Name = "TextBox133"
+        Me.TextBox133.ReadOnly = True
+        Me.TextBox133.Size = New System.Drawing.Size(40, 20)
+        Me.TextBox133.TabIndex = 11
+        '
+        'TextBox134
+        '
+        Me.TextBox134.Location = New System.Drawing.Point(923, 49)
+        Me.TextBox134.Name = "TextBox134"
+        Me.TextBox134.ReadOnly = True
+        Me.TextBox134.Size = New System.Drawing.Size(106, 20)
+        Me.TextBox134.TabIndex = 10
+        '
+        'TextBox135
+        '
+        Me.TextBox135.Location = New System.Drawing.Point(726, 49)
+        Me.TextBox135.Name = "TextBox135"
+        Me.TextBox135.ReadOnly = True
+        Me.TextBox135.Size = New System.Drawing.Size(186, 20)
+        Me.TextBox135.TabIndex = 9
+        '
+        'TextBox136
+        '
+        Me.TextBox136.Location = New System.Drawing.Point(158, 49)
+        Me.TextBox136.Name = "TextBox136"
+        Me.TextBox136.ReadOnly = True
+        Me.TextBox136.Size = New System.Drawing.Size(273, 20)
+        Me.TextBox136.TabIndex = 8
+        '
+        'Label69
+        '
+        Me.Label69.AutoSize = True
+        Me.Label69.Location = New System.Drawing.Point(1149, 12)
+        Me.Label69.MaximumSize = New System.Drawing.Size(60, 26)
+        Me.Label69.Name = "Label69"
+        Me.Label69.Size = New System.Drawing.Size(58, 26)
+        Me.Label69.TabIndex = 7
+        Me.Label69.Text = "Employees Total"
+        '
+        'Label70
+        '
+        Me.Label70.AutoSize = True
+        Me.Label70.Location = New System.Drawing.Point(1084, 12)
+        Me.Label70.MaximumSize = New System.Drawing.Size(60, 26)
+        Me.Label70.Name = "Label70"
+        Me.Label70.Size = New System.Drawing.Size(58, 26)
+        Me.Label70.TabIndex = 6
+        Me.Label70.Text = "Employees Here"
+        '
+        'Label71
+        '
+        Me.Label71.AutoSize = True
+        Me.Label71.Location = New System.Drawing.Point(1042, 25)
+        Me.Label71.Name = "Label71"
+        Me.Label71.Size = New System.Drawing.Size(32, 13)
+        Me.Label71.TabIndex = 5
+        Me.Label71.Text = "State"
+        '
+        'Label72
+        '
+        Me.Label72.AutoSize = True
+        Me.Label72.Location = New System.Drawing.Point(955, 25)
+        Me.Label72.Name = "Label72"
+        Me.Label72.Size = New System.Drawing.Size(24, 13)
+        Me.Label72.TabIndex = 4
+        Me.Label72.Text = "City"
+        '
+        'Label73
+        '
+        Me.Label73.AutoSize = True
+        Me.Label73.Location = New System.Drawing.Point(769, 25)
+        Me.Label73.Name = "Label73"
+        Me.Label73.Size = New System.Drawing.Size(45, 13)
+        Me.Label73.TabIndex = 3
+        Me.Label73.Text = "Address"
+        '
+        'Label74
+        '
+        Me.Label74.AutoSize = True
+        Me.Label74.Location = New System.Drawing.Point(273, 25)
+        Me.Label74.Name = "Label74"
+        Me.Label74.Size = New System.Drawing.Size(35, 13)
+        Me.Label74.TabIndex = 2
+        Me.Label74.Text = "Name"
+        '
+        'Label75
+        '
+        Me.Label75.AutoSize = True
+        Me.Label75.Location = New System.Drawing.Point(102, 25)
+        Me.Label75.Name = "Label75"
+        Me.Label75.Size = New System.Drawing.Size(32, 13)
+        Me.Label75.TabIndex = 1
+        Me.Label75.Text = "Duns"
+        '
+        'TextBox137
+        '
+        Me.TextBox137.Location = New System.Drawing.Point(72, 49)
+        Me.TextBox137.Name = "TextBox137"
+        Me.TextBox137.ReadOnly = True
+        Me.TextBox137.Size = New System.Drawing.Size(79, 20)
+        Me.TextBox137.TabIndex = 0
+        '
+        'GroupBox8
+        '
+        Me.GroupBox8.Controls.Add(Me.radSubDelete)
+        Me.GroupBox8.Controls.Add(Me.radSubAddition)
+        Me.GroupBox8.Controls.Add(Me.radSubPromotion)
+        Me.GroupBox8.Controls.Add(Me.radSubDoubleDemotion)
+        Me.GroupBox8.Controls.Add(Me.radSubDemotion)
+        Me.GroupBox8.Location = New System.Drawing.Point(439, 14)
+        Me.GroupBox8.Name = "GroupBox8"
+        Me.GroupBox8.Size = New System.Drawing.Size(470, 39)
+        Me.GroupBox8.TabIndex = 18
+        Me.GroupBox8.TabStop = False
+        Me.GroupBox8.Text = "Change"
+        '
+        'radSubDelete
+        '
+        Me.radSubDelete.AutoSize = True
+        Me.radSubDelete.Location = New System.Drawing.Point(397, 16)
+        Me.radSubDelete.Name = "radSubDelete"
+        Me.radSubDelete.Size = New System.Drawing.Size(62, 17)
+        Me.radSubDelete.TabIndex = 4
+        Me.radSubDelete.TabStop = True
+        Me.radSubDelete.Text = "Delete?"
+        Me.radSubDelete.UseVisualStyleBackColor = True
+        '
+        'radSubAddition
+        '
+        Me.radSubAddition.AutoSize = True
+        Me.radSubAddition.Location = New System.Drawing.Point(327, 16)
+        Me.radSubAddition.Name = "radSubAddition"
+        Me.radSubAddition.Size = New System.Drawing.Size(63, 17)
+        Me.radSubAddition.TabIndex = 3
+        Me.radSubAddition.TabStop = True
+        Me.radSubAddition.Text = "Addition"
+        Me.radSubAddition.UseVisualStyleBackColor = True
+        '
+        'radSubPromotion
+        '
+        Me.radSubPromotion.AutoSize = True
+        Me.radSubPromotion.Location = New System.Drawing.Point(248, 16)
+        Me.radSubPromotion.Name = "radSubPromotion"
+        Me.radSubPromotion.Size = New System.Drawing.Size(72, 17)
+        Me.radSubPromotion.TabIndex = 2
+        Me.radSubPromotion.TabStop = True
+        Me.radSubPromotion.Text = "Promotion"
+        Me.radSubPromotion.UseVisualStyleBackColor = True
+        '
+        'radSubDoubleDemotion
+        '
+        Me.radSubDoubleDemotion.AutoSize = True
+        Me.radSubDoubleDemotion.Location = New System.Drawing.Point(134, 16)
+        Me.radSubDoubleDemotion.Name = "radSubDoubleDemotion"
+        Me.radSubDoubleDemotion.Size = New System.Drawing.Size(107, 17)
+        Me.radSubDoubleDemotion.TabIndex = 1
+        Me.radSubDoubleDemotion.TabStop = True
+        Me.radSubDoubleDemotion.Text = "Double Demotion"
+        Me.radSubDoubleDemotion.UseVisualStyleBackColor = True
+        '
+        'radSubDemotion
+        '
+        Me.radSubDemotion.AutoSize = True
+        Me.radSubDemotion.Location = New System.Drawing.Point(57, 16)
+        Me.radSubDemotion.Name = "radSubDemotion"
+        Me.radSubDemotion.Size = New System.Drawing.Size(70, 17)
+        Me.radSubDemotion.TabIndex = 0
+        Me.radSubDemotion.TabStop = True
+        Me.radSubDemotion.Text = "Demotion"
+        Me.radSubDemotion.UseVisualStyleBackColor = True
+        '
+        'cmbSubList
+        '
+        Me.cmbSubList.FormattingEnabled = True
+        Me.cmbSubList.Location = New System.Drawing.Point(95, 29)
+        Me.cmbSubList.Name = "cmbSubList"
+        Me.cmbSubList.Size = New System.Drawing.Size(338, 21)
+        Me.cmbSubList.TabIndex = 17
+        '
         'TabPage5
         '
         Me.TabPage5.Controls.Add(Me.btnFilter)
@@ -1484,6 +2854,423 @@ Partial Class Form1
         Me.cmbSubsidiaryBrowser.Size = New System.Drawing.Size(424, 21)
         Me.cmbSubsidiaryBrowser.TabIndex = 2
         '
+        'TabPage1
+        '
+        Me.TabPage1.Controls.Add(Me.btnRefresh)
+        Me.TabPage1.Controls.Add(Me.TextBox95)
+        Me.TabPage1.Controls.Add(Me.TextBox94)
+        Me.TabPage1.Controls.Add(Me.TextBox93)
+        Me.TabPage1.Controls.Add(Me.TextBox14)
+        Me.TabPage1.Controls.Add(Me.Label54)
+        Me.TabPage1.Controls.Add(Me.Label53)
+        Me.TabPage1.Controls.Add(Me.Label16)
+        Me.TabPage1.Controls.Add(Me.Label15)
+        Me.TabPage1.Controls.Add(Me.TextBox13)
+        Me.TabPage1.Controls.Add(Me.TextBox12)
+        Me.TabPage1.Controls.Add(Me.GroupBox6)
+        Me.TabPage1.Controls.Add(Me.GroupBox5)
+        Me.TabPage1.Controls.Add(Me.Label4)
+        Me.TabPage1.Controls.Add(Me.Label3)
+        Me.TabPage1.Controls.Add(Me.TextBox1)
+        Me.TabPage1.Controls.Add(Me.Label2)
+        Me.TabPage1.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage1.Name = "TabPage1"
+        Me.TabPage1.Size = New System.Drawing.Size(1254, 735)
+        Me.TabPage1.TabIndex = 6
+        Me.TabPage1.Text = "Stats"
+        Me.TabPage1.UseVisualStyleBackColor = True
+        '
+        'btnRefresh
+        '
+        Me.btnRefresh.Location = New System.Drawing.Point(87, 581)
+        Me.btnRefresh.Name = "btnRefresh"
+        Me.btnRefresh.Size = New System.Drawing.Size(75, 23)
+        Me.btnRefresh.TabIndex = 26
+        Me.btnRefresh.Text = "Refresh"
+        Me.btnRefresh.UseVisualStyleBackColor = True
+        '
+        'TextBox95
+        '
+        Me.TextBox95.Location = New System.Drawing.Point(218, 422)
+        Me.TextBox95.Name = "TextBox95"
+        Me.TextBox95.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox95.TabIndex = 25
+        '
+        'TextBox94
+        '
+        Me.TextBox94.Location = New System.Drawing.Point(218, 359)
+        Me.TextBox94.Name = "TextBox94"
+        Me.TextBox94.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox94.TabIndex = 24
+        '
+        'TextBox93
+        '
+        Me.TextBox93.Location = New System.Drawing.Point(218, 296)
+        Me.TextBox93.Name = "TextBox93"
+        Me.TextBox93.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox93.TabIndex = 23
+        '
+        'TextBox14
+        '
+        Me.TextBox14.Location = New System.Drawing.Point(218, 233)
+        Me.TextBox14.Name = "TextBox14"
+        Me.TextBox14.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox14.TabIndex = 22
+        '
+        'Label54
+        '
+        Me.Label54.AutoSize = True
+        Me.Label54.Location = New System.Drawing.Point(84, 426)
+        Me.Label54.Name = "Label54"
+        Me.Label54.Size = New System.Drawing.Size(120, 13)
+        Me.Label54.TabIndex = 21
+        Me.Label54.Text = "Subsidiary Newest Date"
+        '
+        'Label53
+        '
+        Me.Label53.AutoSize = True
+        Me.Label53.Location = New System.Drawing.Point(84, 363)
+        Me.Label53.Name = "Label53"
+        Me.Label53.Size = New System.Drawing.Size(114, 13)
+        Me.Label53.TabIndex = 20
+        Me.Label53.Text = "Subsidiary Oldest Date"
+        '
+        'Label16
+        '
+        Me.Label16.AutoSize = True
+        Me.Label16.Location = New System.Drawing.Point(84, 300)
+        Me.Label16.Name = "Label16"
+        Me.Label16.Size = New System.Drawing.Size(97, 13)
+        Me.Label16.TabIndex = 19
+        Me.Label16.Text = "Corp. Newest Date"
+        '
+        'Label15
+        '
+        Me.Label15.AutoSize = True
+        Me.Label15.Location = New System.Drawing.Point(84, 237)
+        Me.Label15.Name = "Label15"
+        Me.Label15.Size = New System.Drawing.Size(88, 13)
+        Me.Label15.TabIndex = 18
+        Me.Label15.Text = "Corp Oldest Date"
+        '
+        'TextBox13
+        '
+        Me.TextBox13.Location = New System.Drawing.Point(218, 170)
+        Me.TextBox13.Name = "TextBox13"
+        Me.TextBox13.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox13.TabIndex = 17
+        '
+        'TextBox12
+        '
+        Me.TextBox12.Location = New System.Drawing.Point(218, 107)
+        Me.TextBox12.Name = "TextBox12"
+        Me.TextBox12.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox12.TabIndex = 16
+        '
+        'GroupBox6
+        '
+        Me.GroupBox6.Controls.Add(Me.TextBox98)
+        Me.GroupBox6.Controls.Add(Me.TextBox99)
+        Me.GroupBox6.Controls.Add(Me.Label57)
+        Me.GroupBox6.Controls.Add(Me.Label58)
+        Me.GroupBox6.Controls.Add(Me.TextBox11)
+        Me.GroupBox6.Controls.Add(Me.TextBox10)
+        Me.GroupBox6.Controls.Add(Me.TextBox9)
+        Me.GroupBox6.Controls.Add(Me.TextBox8)
+        Me.GroupBox6.Controls.Add(Me.TextBox7)
+        Me.GroupBox6.Controls.Add(Me.Label11)
+        Me.GroupBox6.Controls.Add(Me.Label14)
+        Me.GroupBox6.Controls.Add(Me.Label10)
+        Me.GroupBox6.Controls.Add(Me.Label13)
+        Me.GroupBox6.Controls.Add(Me.Label12)
+        Me.GroupBox6.Location = New System.Drawing.Point(760, 44)
+        Me.GroupBox6.Name = "GroupBox6"
+        Me.GroupBox6.Size = New System.Drawing.Size(374, 394)
+        Me.GroupBox6.TabIndex = 15
+        Me.GroupBox6.TabStop = False
+        Me.GroupBox6.Text = "Subsidiary"
+        '
+        'TextBox98
+        '
+        Me.TextBox98.Location = New System.Drawing.Point(158, 318)
+        Me.TextBox98.Name = "TextBox98"
+        Me.TextBox98.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox98.TabIndex = 22
+        '
+        'TextBox99
+        '
+        Me.TextBox99.Location = New System.Drawing.Point(158, 268)
+        Me.TextBox99.Name = "TextBox99"
+        Me.TextBox99.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox99.TabIndex = 21
+        '
+        'Label57
+        '
+        Me.Label57.AutoSize = True
+        Me.Label57.Location = New System.Drawing.Point(19, 272)
+        Me.Label57.Name = "Label57"
+        Me.Label57.Size = New System.Drawing.Size(42, 13)
+        Me.Label57.TabIndex = 19
+        Me.Label57.Text = "Update"
+        '
+        'Label58
+        '
+        Me.Label58.AutoSize = True
+        Me.Label58.Location = New System.Drawing.Point(19, 322)
+        Me.Label58.Name = "Label58"
+        Me.Label58.Size = New System.Drawing.Size(61, 13)
+        Me.Label58.TabIndex = 20
+        Me.Label58.Text = "No Change"
+        '
+        'TextBox11
+        '
+        Me.TextBox11.Location = New System.Drawing.Point(158, 218)
+        Me.TextBox11.Name = "TextBox11"
+        Me.TextBox11.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox11.TabIndex = 18
+        '
+        'TextBox10
+        '
+        Me.TextBox10.Location = New System.Drawing.Point(158, 168)
+        Me.TextBox10.Name = "TextBox10"
+        Me.TextBox10.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox10.TabIndex = 17
+        '
+        'TextBox9
+        '
+        Me.TextBox9.Location = New System.Drawing.Point(158, 118)
+        Me.TextBox9.Name = "TextBox9"
+        Me.TextBox9.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox9.TabIndex = 16
+        '
+        'TextBox8
+        '
+        Me.TextBox8.Location = New System.Drawing.Point(158, 68)
+        Me.TextBox8.Name = "TextBox8"
+        Me.TextBox8.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox8.TabIndex = 15
+        '
+        'TextBox7
+        '
+        Me.TextBox7.Location = New System.Drawing.Point(158, 18)
+        Me.TextBox7.Name = "TextBox7"
+        Me.TextBox7.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox7.TabIndex = 14
+        '
+        'Label11
+        '
+        Me.Label11.AutoSize = True
+        Me.Label11.Location = New System.Drawing.Point(19, 172)
+        Me.Label11.Name = "Label11"
+        Me.Label11.Size = New System.Drawing.Size(45, 13)
+        Me.Label11.TabIndex = 12
+        Me.Label11.Text = "Addition"
+        '
+        'Label14
+        '
+        Me.Label14.AutoSize = True
+        Me.Label14.Location = New System.Drawing.Point(19, 22)
+        Me.Label14.Name = "Label14"
+        Me.Label14.Size = New System.Drawing.Size(52, 13)
+        Me.Label14.TabIndex = 9
+        Me.Label14.Text = "Demotion"
+        '
+        'Label10
+        '
+        Me.Label10.AutoSize = True
+        Me.Label10.Location = New System.Drawing.Point(19, 222)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(44, 13)
+        Me.Label10.TabIndex = 13
+        Me.Label10.Text = "Delete?"
+        '
+        'Label13
+        '
+        Me.Label13.AutoSize = True
+        Me.Label13.Location = New System.Drawing.Point(19, 72)
+        Me.Label13.Name = "Label13"
+        Me.Label13.Size = New System.Drawing.Size(89, 13)
+        Me.Label13.TabIndex = 10
+        Me.Label13.Text = "Double Demotion"
+        '
+        'Label12
+        '
+        Me.Label12.AutoSize = True
+        Me.Label12.Location = New System.Drawing.Point(19, 122)
+        Me.Label12.Name = "Label12"
+        Me.Label12.Size = New System.Drawing.Size(54, 13)
+        Me.Label12.TabIndex = 11
+        Me.Label12.Text = "Promotion"
+        '
+        'GroupBox5
+        '
+        Me.GroupBox5.Controls.Add(Me.TextBox96)
+        Me.GroupBox5.Controls.Add(Me.TextBox97)
+        Me.GroupBox5.Controls.Add(Me.Label55)
+        Me.GroupBox5.Controls.Add(Me.Label56)
+        Me.GroupBox5.Controls.Add(Me.TextBox6)
+        Me.GroupBox5.Controls.Add(Me.TextBox5)
+        Me.GroupBox5.Controls.Add(Me.TextBox4)
+        Me.GroupBox5.Controls.Add(Me.TextBox3)
+        Me.GroupBox5.Controls.Add(Me.TextBox2)
+        Me.GroupBox5.Controls.Add(Me.Label6)
+        Me.GroupBox5.Controls.Add(Me.Label5)
+        Me.GroupBox5.Controls.Add(Me.Label7)
+        Me.GroupBox5.Controls.Add(Me.Label8)
+        Me.GroupBox5.Controls.Add(Me.Label9)
+        Me.GroupBox5.Location = New System.Drawing.Point(362, 44)
+        Me.GroupBox5.Name = "GroupBox5"
+        Me.GroupBox5.Size = New System.Drawing.Size(374, 397)
+        Me.GroupBox5.TabIndex = 14
+        Me.GroupBox5.TabStop = False
+        Me.GroupBox5.Text = "Corporation"
+        '
+        'TextBox96
+        '
+        Me.TextBox96.Location = New System.Drawing.Point(153, 318)
+        Me.TextBox96.Name = "TextBox96"
+        Me.TextBox96.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox96.TabIndex = 17
+        '
+        'TextBox97
+        '
+        Me.TextBox97.Location = New System.Drawing.Point(153, 268)
+        Me.TextBox97.Name = "TextBox97"
+        Me.TextBox97.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox97.TabIndex = 16
+        '
+        'Label55
+        '
+        Me.Label55.AutoSize = True
+        Me.Label55.Location = New System.Drawing.Point(30, 272)
+        Me.Label55.Name = "Label55"
+        Me.Label55.Size = New System.Drawing.Size(42, 13)
+        Me.Label55.TabIndex = 14
+        Me.Label55.Text = "Update"
+        '
+        'Label56
+        '
+        Me.Label56.AutoSize = True
+        Me.Label56.Location = New System.Drawing.Point(30, 322)
+        Me.Label56.Name = "Label56"
+        Me.Label56.Size = New System.Drawing.Size(61, 13)
+        Me.Label56.TabIndex = 15
+        Me.Label56.Text = "No Change"
+        '
+        'TextBox6
+        '
+        Me.TextBox6.Location = New System.Drawing.Point(153, 218)
+        Me.TextBox6.Name = "TextBox6"
+        Me.TextBox6.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox6.TabIndex = 13
+        '
+        'TextBox5
+        '
+        Me.TextBox5.Location = New System.Drawing.Point(153, 168)
+        Me.TextBox5.Name = "TextBox5"
+        Me.TextBox5.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox5.TabIndex = 12
+        '
+        'TextBox4
+        '
+        Me.TextBox4.Location = New System.Drawing.Point(153, 118)
+        Me.TextBox4.Name = "TextBox4"
+        Me.TextBox4.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox4.TabIndex = 11
+        '
+        'TextBox3
+        '
+        Me.TextBox3.Location = New System.Drawing.Point(153, 68)
+        Me.TextBox3.Name = "TextBox3"
+        Me.TextBox3.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox3.TabIndex = 10
+        '
+        'TextBox2
+        '
+        Me.TextBox2.Location = New System.Drawing.Point(153, 18)
+        Me.TextBox2.Name = "TextBox2"
+        Me.TextBox2.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox2.TabIndex = 9
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(30, 72)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(89, 13)
+        Me.Label6.TabIndex = 5
+        Me.Label6.Text = "Double Demotion"
+        '
+        'Label5
+        '
+        Me.Label5.AutoSize = True
+        Me.Label5.Location = New System.Drawing.Point(30, 22)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(52, 13)
+        Me.Label5.TabIndex = 4
+        Me.Label5.Text = "Demotion"
+        '
+        'Label7
+        '
+        Me.Label7.AutoSize = True
+        Me.Label7.Location = New System.Drawing.Point(30, 122)
+        Me.Label7.Name = "Label7"
+        Me.Label7.Size = New System.Drawing.Size(54, 13)
+        Me.Label7.TabIndex = 6
+        Me.Label7.Text = "Promotion"
+        '
+        'Label8
+        '
+        Me.Label8.AutoSize = True
+        Me.Label8.Location = New System.Drawing.Point(30, 172)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(45, 13)
+        Me.Label8.TabIndex = 7
+        Me.Label8.Text = "Addition"
+        '
+        'Label9
+        '
+        Me.Label9.AutoSize = True
+        Me.Label9.Location = New System.Drawing.Point(30, 222)
+        Me.Label9.Name = "Label9"
+        Me.Label9.Size = New System.Drawing.Size(44, 13)
+        Me.Label9.TabIndex = 8
+        Me.Label9.Text = "Delete?"
+        '
+        'Label4
+        '
+        Me.Label4.AutoSize = True
+        Me.Label4.Location = New System.Drawing.Point(84, 174)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(102, 13)
+        Me.Label4.TabIndex = 3
+        Me.Label4.Text = "Branch/Subsidiaries"
+        '
+        'Label3
+        '
+        Me.Label3.AutoSize = True
+        Me.Label3.Location = New System.Drawing.Point(84, 111)
+        Me.Label3.Name = "Label3"
+        Me.Label3.Size = New System.Drawing.Size(66, 13)
+        Me.Label3.TabIndex = 2
+        Me.Label3.Text = "Corporations"
+        '
+        'TextBox1
+        '
+        Me.TextBox1.Location = New System.Drawing.Point(218, 44)
+        Me.TextBox1.Name = "TextBox1"
+        Me.TextBox1.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox1.TabIndex = 1
+        '
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(84, 48)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(82, 13)
+        Me.Label2.TabIndex = 0
+        Me.Label2.Text = "Total Employers"
+        '
         'TabPage4
         '
         Me.TabPage4.Location = New System.Drawing.Point(4, 22)
@@ -1492,6 +3279,39 @@ Partial Class Form1
         Me.TabPage4.TabIndex = 3
         Me.TabPage4.Text = "Duns to DLN (EIN)"
         Me.TabPage4.UseVisualStyleBackColor = True
+        '
+        'ckbSortAlpha
+        '
+        Me.ckbSortAlpha.AutoSize = True
+        Me.ckbSortAlpha.Location = New System.Drawing.Point(95, 59)
+        Me.ckbSortAlpha.Name = "ckbSortAlpha"
+        Me.ckbSortAlpha.Size = New System.Drawing.Size(203, 17)
+        Me.ckbSortAlpha.TabIndex = 37
+        Me.ckbSortAlpha.Text = "Sort by Apha instead of by employees"
+        Me.ckbSortAlpha.UseVisualStyleBackColor = True
+        Me.ckbSortAlpha.Visible = False
+        '
+        'LinkLabel3
+        '
+        Me.LinkLabel3.AutoSize = True
+        Me.LinkLabel3.Location = New System.Drawing.Point(811, 93)
+        Me.LinkLabel3.Name = "LinkLabel3"
+        Me.LinkLabel3.Size = New System.Drawing.Size(282, 13)
+        Me.LinkLabel3.TabIndex = 38
+        Me.LinkLabel3.TabStop = True
+        Me.LinkLabel3.Text = "Report on all Corps that all their subs are marked for delete"
+        Me.LinkLabel3.Visible = False
+        '
+        'ckbExpandedList
+        '
+        Me.ckbExpandedList.AutoSize = True
+        Me.ckbExpandedList.Location = New System.Drawing.Point(95, 83)
+        Me.ckbExpandedList.Name = "ckbExpandedList"
+        Me.ckbExpandedList.Size = New System.Drawing.Size(111, 17)
+        Me.ckbExpandedList.TabIndex = 39
+        Me.ckbExpandedList.Text = "Use Expanded list"
+        Me.ckbExpandedList.UseVisualStyleBackColor = True
+        Me.ckbExpandedList.Visible = False
         '
         'Form1
         '
@@ -1514,12 +3334,26 @@ Partial Class Form1
         Me.GroupBox2.PerformLayout()
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
+        Me.TabPage2.ResumeLayout(False)
+        Me.TabPage2.PerformLayout()
+        Me.GroupBox9.ResumeLayout(False)
+        Me.GroupBox9.PerformLayout()
+        Me.GroupBox7.ResumeLayout(False)
+        Me.GroupBox7.PerformLayout()
+        Me.GroupBox8.ResumeLayout(False)
+        Me.GroupBox8.PerformLayout()
         Me.TabPage5.ResumeLayout(False)
         Me.TabPage5.PerformLayout()
         CType(Me.dgvCorporate, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabPage6.ResumeLayout(False)
         Me.TabPage6.PerformLayout()
         CType(Me.dgvSubsidiaryBrowser, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPage1.ResumeLayout(False)
+        Me.TabPage1.PerformLayout()
+        Me.GroupBox6.ResumeLayout(False)
+        Me.GroupBox6.PerformLayout()
+        Me.GroupBox5.ResumeLayout(False)
+        Me.GroupBox5.PerformLayout()
         Me.ResumeLayout(False)
 
     End Sub
@@ -1662,5 +3496,178 @@ Partial Class Form1
     Friend WithEvents GroupBox4 As System.Windows.Forms.GroupBox
     Friend WithEvents btnOrphanedHolding As System.Windows.Forms.Button
     Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents TabPage1 As System.Windows.Forms.TabPage
+    Friend WithEvents Label5 As System.Windows.Forms.Label
+    Friend WithEvents Label4 As System.Windows.Forms.Label
+    Friend WithEvents Label3 As System.Windows.Forms.Label
+    Friend WithEvents TextBox1 As System.Windows.Forms.TextBox
+    Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents Label9 As System.Windows.Forms.Label
+    Friend WithEvents Label8 As System.Windows.Forms.Label
+    Friend WithEvents Label7 As System.Windows.Forms.Label
+    Friend WithEvents Label6 As System.Windows.Forms.Label
+    Friend WithEvents TextBox13 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox12 As System.Windows.Forms.TextBox
+    Friend WithEvents GroupBox6 As System.Windows.Forms.GroupBox
+    Friend WithEvents TextBox11 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox10 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox9 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox8 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox7 As System.Windows.Forms.TextBox
+    Friend WithEvents Label11 As System.Windows.Forms.Label
+    Friend WithEvents Label14 As System.Windows.Forms.Label
+    Friend WithEvents Label10 As System.Windows.Forms.Label
+    Friend WithEvents Label13 As System.Windows.Forms.Label
+    Friend WithEvents Label12 As System.Windows.Forms.Label
+    Friend WithEvents GroupBox5 As System.Windows.Forms.GroupBox
+    Friend WithEvents TextBox6 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox5 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox4 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox3 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox2 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox95 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox94 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox93 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox14 As System.Windows.Forms.TextBox
+    Friend WithEvents Label54 As System.Windows.Forms.Label
+    Friend WithEvents Label53 As System.Windows.Forms.Label
+    Friend WithEvents Label16 As System.Windows.Forms.Label
+    Friend WithEvents Label15 As System.Windows.Forms.Label
+    Friend WithEvents TextBox98 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox99 As System.Windows.Forms.TextBox
+    Friend WithEvents Label57 As System.Windows.Forms.Label
+    Friend WithEvents Label58 As System.Windows.Forms.Label
+    Friend WithEvents TextBox96 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox97 As System.Windows.Forms.TextBox
+    Friend WithEvents Label55 As System.Windows.Forms.Label
+    Friend WithEvents Label56 As System.Windows.Forms.Label
+    Friend WithEvents TabPage2 As System.Windows.Forms.TabPage
+    Friend WithEvents TextBox100 As System.Windows.Forms.TextBox
+    Friend WithEvents Label59 As System.Windows.Forms.Label
+    Friend WithEvents TextBox101 As System.Windows.Forms.TextBox
+    Friend WithEvents Label60 As System.Windows.Forms.Label
+    Friend WithEvents Label61 As System.Windows.Forms.Label
+    Friend WithEvents LinkLabel2 As System.Windows.Forms.LinkLabel
+    Friend WithEvents Label62 As System.Windows.Forms.Label
+    Friend WithEvents btnRejectSubChange As System.Windows.Forms.Button
+    Friend WithEvents btnAcceptSubChange As System.Windows.Forms.Button
+    Friend WithEvents GroupBox7 As System.Windows.Forms.GroupBox
+    Friend WithEvents Label63 As System.Windows.Forms.Label
+    Friend WithEvents TextBox102 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox103 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox104 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox105 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox106 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox107 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox108 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox109 As System.Windows.Forms.TextBox
+    Friend WithEvents Label64 As System.Windows.Forms.Label
+    Friend WithEvents TextBox110 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox111 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox112 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox113 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox114 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox115 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox116 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox117 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox118 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox119 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox120 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox121 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox122 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox123 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox124 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox125 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox126 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox127 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox128 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox129 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox130 As System.Windows.Forms.TextBox
+    Friend WithEvents Label65 As System.Windows.Forms.Label
+    Friend WithEvents Label66 As System.Windows.Forms.Label
+    Friend WithEvents Label67 As System.Windows.Forms.Label
+    Friend WithEvents Label68 As System.Windows.Forms.Label
+    Friend WithEvents TextBox131 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox132 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox133 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox134 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox135 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox136 As System.Windows.Forms.TextBox
+    Friend WithEvents Label69 As System.Windows.Forms.Label
+    Friend WithEvents Label70 As System.Windows.Forms.Label
+    Friend WithEvents Label71 As System.Windows.Forms.Label
+    Friend WithEvents Label72 As System.Windows.Forms.Label
+    Friend WithEvents Label73 As System.Windows.Forms.Label
+    Friend WithEvents Label74 As System.Windows.Forms.Label
+    Friend WithEvents Label75 As System.Windows.Forms.Label
+    Friend WithEvents TextBox137 As System.Windows.Forms.TextBox
+    Friend WithEvents GroupBox8 As System.Windows.Forms.GroupBox
+    Friend WithEvents radSubDelete As System.Windows.Forms.RadioButton
+    Friend WithEvents radSubAddition As System.Windows.Forms.RadioButton
+    Friend WithEvents radSubPromotion As System.Windows.Forms.RadioButton
+    Friend WithEvents radSubDoubleDemotion As System.Windows.Forms.RadioButton
+    Friend WithEvents radSubDemotion As System.Windows.Forms.RadioButton
+    Friend WithEvents cmbSubList As System.Windows.Forms.ComboBox
+    Friend WithEvents GroupBox9 As System.Windows.Forms.GroupBox
+    Friend WithEvents Label76 As System.Windows.Forms.Label
+    Friend WithEvents TextBox138 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox139 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox140 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox141 As System.Windows.Forms.TextBox
+    Friend WithEvents Label77 As System.Windows.Forms.Label
+    Friend WithEvents Label78 As System.Windows.Forms.Label
+    Friend WithEvents TextBox142 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox143 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox144 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox145 As System.Windows.Forms.TextBox
+    Friend WithEvents Label79 As System.Windows.Forms.Label
+    Friend WithEvents TextBox146 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox147 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox148 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox149 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox150 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox151 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox152 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox153 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox154 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox155 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox156 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox157 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox158 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox159 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox160 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox161 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox162 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox163 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox164 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox165 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox166 As System.Windows.Forms.TextBox
+    Friend WithEvents Label80 As System.Windows.Forms.Label
+    Friend WithEvents Label81 As System.Windows.Forms.Label
+    Friend WithEvents Label82 As System.Windows.Forms.Label
+    Friend WithEvents Label83 As System.Windows.Forms.Label
+    Friend WithEvents TextBox167 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox168 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox169 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox170 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox171 As System.Windows.Forms.TextBox
+    Friend WithEvents TextBox172 As System.Windows.Forms.TextBox
+    Friend WithEvents Label84 As System.Windows.Forms.Label
+    Friend WithEvents Label85 As System.Windows.Forms.Label
+    Friend WithEvents Label86 As System.Windows.Forms.Label
+    Friend WithEvents Label87 As System.Windows.Forms.Label
+    Friend WithEvents Label88 As System.Windows.Forms.Label
+    Friend WithEvents TextBox173 As System.Windows.Forms.TextBox
+    Friend WithEvents Label89 As System.Windows.Forms.Label
+    Friend WithEvents Label90 As System.Windows.Forms.Label
+    Friend WithEvents btnRefresh As System.Windows.Forms.Button
+    Friend WithEvents btnMatchSubDelete As System.Windows.Forms.Button
+    Friend WithEvents TextBox174 As System.Windows.Forms.TextBox
+    Friend WithEvents Label91 As System.Windows.Forms.Label
+    Friend WithEvents btnRejectAllChanges As System.Windows.Forms.Button
+    Friend WithEvents btnAcceptAllChanges As System.Windows.Forms.Button
+    Friend WithEvents ckbSortAlpha As System.Windows.Forms.CheckBox
+    Friend WithEvents LinkLabel3 As System.Windows.Forms.LinkLabel
+    Friend WithEvents ckbExpandedList As System.Windows.Forms.CheckBox
 
 End Class
