@@ -6,12 +6,7 @@ GlobalLibrary
 </name>
 </assembly>
 <members>
-<member name="T:GlobalLibrary.HLIApplicationForm">
-	<summary>
- This Form contains the references, and values that all HLI Applications need.
- </summary>
-	<remarks></remarks>
-</member><member name="P:GlobalLibrary.ApplicationVariableInfo.ID">
+<member name="P:GlobalLibrary.ApplicationVariableInfo.ID">
 	<summary>
  Get the ID of the current object.
  </summary>
@@ -79,6 +74,11 @@ GlobalLibrary
  Get the unique id for the current object.
  </summary>
 	<returns>A value that is the unique id of the object.</returns>
+	<remarks></remarks>
+</member><member name="T:GlobalLibrary.HLIApplicationForm">
+	<summary>
+ This Form contains the references, and values that all HLI Applications need.
+ </summary>
 	<remarks></remarks>
 </member><member name="P:GlobalLibrary.My.Resources.Resources.ResourceManager">
 	<summary>

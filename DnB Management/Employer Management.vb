@@ -39,6 +39,10 @@ Public Class Form1
     Private dsSubDemotionList As DataSet
     Private dsStats As DataSet
     Private dsSubChangeRecords As DataSet
+
+    Private dsDOLF5500 As DataSet
+    Private dsDOLF5500Deletes As DataSet
+    Private dsDOLCleanStats As DataSet
     Dim path As String = "\\nasprosql1\Dunn & Bradstreet\DnBFlow.sql"
 
 
@@ -122,6 +126,16 @@ Public Class Form1
             dsStats = SQLHelper.ExecuteDataset(CN, "emp.s_Get_Stats")
             fillstats()
 
+            dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", 1)
+            dgvClean5500_FormatGrid()
+            dgvClean5500_BindData()
+
+            dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", 1)
+            dgvdirty5500_FormatGrid()
+            dgvDirty5500_BindData()
+
+            get_DOL_CleanStats()
+
         
             TabControl1.Controls.Remove(TabControl1.TabPages("TabPage4"))
             Label44.Visible = False
@@ -136,10 +150,11 @@ Public Class Form1
             ToolTip1.SetToolTip(btnAcceptAllChanges, "All subsidiares for this Coprporation that are slated for delete are deleted along with related data")
             ToolTip1.SetToolTip(btnRejectAllChanges, "All subsidiares for this Coprporation that are slated for delete are changed to 'No Change' so they won't be deleted.")
             ToolTip1.SetToolTip(ckbExpandedList, "Expands the list to include companies where employees here is greater than 100")
+            ToolTip1.SetToolTip(btnAcceptAllRemainingDeletes, "Caution, this clears all the subsidiaries that are marked for deletion.  The amount of records affected is listed above")
 
             bInitial = False
         Catch ex As Exception
-            Functions.Sendmail(ex.Message, "Form Load", 0, 0, "DnB Management")
+            'Functions.Sendmail(ex.Message, "Form Load", 0, 0, "DnB Management")
             MsgBox(ex.Message)
         End Try
     End Sub
@@ -167,6 +182,7 @@ Public Class Form1
             TextBox97.Text = isnull(dsStats.Tables(0).Rows(0).Item("Corporate Update"))
             TextBox98.Text = isnull(dsStats.Tables(0).Rows(0).Item("Subsidiary No Change"))
             TextBox99.Text = isnull(dsStats.Tables(0).Rows(0).Item("Subsidiary Update"))
+            TextBox175.Text = isnull(dsStats.Tables(0).Rows(0).Item("Corporate Orphaned Demotion"))
 
         Catch ex As Exception
 
@@ -299,6 +315,238 @@ Public Class Form1
             'Functions.Sendmail(ex.Message, "cmbChangeList_SelectedIndexChanged ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
             MsgBox("Employer Maintenance : cmbChangeList_SelectedIndexChanged : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
         End Try
+    End Sub
+
+    Private Sub cmbSubsidiaryBrowser_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbSubsidiaryBrowser.SelectedIndexChanged
+        Try
+            If Not bInitial And cmbSubsidiaryBrowser.SelectedIndex > 0 Then
+                bInitial = True
+                dsSubsidiaryList = SQLHelper.ExecuteDataset(CN, "emp.s_get_Subsidiarylist", cmbSubsidiaryBrowser.SelectedValue(0))
+                dgvSubsidiaryBrowser_BindData()
+                bInitial = False
+            End If
+        Catch ex As Exception
+            bInitial = False
+            'Functions.Sendmail(ex.Message, "cmbSubsidiaryBrowser_SelectedIndexChanged ", cmbSubsidiaryBrowser.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : cmbSubsidiaryBrowser_SelectedIndexChanged : " + cmbSubsidiaryBrowser.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub cmbSubList_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbSubList.SelectedIndexChanged
+        Try
+            If Not bInitial And cmbSubList.SelectedIndex > 0 Then
+                bInitial = True
+                get_SubChangeData()
+                bInitial = False
+            End If
+        Catch ex As Exception
+            bInitial = False
+            'Functions.Sendmail(ex.Message, "cmbChangeList_SelectedIndexChanged ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : cmbChangeList_SelectedIndexChanged : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+
+#End Region
+
+#Region "Radiobuttons"
+
+    Private Sub radDoubleDemotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radDoubleDemotion.CheckedChanged
+        If radDoubleDemotion.Checked And Not bInitial Then
+            Label44.Visible = True
+            Label46.Visible = False
+            Label47.Visible = False
+            ToolTip1.SetToolTip(btnAccepttheChange, "Accepting the demotion Moves the Company from the Corporate list to the Subsidiary/branch list")
+            ToolTip1.SetToolTip(btnRejectChange, "Rejecting the demotion resets the ParentID for this company to itself and marks it to be left alone.")
+            Try
+                ' change combobox to be filled with Demotion list.
+                bInitial = True
+                Reprocess_Change_List()
+                bInitial = False
+            Catch ex As Exception
+                bInitial = False
+                'Functions.Sendmail(ex.Message, "radDoubleDemotion_CheckedChanged ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
+                MsgBox("Employer Maintenance : radDoubleDemotion_CheckedChanged : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+            End Try
+
+        End If
+    End Sub
+
+    Private Sub radPromotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radPromotion.CheckedChanged
+        If radPromotion.Checked And Not bInitial Then
+            Label44.Visible = False
+            Label46.Visible = True
+            Label47.Visible = False
+
+            ToolTip1.SetToolTip(btnAccepttheChange, "Accepting the Promotion Delete the Company from the Subsidiary/branch list.  It already exisits in the Corporate list. " _
+                                                    + "All subsidiaries already point to this Company")
+            ToolTip1.SetToolTip(btnRejectChange, "Rejecting the Promotion leaves this company in the subsidiary table and clears it from the Corporate")
+            Try
+                ' change combobox to be filled with Demotion list.
+                bInitial = True
+                Reprocess_Change_List()
+                bInitial = False
+            Catch ex As Exception
+                bInitial = False
+                'Functions.Sendmail(ex.Message, "radDoubleDemotion_CheckedChanged ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
+                MsgBox("Employer Maintenance : radDoubleDemotion_CheckedChanged : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+            End Try
+
+        End If
+    End Sub
+
+    Private Sub radAddition_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radAddition.CheckedChanged
+        If radAddition.Checked And Not bInitial Then
+            Label44.Visible = False
+            Label46.Visible = False
+            Label47.Visible = True
+
+            ToolTip1.SetToolTip(btnAccepttheChange, "Accepting the Promotion Delete the Company from the Subsidiary/branch list.  It already exisits in the Corporate list. " _
+                                                    + "All subsidiaries already point to this Company")
+            ToolTip1.SetToolTip(btnRejectChange, "Rejecting the Promotion leaves this company in the subsidiary table and clears it from the Corporate")
+            Try
+                ' change combobox to be filled with Demotion list.
+                bInitial = True
+                Reprocess_Change_List()
+                bInitial = False
+            Catch ex As Exception
+                bInitial = False
+                'Functions.Sendmail(ex.Message, "radDoubleDemotion_CheckedChanged ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
+                MsgBox("Employer Maintenance : radDoubleDemotion_CheckedChanged : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+            End Try
+
+        End If
+    End Sub
+
+    Private Sub radDeletion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radDeletion.CheckedChanged
+        If radDeletion.Checked And Not bInitial Then
+            Label44.Visible = False
+            Label46.Visible = False
+            Label47.Visible = False
+
+            ToolTip1.SetToolTip(btnAccepttheChange, "Accepting the Deletion Deletes the Corporation from the list and all subsidiaries that point to it")
+            ToolTip1.SetToolTip(btnRejectChange, "Rejecting the Deletion leaves this company in the subsidiary table and clears it from the Corporate delete list")
+            Try
+                ' change combobox to be filled with Demotion list.
+                bInitial = True
+                Reprocess_Change_List()
+                bInitial = False
+            Catch ex As Exception
+                bInitial = False
+                'Functions.Sendmail(ex.Message, "radDeletion_CheckedChanged ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
+                MsgBox("Employer Maintenance : radDeletion_CheckedChanged : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+            End Try
+
+        End If
+    End Sub
+
+    Private Sub radSubDemotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubDemotion.CheckedChanged
+        If radSubDemotion.Checked And Not bInitial Then
+            btnAcceptSubChange.Visible = True
+            btnRejectSubChange.Visible = True
+            Label90.Visible = True
+            ToolTip1.SetToolTip(btnAcceptSubChange, "Accept the analysis for a demotion (from corporate to second tier)")
+            ToolTip1.SetToolTip(btnRejectSubChange, "Reject the analysis for a demotion (from corporate to second tier)")
+            Try
+                ' change combobox to be filled with Demotion list.
+                bInitial = True
+                Reprocess_Sub_List()
+                bInitial = False
+            Catch ex As Exception
+                bInitial = False
+                'Functions.Sendmail(ex.Message, "radSubDemotion_CheckedChanged ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
+                MsgBox("Employer Maintenance : radSubDemotion_CheckedChanged : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
+            End Try
+
+        End If
+    End Sub
+
+
+    Private Sub radSubPromotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubPromotion.CheckedChanged
+        If radSubPromotion.Checked And Not bInitial Then
+            btnAcceptSubChange.Visible = False
+            btnRejectSubChange.Visible = False
+            MsgBox("There currently is no code to handle this.  If the Stats page shows Subsidiary Promotion, then contact the DBA/Developer for a solution")
+        End If
+
+    End Sub
+
+    Private Sub radSubAddition_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubAddition.CheckedChanged
+        If radSubAddition.Checked And Not bInitial Then
+            btnAcceptSubChange.Visible = False
+            btnRejectSubChange.Visible = False
+            MsgBox("There currently is no code to handle this.  If the Stats page shows Subsidiary Addition and you really want to evalute these, then contact the DBA/Developer for a solution")
+        End If
+    End Sub
+
+    Private Sub radSubDelete_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubDelete.CheckedChanged
+        If radSubDelete.Checked And Not bInitial Then
+            'GroupBox7.Visible = False
+            'GroupBox9.Visible = False
+            Label90.Visible = False
+            'Label89.Visible = False
+            btnMatchSubDelete.Visible = True
+            MsgBox("There tend to be thousands of these. You have the Match Deletes button and you have a partial list to work with.")
+            btnAcceptSubChange.Visible = True
+            btnRejectSubChange.Visible = True
+            btnRejectAllChanges.Visible = True
+            btnAcceptAllChanges.Visible = True
+            ckbExpandedList.Visible = True
+            LinkLabel3.Visible = True
+            ckbSortAlpha.Visible = True
+            Label91.Visible = True
+            TextBox174.Visible = True
+            btnAcceptAllRemainingDeletes.Visible = True
+            ToolTip1.SetToolTip(btnAcceptSubChange, "Accept the analysis for a Deletion")
+            ToolTip1.SetToolTip(btnRejectSubChange, "Reject the analysis for a Deletion")
+            Try
+                ' change combobox to be filled with Demotion list.
+                bInitial = True
+                Reprocess_Sub_List()
+                bInitial = False
+            Catch ex As Exception
+                bInitial = False
+                'Functions.Sendmail(ex.Message, "radSubDemotion_CheckedChanged ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
+                MsgBox("Employer Maintenance : radSubDemotion_CheckedChanged : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
+            End Try
+        ElseIf Not radSubDelete.Checked And Not bInitial Then
+            'GroupBox7.Visible = True
+            'GroupBox9.Visible = True
+            Label90.Visible = True
+            Label91.Visible = False
+            TextBox174.Visible = False
+            btnRejectAllChanges.Visible = False
+            btnAcceptAllChanges.Visible = False
+            ckbExpandedList.Visible = False
+            LinkLabel3.Visible = False
+            ckbSortAlpha.Visible = False
+            btnAcceptAllRemainingDeletes.Visible = False
+            'Label89.Visible = True
+            'btnAcceptSubChange.Visible = True
+            'btnRejectSubChange.Visible = True
+            btnMatchSubDelete.Visible = False
+        End If
+    End Sub
+
+    Private Sub radSubDoubleDemotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubDoubleDemotion.CheckedChanged
+        If radSubDoubleDemotion.Checked And Not bInitial Then
+            btnAcceptSubChange.Visible = True
+            btnRejectSubChange.Visible = True
+            Label90.Visible = True
+            ToolTip1.SetToolTip(btnAcceptSubChange, "Accept the analysis for a double demotion (from corporate to third tier or lower)")
+            ToolTip1.SetToolTip(btnRejectSubChange, "Reject the analysis for a double demotion (from corporate to third tier or lower)")
+            Try
+                ' change combobox to be filled with Demotion list.
+                bInitial = True
+                Reprocess_Sub_List()
+                bInitial = False
+            Catch ex As Exception
+                bInitial = False
+                'Functions.Sendmail(ex.Message, "radSubDemotion_CheckedChanged ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
+                MsgBox("Employer Maintenance : radSubDemotion_CheckedChanged : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
+            End Try
+
+        End If
     End Sub
 
 #End Region
@@ -450,6 +698,240 @@ Public Class Form1
             MsgBox("Employer Maintenance : btnRejectChange_Click : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
         End Try
     End Sub
+
+    Private Sub btnFilter_Click(sender As System.Object, e As System.EventArgs) Handles btnFilter.Click
+        Try
+
+            If Not bInitial Then
+                dsCorporateList = SQLHelper.ExecuteDataset(CN, "emp.s_get_Filtered_list", _
+                                                          IIf(Len(TextBox87.Text) = 0, DBNull.Value, "%" + TextBox87.Text + "%"), _
+                                                          IIf(Len(TextBox88.Text) = 0, DBNull.Value, "%" + TextBox88.Text + "%"), _
+                                                          IIf(Len(TextBox89.Text) = 0, DBNull.Value, TextBox89.Text))
+                dgvCorporate_BindData()
+            End If
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "btnFilter_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnFilter_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnOrphanedHolding_Click(sender As System.Object, e As System.EventArgs) Handles btnOrphanedHolding.Click
+        Try
+            If Not bInitial Then
+                btnOrphanedHolding.Visible = False
+                SQLHelper.ExecuteScalar(CN, "EMP.s_Delete_OrphanedHolding")
+
+                'reset lists on other tabs
+                dsCorporateList = SQLHelper.ExecuteDataset(CN, "emp.s_get_Corporate_list")
+                dgvCorporate_BindData()
+                dsCorpforSubsidiaryList = SQLHelper.ExecuteDataset(CN, "emp.s_Get_Full_List")
+                cmbSubsidiaryBrowser.DataSource = dsCorpforSubsidiaryList.Tables(0)
+                cmbSubsidiaryBrowser.DisplayMember = dsCorpforSubsidiaryList.Tables(0).Columns("Business Name").ToString
+
+
+                Using sw As StreamWriter = File.AppendText(path)
+                    sw.WriteLine("EMP.s_Delete_OrphanedHolding")
+                    sw.WriteLine("Go")
+                End Using
+                btnOrphanedHolding.Visible = True
+            End If
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "btnOrphanedHolding_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnOrphanedHolding_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnAcceptSubChange_Click(sender As System.Object, e As System.EventArgs) Handles btnAcceptSubChange.Click
+        Dim iresult As Integer
+        Dim indexpointer As Int16
+        Try
+            bInitial = True
+            indexpointer = cmbSubList.SelectedIndex
+
+            If radSubDemotion.Checked Or radSubDoubleDemotion.Checked Then
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_SubDemotion", cmbSubList.SelectedValue(0), strCurrentUser)
+                Using sw As StreamWriter = File.AppendText(path)
+                    sw.WriteLine("EMP.s_Accept_SubDemotion " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
+                    sw.WriteLine("Go")
+                End Using
+                'ElseIf radPromotion.Checked Then
+                '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Promotion", cmbChangeList.SelectedValue(0), strCurrentUser)
+                '    'objWriter.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                '    Using sw As StreamWriter = File.AppendText(path)
+                '        sw.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                '        sw.WriteLine("Go")
+                '    End Using
+            ElseIf radSubDelete.Checked Then
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_SubDelete", cmbSubList.SelectedValue(0), strCurrentUser)
+                'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                Using sw As StreamWriter = File.AppendText(path)
+                    sw.WriteLine("EMP.s_Accept_SubDelete " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
+                    sw.WriteLine("Go")
+                End Using
+                'ElseIf radAddition.Checked Then
+                '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
+                '    'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                '    Using sw As StreamWriter = File.AppendText(path)
+                '        sw.WriteLine("EMP.s_Accept_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                '        sw.WriteLine("Go")
+                '    End Using
+            End If
+
+            If iresult = 0 Then
+                Reprocess_Sub_List()
+            End If
+
+            bInitial = False
+
+        Catch ex As Exception
+            bInitial = False
+            'Functions.Sendmail(ex.Message, "btnAccepttheChange_Click ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnAccepttheChange_Click : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnRejectSubChange_Click(sender As System.Object, e As System.EventArgs) Handles btnRejectSubChange.Click
+        Dim iresult As Integer
+        Try
+            bInitial = True
+            If radSubDemotion.Checked Then
+                MsgBox("There currently is no solution for this.  Please contact the DBA/Developer for a solution")
+            ElseIf radSubDoubleDemotion.Checked Then
+                MsgBox("There currently is no solution for this.  Please contact the DBA/Developer for a solution")
+            ElseIf radSubDelete.Checked Then
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_SubDelete", cmbSubList.SelectedValue(0), strCurrentUser)
+                If iresult = 0 Then
+                    Using sw As StreamWriter = File.AppendText(path)
+                        sw.WriteLine("EMP.s_Reject_SubDelete " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
+                        sw.WriteLine("Go")
+                    End Using
+                End If
+            End If
+            'If radAddition.Checked Then
+            '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
+            '    If iresult = 0 Then
+            '        Using sw As StreamWriter = File.AppendText(path)
+            '            sw.WriteLine("EMP.s_Reject_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+            '            sw.WriteLine("Go")
+            '        End Using
+            '    End If
+            'Else
+            '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Demotion", cmbChangeList.SelectedValue(0), strCurrentUser)
+            '    If iresult = 0 Then
+            '        Using sw As StreamWriter = File.AppendText(path)
+            '            sw.WriteLine("EMP.s_Reject_Demotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+            '            sw.WriteLine("Go")
+            '        End Using
+            '    End If
+            'End If
+
+            Reprocess_Sub_List()
+            bInitial = False
+
+        Catch ex As Exception
+            bInitial = False
+            'Functions.Sendmail(ex.Message, "btnRejectChange_Click ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnRejectChange_Click : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnRefresh_Click(sender As System.Object, e As System.EventArgs) Handles btnRefresh.Click
+        dsStats = SQLHelper.ExecuteDataset(CN, "emp.s_Get_Stats")
+        fillstats()
+    End Sub
+
+    Private Sub btnMatchSubDelete_Click(sender As System.Object, e As System.EventArgs) Handles btnMatchSubDelete.Click
+
+        Try
+            SQLHelper.ExecuteDataset(CN, "emp.s_MatchDeletionstoAdditions")
+            MsgBox("Records removed.  Please review in the stats tab to see the effect")
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "btnMatchSubDelete_Click ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnMatchSubDelete_Click : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnRejectAllChanges_Click(sender As System.Object, e As System.EventArgs) Handles btnRejectAllChanges.Click
+        Dim iresult As Integer
+        Try
+            bInitial = True
+
+            If isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid")) = "" Then
+                MsgBox("This subsidiary is missing a Parent")
+            Else
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_AllChanges", isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid")), strCurrentUser)
+                If iresult = 0 Then
+                    Using sw As StreamWriter = File.AppendText(path)
+                        sw.WriteLine("EMP.s_Reject_AllChanges " + CStr(isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid"))) + ", " + strCurrentUser)
+                        sw.WriteLine("Go")
+                    End Using
+                End If
+            End If
+
+
+            Reprocess_Sub_List()
+            bInitial = False
+
+        Catch ex As Exception
+            bInitial = False
+            'Functions.Sendmail(ex.Message, "btnRejectAllChanges_Click ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnRejectAllChanges_Click : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnAcceptAllChanges_Click(sender As System.Object, e As System.EventArgs) Handles btnAcceptAllChanges.Click
+        Dim iresult As Integer
+        Try
+            bInitial = True
+
+            iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_AllChanges", isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid")), strCurrentUser)
+            If iresult = 0 Then
+                Using sw As StreamWriter = File.AppendText(path)
+                    sw.WriteLine("EMP.s_Accept_AllChanges " + CStr(isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid"))) + ", " + strCurrentUser)
+                    sw.WriteLine("Go")
+                End Using
+            End If
+
+            Reprocess_Sub_List()
+            bInitial = False
+
+        Catch ex As Exception
+            bInitial = False
+            'Functions.Sendmail(ex.Message, "btnAcceptAllChanges_Click ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnAcceptAllChanges_Click : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnAcceptAllRemainingDeletes_Click(sender As System.Object, e As System.EventArgs) Handles btnAcceptAllRemainingDeletes.Click
+        Dim iresult As Integer
+        Try
+            bInitial = True
+
+            iresult = MsgBox("This will delete all of the " + TextBox11.Text + " records marked for deletion.  Are you sure you want to do this?", MsgBoxStyle.YesNo)
+            If iresult = 6 Then
+                Me.Cursor = Cursors.AppStarting
+                'Dim CN
+                Using conn As New SqlClient.SqlConnection(CN)
+                    conn.Open()
+                    Using cm As New SqlClient.SqlCommand("emp.s_Delete_Remaining", conn)
+                        cm.CommandType = CommandType.StoredProcedure
+                        cm.CommandTimeout = 500
+                        cm.ExecuteNonQuery()
+                    End Using
+                End Using
+                Me.Cursor = Cursors.Default
+            End If
+
+            Reprocess_Sub_List()
+            bInitial = False
+
+        Catch ex As Exception
+            bInitial = False
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnAcceptAllRemainingDeletes_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnAcceptAllRemainingDeletes_Click : " + ex.Message)
+        End Try
+    End Sub
 #End Region
 
 
@@ -586,8 +1068,8 @@ Public Class Form1
             '    dgvCorporate.Columns.Item(i).ReadOnly = True
             'Next
         Catch ex As Exception
-            Functions.Sendmail(ex.Message, "dgvCorporate_FormatGrid", 0, 0, "MO Entry")
-            MsgBox("Mo Entry : dgvCorporate_FormatGrid " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+            Functions.Sendmail(ex.Message, "dgvCorporate_FormatGrid", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvCorporate_FormatGrid " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
         End Try
     End Sub
 
@@ -602,8 +1084,8 @@ Public Class Form1
 
             Next
         Catch ex As Exception
-            Functions.Sendmail(ex.Message, "dgvCorporate_BindData", 0, 0, "MO Entry")
-            MsgBox("Mo Entry : dgvCorporate_BindData  : " + ex.Message)
+            Functions.Sendmail(ex.Message, "dgvCorporate_BindData", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvCorporate_BindData  : " + ex.Message)
         End Try
     End Sub
 
@@ -746,8 +1228,8 @@ Public Class Form1
             dgvSubsidiaryBrowser.Columns.Add(colEmployeesTotal)
 
         Catch ex As Exception
-            Functions.Sendmail(ex.Message, "dgvSubsidiaryBrowser_FormatGrid", 0, 0, "MO Entry")
-            MsgBox("Mo Entry : dgvSubsidiaryBrowser_FormatGrid  : " + ex.Message)
+            Functions.Sendmail(ex.Message, "dgvSubsidiaryBrowser_FormatGrid", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvSubsidiaryBrowser_FormatGrid  : " + ex.Message)
         End Try
     End Sub
 
@@ -769,10 +1251,405 @@ Public Class Form1
                 TextBox90.Text = "None"
             End If
         Catch ex As Exception
-            Functions.Sendmail(ex.Message, "dgvSubsidiaryBrowser_BindData", 0, 0, "MO Entry")
-            MsgBox("Mo Entry : dgvSubsidiaryBrowser_BindData  : " + ex.Message)
+            Functions.Sendmail(ex.Message, "dgvSubsidiaryBrowser_BindData", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvSubsidiaryBrowser_BindData  : " + ex.Message)
         End Try
     End Sub
+
+
+    Private Sub dgvClean5500_FormatGrid()
+        'This is a general formatting grid subroutine for the HMO, PPO, HMOMedicare, HMOMedicaid datagrids
+        Try
+            'set Visual Basic Datagrid Header style to false so we can use our own
+            'The key statement required to get the column and row styles to work
+            'Visual Header styles must be shut off
+            dgvClean5500.EnableHeadersVisualStyles = False
+            'go and set the styles
+            With dgvClean5500
+                'the following line is necessary for manual column sizing 
+                .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
+                'let the columns size their heights on their own
+                .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+                '*** header settings
+                'header backcolor, text color, font bold, font, multiline and alignment
+                Dim columnHeaderStyle As New DataGridViewCellStyle
+                columnHeaderStyle.BackColor = Color.FromArgb(0, 52, 104)
+                columnHeaderStyle.ForeColor = Color.White
+                columnHeaderStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                columnHeaderStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                columnHeaderStyle.WrapMode = DataGridViewTriState.True
+                'set into place the previously defined header styles
+                .ColumnHeadersDefaultCellStyle = columnHeaderStyle
+            End With
+            'Set DataGridView textbox Column for Duns
+            Dim colDOLID As New DataGridViewTextBoxColumn
+            With colDOLID
+                .DataPropertyName = "DOLID"
+                .Name = "DOLID"
+                .Visible = False
+                .Width = 78
+            End With
+            dgvClean5500.Columns.Add(colDOLID)
+
+            'Set DataGridView textbox Column for FORM_PLAN_YEAR_BEGIN_DATE
+            Dim colFORM_PLAN_YEAR_BEGIN_DATE As New DataGridViewTextBoxColumn
+            With colFORM_PLAN_YEAR_BEGIN_DATE
+                .DataPropertyName = "FORM_PLAN_YEAR_BEGIN_DATE"
+                .HeaderText = "Plan Year"
+                .Name = "FORM_PLAN_YEAR_BEGIN_DATE"
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Format = "MM/dd/yyyy"
+                .Width = 80
+            End With
+            dgvClean5500.Columns.Add(colFORM_PLAN_YEAR_BEGIN_DATE)
+
+
+            'Set DataGridView textbox Column for SPONS_DFE_EIN
+            Dim colSPONS_DFE_EIN As New DataGridViewTextBoxColumn
+            With colSPONS_DFE_EIN
+                .DataPropertyName = "SPONS_DFE_EIN"
+                .HeaderText = "EIN"
+                .Name = "SPONS_DFE_EIN"
+                .Width = 75
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvClean5500.Columns.Add(colSPONS_DFE_EIN)
+
+            'Set DataGridView textbox Column for Business Name
+            Dim colSPONS_DFE_PN As New DataGridViewTextBoxColumn
+            With colSPONS_DFE_PN
+                .DataPropertyName = "SPONS_DFE_PN"
+                .HeaderText = "PN"
+                .Name = "SPONS_DFE_PN"
+                .Width = 55
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##,##0"
+            End With
+            dgvClean5500.Columns.Add(colSPONS_DFE_PN)
+
+
+            'Set DataGridView textbox Column for PLAN_NAME
+            Dim colPLAN_NAME As New DataGridViewTextBoxColumn
+            With colPLAN_NAME
+                .DataPropertyName = "PLAN_NAME"
+                .HeaderText = "PLAN NAME"
+                .Name = "PLAN_NAME"
+                .Width = 330
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvClean5500.Columns.Add(colPLAN_NAME)
+
+            'Set DataGridView textbox Column for SUBTL_ACT_RTD_SEP_CNT
+            Dim colSUBTL_ACT_RTD_SEP_CNT As New DataGridViewTextBoxColumn
+            With colSUBTL_ACT_RTD_SEP_CNT
+                .DataPropertyName = "SUBTL_ACT_RTD_SEP_CNT"
+                .HeaderText = "Participants"
+                .Name = "SUBTL_ACT_RTD_SEP_CNT"
+                .Width = 70
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvClean5500.Columns.Add(colSUBTL_ACT_RTD_SEP_CNT)
+
+
+            'Set DataGridView textbox Column for TYPE_WELFARE_BNFT_CODE
+            Dim colTYPE_WELFARE_BNFT_CODE As New DataGridViewTextBoxColumn
+            With colTYPE_WELFARE_BNFT_CODE
+                .DataPropertyName = "TYPE_WELFARE_BNFT_CODE"
+                .HeaderText = "Benefit Code"
+                .Name = "TYPE_WELFARE_BNFT_CODE"
+                .Width = 125
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvClean5500.Columns.Add(colTYPE_WELFARE_BNFT_CODE)
+
+            'Set DataGridView textbox Column for Form_Tax_Prd
+            Dim colForm_Tax_Prd As New DataGridViewTextBoxColumn
+            With colForm_Tax_Prd
+                .DataPropertyName = "Form_Tax_Prd"
+                .HeaderText = "Tax Prepared"
+                .Name = "Form_Tax_Prd"
+                .Width = 70
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                .DefaultCellStyle.Format = "MM/dd/yyyy"
+            End With
+            dgvClean5500.Columns.Add(colForm_Tax_Prd)
+
+            'Set DataGridView textbox Column for ACK_ID
+            Dim colACK_ID As New DataGridViewTextBoxColumn
+            With colACK_ID
+                .DataPropertyName = "ACK_ID"
+                .HeaderText = "ACK_ID"
+                .Name = "ACK_ID"
+                .Width = 150
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvClean5500.Columns.Add(colACK_ID)
+
+            'Set DataGridView textbox Column for Dailytimedimid
+            Dim colDailytimedimid As New DataGridViewTextBoxColumn
+            With colDailytimedimid
+                .DataPropertyName = "Dailytimedimid"
+                .HeaderText = "Date ID"
+                .Name = "Dailytimedimid"
+                .Width = 60
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvClean5500.Columns.Add(colDailytimedimid)
+
+            'Set DataGridView textbox Column for ImportAnalysis
+            Dim colPLAN_EFF_DATE As New DataGridViewTextBoxColumn
+            With colPLAN_EFF_DATE
+                .DataPropertyName = "PLAN_EFF_DATE"
+                .HeaderText = "Effective Date"
+                .Name = "PLAN_EFF_DATE"
+                .Width = 70
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                .DefaultCellStyle.Format = "MM/dd/yyyy"
+            End With
+            dgvClean5500.Columns.Add(colPLAN_EFF_DATE)
+
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgvClean5500_FormatGrid", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvClean5500_FormatGrid " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvClean5500_BindData()
+        Try
+            dgvClean5500.Rows.Clear()
+            For i As Integer = 0 To dsDOLF5500.Tables(0).Rows.Count - 1
+                Me.dgvClean5500.Rows.Add(dsDOLF5500.Tables(0).Rows(i).Item(0), dsDOLF5500.Tables(0).Rows(i).Item(1), _
+                                    dsDOLF5500.Tables(0).Rows(i).Item(3), dsDOLF5500.Tables(0).Rows(i).Item(2), _
+                                    dsDOLF5500.Tables(0).Rows(i).Item(4), dsDOLF5500.Tables(0).Rows(i).Item(8), _
+                                    dsDOLF5500.Tables(0).Rows(i).Item(9), dsDOLF5500.Tables(0).Rows(i).Item(10), _
+                                    dsDOLF5500.Tables(0).Rows(i).Item(5), _
+                                    dsDOLF5500.Tables(0).Rows(i).Item(6), dsDOLF5500.Tables(0).Rows(i).Item(7))
+            Next
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgvClean5500_BindData", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvClean5500_BindData  : " + ex.Message)
+        End Try
+    End Sub
+
+
+    Private Sub dgvDirty5500_FormatGrid()
+        'This is a general formatting grid subroutine for the HMO, PPO, HMOMedicare, HMOMedicaid datagrids
+        Try
+            'set Visual Basic Datagrid Header style to false so we can use our own
+            'The key statement required to get the column and row styles to work
+            'Visual Header styles must be shut off
+            dgvDirty5500.EnableHeadersVisualStyles = False
+            'go and set the styles
+            With dgvDirty5500
+                'the following line is necessary for manual column sizing 
+                .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
+                'let the columns size their heights on their own
+                .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+                '*** header settings
+                'header backcolor, text color, font bold, font, multiline and alignment
+                Dim columnHeaderStyle As New DataGridViewCellStyle
+                columnHeaderStyle.BackColor = Color.FromArgb(0, 52, 104)
+                columnHeaderStyle.ForeColor = Color.White
+                columnHeaderStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                columnHeaderStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                columnHeaderStyle.WrapMode = DataGridViewTriState.True
+                'set into place the previously defined header styles
+                .ColumnHeadersDefaultCellStyle = columnHeaderStyle
+            End With
+            'Set DataGridView textbox Column for Duns
+            Dim colDOLID As New DataGridViewTextBoxColumn
+            With colDOLID
+                .DataPropertyName = "DOLID"
+                .Name = "DOLID"
+                .Visible = False
+                .Width = 78
+            End With
+            dgvDirty5500.Columns.Add(colDOLID)
+
+            'Set DataGridView textbox Column for Analysis
+            Dim colAnalysis As New DataGridViewTextBoxColumn
+            With colAnalysis
+                .DataPropertyName = "Analysis"
+                .HeaderText = "Analysis"
+                .Name = "Analysis"
+                .Width = 95
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvDirty5500.Columns.Add(colAnalysis)
+
+            'Set DataGridView textbox Column for FORM_PLAN_YEAR_BEGIN_DATE
+            Dim colFORM_PLAN_YEAR_BEGIN_DATE As New DataGridViewTextBoxColumn
+            With colFORM_PLAN_YEAR_BEGIN_DATE
+                .DataPropertyName = "FORM_PLAN_YEAR_BEGIN_DATE"
+                .HeaderText = "Plan Year"
+                .Name = "FORM_PLAN_YEAR_BEGIN_DATE"
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Format = "MM/dd/yyyy"
+                .Width = 80
+            End With
+            dgvDirty5500.Columns.Add(colFORM_PLAN_YEAR_BEGIN_DATE)
+
+
+            'Set DataGridView textbox Column for SPONS_DFE_EIN
+            Dim colSPONS_DFE_EIN As New DataGridViewTextBoxColumn
+            With colSPONS_DFE_EIN
+                .DataPropertyName = "SPONS_DFE_EIN"
+                .HeaderText = "EIN"
+                .Name = "SPONS_DFE_EIN"
+                .Width = 75
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvDirty5500.Columns.Add(colSPONS_DFE_EIN)
+
+            'Set DataGridView textbox Column for Business Name
+            Dim colSPONS_DFE_PN As New DataGridViewTextBoxColumn
+            With colSPONS_DFE_PN
+                .DataPropertyName = "SPONS_DFE_PN"
+                .HeaderText = "PN"
+                .Name = "SPONS_DFE_PN"
+                .Width = 55
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##,##0"
+            End With
+            dgvDirty5500.Columns.Add(colSPONS_DFE_PN)
+
+
+            'Set DataGridView textbox Column for PLAN_NAME
+            Dim colPLAN_NAME As New DataGridViewTextBoxColumn
+            With colPLAN_NAME
+                .DataPropertyName = "PLAN_NAME"
+                .HeaderText = "PLAN NAME"
+                .Name = "PLAN_NAME"
+                .Width = 330
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvDirty5500.Columns.Add(colPLAN_NAME)
+
+            'Set DataGridView textbox Column for SUBTL_ACT_RTD_SEP_CNT
+            Dim colSUBTL_ACT_RTD_SEP_CNT As New DataGridViewTextBoxColumn
+            With colSUBTL_ACT_RTD_SEP_CNT
+                .DataPropertyName = "SUBTL_ACT_RTD_SEP_CNT"
+                .HeaderText = "Participants"
+                .Name = "SUBTL_ACT_RTD_SEP_CNT"
+                .Width = 70
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvDirty5500.Columns.Add(colSUBTL_ACT_RTD_SEP_CNT)
+
+            'Set DataGridView textbox Column for TYPE_WELFARE_BNFT_CODE
+            Dim colTYPE_WELFARE_BNFT_CODE As New DataGridViewTextBoxColumn
+            With colTYPE_WELFARE_BNFT_CODE
+                .DataPropertyName = "TYPE_WELFARE_BNFT_CODE"
+                .HeaderText = "Benefit Code"
+                .Name = "TYPE_WELFARE_BNFT_CODE"
+                .Width = 100
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvDirty5500.Columns.Add(colTYPE_WELFARE_BNFT_CODE)
+
+            'Set DataGridView textbox Column for Form_Tax_Prd
+            Dim colForm_Tax_Prd As New DataGridViewTextBoxColumn
+            With colForm_Tax_Prd
+                .DataPropertyName = "Form_Tax_Prd"
+                .HeaderText = "Tax Prepared"
+                .Name = "Form_Tax_Prd"
+                .Width = 70
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                .DefaultCellStyle.Format = "MM/dd/yyyy"
+            End With
+            dgvDirty5500.Columns.Add(colForm_Tax_Prd)
+
+            'Set DataGridView textbox Column for ACK_ID
+            Dim colACK_ID As New DataGridViewTextBoxColumn
+            With colACK_ID
+                .DataPropertyName = "ACK_ID"
+                .HeaderText = "ACK_ID"
+                .Name = "ACK_ID"
+                .Width = 150
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvDirty5500.Columns.Add(colACK_ID)
+
+            'Set DataGridView textbox Column for Dailytimedimid
+            Dim colDailytimedimid As New DataGridViewTextBoxColumn
+            With colDailytimedimid
+                .DataPropertyName = "Dailytimedimid"
+                .HeaderText = "Date ID"
+                .Name = "Dailytimedimid"
+                .Width = 60
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvDirty5500.Columns.Add(colDailytimedimid)
+
+            'Set DataGridView textbox Column for ImportAnalysis
+            Dim colPLAN_EFF_DATE As New DataGridViewTextBoxColumn
+            With colPLAN_EFF_DATE
+                .DataPropertyName = "PLAN_EFF_DATE"
+                .HeaderText = "Effective Date"
+                .Name = "PLAN_EFF_DATE"
+                .Width = 70
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                .DefaultCellStyle.Format = "MM/dd/yyyy"
+            End With
+            dgvDirty5500.Columns.Add(colPLAN_EFF_DATE)
+
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgvDirty5500_FormatGrid", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvDirty5500_FormatGrid " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvDirty5500_BindData()
+        Try
+            dgvDirty5500.Rows.Clear()
+            For i As Integer = 0 To dsDOLF5500Deletes.Tables(0).Rows.Count - 1
+                Me.dgvDirty5500.Rows.Add(dsDOLF5500Deletes.Tables(0).Rows(i).Item(0), dsDOLF5500Deletes.Tables(0).Rows(i).Item(9), _
+                                    dsDOLF5500Deletes.Tables(0).Rows(i).Item(1), _
+                                    dsDOLF5500Deletes.Tables(0).Rows(i).Item(3), dsDOLF5500Deletes.Tables(0).Rows(i).Item(2), _
+                                    dsDOLF5500Deletes.Tables(0).Rows(i).Item(4), dsDOLF5500Deletes.Tables(0).Rows(i).Item(8), _
+                                    dsDOLF5500Deletes.Tables(0).Rows(i).Item(10), dsDOLF5500Deletes.Tables(0).Rows(i).Item(11), _
+                                    dsDOLF5500Deletes.Tables(0).Rows(i).Item(5), _
+                                    dsDOLF5500Deletes.Tables(0).Rows(i).Item(6), dsDOLF5500Deletes.Tables(0).Rows(i).Item(7))
+            Next
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgvDirty5500_BindData", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvDirty5500_BindData  : " + ex.Message)
+        End Try
+    End Sub
+
+
 
 
 #End Region
@@ -1067,10 +1944,12 @@ Public Class Form1
                 dsSubDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_SubDemotion_List")
             ElseIf radSubDoubleDemotion.Checked Then
                 dsSubDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_SubDoubleDemotion_List")
-            ElseIf radSubDelete.Checked And ckbSortAlpha.Checked Then
-                dsSubDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_SubDelete_List", 1)
+            ElseIf radSubDelete.Checked And ckbSortAlpha.Checked And ckbExpandedList.Checked Then
+                dsSubDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_SubDelete_List", 1, 50)
+            ElseIf radSubDelete.Checked And ckbSortAlpha.Checked And Not ckbExpandedList.Checked Then
+                dsSubDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_SubDelete_List", 1, 500)
             ElseIf radSubDelete.Checked Then
-                dsSubDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_SubDelete_List", 0)
+                dsSubDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_SubDelete_List", 0, 500)
                 'ElseIf radAddition.Checked Then
                 '    dsDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_Addition_List")
                 'ElseIf radDeletion.Checked Then
@@ -1085,7 +1964,7 @@ Public Class Form1
             Else
                 cmbSubList.SelectedIndex = 0
             End If
-    
+
 
             'fill boxes with results
             get_SubChangeData()
@@ -1333,435 +2212,7 @@ Public Class Form1
         End Try
     End Sub
 
-    Private Sub radDoubleDemotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radDoubleDemotion.CheckedChanged
-        If radDoubleDemotion.Checked And Not bInitial Then
-            Label44.Visible = True
-            Label46.Visible = False
-            Label47.Visible = False
-            ToolTip1.SetToolTip(btnAccepttheChange, "Accepting the demotion Moves the Company from the Corporate list to the Subsidiary/branch list")
-            ToolTip1.SetToolTip(btnRejectChange, "Rejecting the demotion resets the ParentID for this company to itself and marks it to be left alone.")
-            Try
-                ' change combobox to be filled with Demotion list.
-                bInitial = True
-                Reprocess_Change_List()
-                bInitial = False
-            Catch ex As Exception
-                bInitial = False
-                'Functions.Sendmail(ex.Message, "radDoubleDemotion_CheckedChanged ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
-                MsgBox("Employer Maintenance : radDoubleDemotion_CheckedChanged : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
-            End Try
 
-        End If
-    End Sub
-
-    Private Sub radPromotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radPromotion.CheckedChanged
-        If radPromotion.Checked And Not bInitial Then
-            Label44.Visible = False
-            Label46.Visible = True
-            Label47.Visible = False
-
-            ToolTip1.SetToolTip(btnAccepttheChange, "Accepting the Promotion Delete the Company from the Subsidiary/branch list.  It already exisits in the Corporate list. " _
-                                                    + "All subsidiaries already point to this Company")
-            ToolTip1.SetToolTip(btnRejectChange, "Rejecting the Promotion leaves this company in the subsidiary table and clears it from the Corporate")
-            Try
-                ' change combobox to be filled with Demotion list.
-                bInitial = True
-                Reprocess_Change_List()
-                bInitial = False
-            Catch ex As Exception
-                bInitial = False
-                'Functions.Sendmail(ex.Message, "radDoubleDemotion_CheckedChanged ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
-                MsgBox("Employer Maintenance : radDoubleDemotion_CheckedChanged : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
-            End Try
-
-        End If
-    End Sub
-
-    Private Sub radAddition_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radAddition.CheckedChanged
-        If radAddition.Checked And Not bInitial Then
-            Label44.Visible = False
-            Label46.Visible = False
-            Label47.Visible = True
-
-            ToolTip1.SetToolTip(btnAccepttheChange, "Accepting the Promotion Delete the Company from the Subsidiary/branch list.  It already exisits in the Corporate list. " _
-                                                    + "All subsidiaries already point to this Company")
-            ToolTip1.SetToolTip(btnRejectChange, "Rejecting the Promotion leaves this company in the subsidiary table and clears it from the Corporate")
-            Try
-                ' change combobox to be filled with Demotion list.
-                bInitial = True
-                Reprocess_Change_List()
-                bInitial = False
-            Catch ex As Exception
-                bInitial = False
-                'Functions.Sendmail(ex.Message, "radDoubleDemotion_CheckedChanged ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
-                MsgBox("Employer Maintenance : radDoubleDemotion_CheckedChanged : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
-            End Try
-
-        End If
-    End Sub
-
-    Private Sub radDeletion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radDeletion.CheckedChanged
-        If radDeletion.Checked And Not bInitial Then
-            Label44.Visible = False
-            Label46.Visible = False
-            Label47.Visible = False
-
-            ToolTip1.SetToolTip(btnAccepttheChange, "Accepting the Deletion Deletes the Corporation from the list and all subsidiaries that point to it")
-            ToolTip1.SetToolTip(btnRejectChange, "Rejecting the Deletion leaves this company in the subsidiary table and clears it from the Corporate delete list")
-            Try
-                ' change combobox to be filled with Demotion list.
-                bInitial = True
-                Reprocess_Change_List()
-                bInitial = False
-            Catch ex As Exception
-                bInitial = False
-                'Functions.Sendmail(ex.Message, "radDeletion_CheckedChanged ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
-                MsgBox("Employer Maintenance : radDeletion_CheckedChanged : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
-            End Try
-
-        End If
-    End Sub
-
-    Private Sub cmbSubsidiaryBrowser_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbSubsidiaryBrowser.SelectedIndexChanged
-        Try
-            If Not bInitial And cmbSubsidiaryBrowser.SelectedIndex > 0 Then
-                bInitial = True
-                dsSubsidiaryList = SQLHelper.ExecuteDataset(CN, "emp.s_get_Subsidiarylist", cmbSubsidiaryBrowser.SelectedValue(0))
-                dgvSubsidiaryBrowser_BindData()
-                bInitial = False
-            End If
-        Catch ex As Exception
-            bInitial = False
-            'Functions.Sendmail(ex.Message, "cmbSubsidiaryBrowser_SelectedIndexChanged ", cmbSubsidiaryBrowser.SelectedValue(1), 0, "Employer Maintenance")
-            MsgBox("Employer Maintenance : cmbSubsidiaryBrowser_SelectedIndexChanged : " + cmbSubsidiaryBrowser.SelectedValue(1) + " : " + ex.Message)
-        End Try
-    End Sub
-
-    Private Sub btnFilter_Click(sender As System.Object, e As System.EventArgs) Handles btnFilter.Click
-        Try
-
-            If Not bInitial Then
-                dsCorporateList = SQLHelper.ExecuteDataset(CN, "emp.s_get_Filtered_list", _
-                                                          IIf(Len(TextBox87.Text) = 0, DBNull.Value, "%" + TextBox87.Text + "%"), _
-                                                          IIf(Len(TextBox88.Text) = 0, DBNull.Value, "%" + TextBox88.Text + "%"), _
-                                                          IIf(Len(TextBox89.Text) = 0, DBNull.Value, TextBox89.Text))
-                dgvCorporate_BindData()
-            End If
-        Catch ex As Exception
-            'Functions.Sendmail(ex.Message, "btnFilter_Click ", 0, 0, "Employer Maintenance")
-            MsgBox("Employer Maintenance : btnFilter_Click : " + ex.Message)
-        End Try
-    End Sub
-
-
- 
-    Private Sub btnOrphanedHolding_Click(sender As System.Object, e As System.EventArgs) Handles btnOrphanedHolding.Click
-        Try
-            If Not bInitial Then
-                btnOrphanedHolding.Visible = False
-                SQLHelper.ExecuteScalar(CN, "EMP.s_Delete_OrphanedHolding")
-
-                'reset lists on other tabs
-                dsCorporateList = SQLHelper.ExecuteDataset(CN, "emp.s_get_Corporate_list")
-                dgvCorporate_BindData()
-                dsCorpforSubsidiaryList = SQLHelper.ExecuteDataset(CN, "emp.s_Get_Full_List")
-                cmbSubsidiaryBrowser.DataSource = dsCorpforSubsidiaryList.Tables(0)
-                cmbSubsidiaryBrowser.DisplayMember = dsCorpforSubsidiaryList.Tables(0).Columns("Business Name").ToString
-
-  
-                Using sw As StreamWriter = File.AppendText(path)
-                    sw.WriteLine("EMP.s_Delete_OrphanedHolding")
-                    sw.WriteLine("Go")
-                End Using
-                btnOrphanedHolding.Visible = True
-            End If
-        Catch ex As Exception
-            'Functions.Sendmail(ex.Message, "btnOrphanedHolding_Click ", 0, 0, "Employer Maintenance")
-            MsgBox("Employer Maintenance : btnOrphanedHolding_Click : " + ex.Message)
-        End Try
-    End Sub
-
-   
-    Private Sub radSubDemotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubDemotion.CheckedChanged
-        If radSubDemotion.Checked And Not bInitial Then
-            btnAcceptSubChange.Visible = True
-            btnRejectSubChange.Visible = True
-            Label90.Visible = True
-            ToolTip1.SetToolTip(btnAcceptSubChange, "Accept the analysis for a demotion (from corporate to second tier)")
-            ToolTip1.SetToolTip(btnRejectSubChange, "Reject the analysis for a demotion (from corporate to second tier)")
-            Try
-                ' change combobox to be filled with Demotion list.
-                bInitial = True
-                Reprocess_Sub_List()
-                bInitial = False
-            Catch ex As Exception
-                bInitial = False
-                'Functions.Sendmail(ex.Message, "radSubDemotion_CheckedChanged ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
-                MsgBox("Employer Maintenance : radSubDemotion_CheckedChanged : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
-            End Try
-
-        End If
-    End Sub
-
-    Private Sub cmbSubList_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbSubList.SelectedIndexChanged
-        Try
-            If Not bInitial And cmbSubList.SelectedIndex > 0 Then
-                bInitial = True
-                get_SubChangeData()
-                bInitial = False
-            End If
-        Catch ex As Exception
-            bInitial = False
-            'Functions.Sendmail(ex.Message, "cmbChangeList_SelectedIndexChanged ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
-            MsgBox("Employer Maintenance : cmbChangeList_SelectedIndexChanged : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
-        End Try
-    End Sub
-
-    Private Sub btnAcceptSubChange_Click(sender As System.Object, e As System.EventArgs) Handles btnAcceptSubChange.Click
-        Dim iresult As Integer
-        Dim indexpointer As Int16
-        Try
-            bInitial = True
-            indexpointer = cmbSubList.SelectedIndex
-
-
-
-            If radSubDemotion.Checked Or radSubDoubleDemotion.Checked Then
-                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_SubDemotion", cmbSubList.SelectedValue(0), strCurrentUser)
-                Using sw As StreamWriter = File.AppendText(path)
-                    sw.WriteLine("EMP.s_Accept_SubDemotion " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
-                    sw.WriteLine("Go")
-                End Using
-                'ElseIf radPromotion.Checked Then
-                '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Promotion", cmbChangeList.SelectedValue(0), strCurrentUser)
-                '    'objWriter.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                '    Using sw As StreamWriter = File.AppendText(path)
-                '        sw.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                '        sw.WriteLine("Go")
-                '    End Using
-            ElseIf radSubDelete.Checked Then
-                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_SubDelete", cmbSubList.SelectedValue(0), strCurrentUser)
-                'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                Using sw As StreamWriter = File.AppendText(path)
-                    sw.WriteLine("EMP.s_Accept_SubDelete " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
-                    sw.WriteLine("Go")
-                End Using
-                'ElseIf radAddition.Checked Then
-                '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
-                '    'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                '    Using sw As StreamWriter = File.AppendText(path)
-                '        sw.WriteLine("EMP.s_Accept_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                '        sw.WriteLine("Go")
-                '    End Using
-            End If
-
-            If iresult = 0 Then
-                Reprocess_Sub_List()
-            End If
-
-            bInitial = False
-
-        Catch ex As Exception
-            bInitial = False
-            'Functions.Sendmail(ex.Message, "btnAccepttheChange_Click ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
-            MsgBox("Employer Maintenance : btnAccepttheChange_Click : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
-        End Try
-    End Sub
-
-    Private Sub btnRejectSubChange_Click(sender As System.Object, e As System.EventArgs) Handles btnRejectSubChange.Click
-        Dim iresult As Integer
-        Try
-            bInitial = True
-            If radSubDemotion.Checked Then
-                MsgBox("There currently is no solution for this.  Please contact the DBA/Developer for a solution")
-            ElseIf radSubDoubleDemotion.Checked Then
-                MsgBox("There currently is no solution for this.  Please contact the DBA/Developer for a solution")
-            ElseIf radSubDelete.Checked Then
-                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_SubDelete", cmbSubList.SelectedValue(0), strCurrentUser)
-                If iresult = 0 Then
-                    Using sw As StreamWriter = File.AppendText(path)
-                        sw.WriteLine("EMP.s_Reject_SubDelete " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
-                        sw.WriteLine("Go")
-                    End Using
-                End If
-            End If
-            'If radAddition.Checked Then
-            '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
-            '    If iresult = 0 Then
-            '        Using sw As StreamWriter = File.AppendText(path)
-            '            sw.WriteLine("EMP.s_Reject_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-            '            sw.WriteLine("Go")
-            '        End Using
-            '    End If
-            'Else
-            '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Demotion", cmbChangeList.SelectedValue(0), strCurrentUser)
-            '    If iresult = 0 Then
-            '        Using sw As StreamWriter = File.AppendText(path)
-            '            sw.WriteLine("EMP.s_Reject_Demotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-            '            sw.WriteLine("Go")
-            '        End Using
-            '    End If
-            'End If
-
-            Reprocess_Sub_List()
-            bInitial = False
-
-        Catch ex As Exception
-            bInitial = False
-            'Functions.Sendmail(ex.Message, "btnRejectChange_Click ", cmbChangeList.SelectedValue(1), 0, "Employer Maintenance")
-            MsgBox("Employer Maintenance : btnRejectChange_Click : " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
-        End Try
-    End Sub
-
-    Private Sub btnRefresh_Click(sender As System.Object, e As System.EventArgs) Handles btnRefresh.Click
-        dsStats = SQLHelper.ExecuteDataset(CN, "emp.s_Get_Stats")
-        fillstats()
-    End Sub
-
-
-    Private Sub radSubPromotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubPromotion.CheckedChanged
-        If radSubPromotion.Checked And Not bInitial Then
-            btnAcceptSubChange.Visible = False
-            btnRejectSubChange.Visible = False
-            MsgBox("There currently is no code to handle this.  If the Stats page shows Subsidiary Promotion, then contact the DBA/Developer for a solution")
-        End If
-
-    End Sub
-
-    Private Sub radSubAddition_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubAddition.CheckedChanged
-        If radSubAddition.Checked And Not bInitial Then
-            btnAcceptSubChange.Visible = False
-            btnRejectSubChange.Visible = False
-            MsgBox("There currently is no code to handle this.  If the Stats page shows Subsidiary Addition and you really want to evalute these, then contact the DBA/Developer for a solution")
-        End If
-     End Sub
-
-    Private Sub radSubDelete_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubDelete.CheckedChanged
-        If radSubDelete.Checked And Not bInitial Then
-            'GroupBox7.Visible = False
-            'GroupBox9.Visible = False
-            Label90.Visible = False
-            'Label89.Visible = False
-            btnMatchSubDelete.Visible = True
-            MsgBox("There tend to be thousands of these. You have the Match Deletes button and you have a partial list to work with.")
-            btnAcceptSubChange.Visible = True
-            btnRejectSubChange.Visible = True
-            btnRejectAllChanges.Visible = True
-            btnAcceptAllChanges.Visible = True
-            ckbExpandedList.Visible = True
-            LinkLabel3.Visible = True
-            ckbSortAlpha.Visible = True
-            Label91.Visible = True
-            TextBox174.Visible = True
-            ToolTip1.SetToolTip(btnAcceptSubChange, "Accept the analysis for a Deletion")
-            ToolTip1.SetToolTip(btnRejectSubChange, "Reject the analysis for a Deletion")
-            Try
-                ' change combobox to be filled with Demotion list.
-                bInitial = True
-                Reprocess_Sub_List()
-                bInitial = False
-            Catch ex As Exception
-                bInitial = False
-                'Functions.Sendmail(ex.Message, "radSubDemotion_CheckedChanged ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
-                MsgBox("Employer Maintenance : radSubDemotion_CheckedChanged : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
-            End Try
-        ElseIf Not radSubDelete.Checked And Not bInitial Then
-            'GroupBox7.Visible = True
-            'GroupBox9.Visible = True
-            Label90.Visible = True
-            Label91.Visible = False
-            TextBox174.Visible = False
-            btnRejectAllChanges.Visible = False
-            btnAcceptAllChanges.Visible = False
-            ckbExpandedList.Visible = False
-            LinkLabel3.Visible = False
-            ckbSortAlpha.Visible = False
-            'Label89.Visible = True
-            'btnAcceptSubChange.Visible = True
-            'btnRejectSubChange.Visible = True
-            btnMatchSubDelete.Visible = False
-        End If
-     End Sub
-
-
-
-    Private Sub radSubDoubleDemotion_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles radSubDoubleDemotion.CheckedChanged
-        If radSubDoubleDemotion.Checked And Not bInitial Then
-            btnAcceptSubChange.Visible = True
-            btnRejectSubChange.Visible = True
-            Label90.Visible = True
-            ToolTip1.SetToolTip(btnAcceptSubChange, "Accept the analysis for a double demotion (from corporate to third tier or lower)")
-            ToolTip1.SetToolTip(btnRejectSubChange, "Reject the analysis for a double demotion (from corporate to third tier or lower)")
-            Try
-                ' change combobox to be filled with Demotion list.
-                bInitial = True
-                Reprocess_Sub_List()
-                bInitial = False
-            Catch ex As Exception
-                bInitial = False
-                'Functions.Sendmail(ex.Message, "radSubDemotion_CheckedChanged ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
-                MsgBox("Employer Maintenance : radSubDemotion_CheckedChanged : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
-            End Try
-
-        End If
-    End Sub
-
-    Private Sub btnMatchSubDelete_Click(sender As System.Object, e As System.EventArgs) Handles btnMatchSubDelete.Click
-
-        Try
-            SQLHelper.ExecuteDataset(CN, "emp.s_MatchDeletionstoAdditions")
-            MsgBox("Records removed.  Please review in the stats tab to see the effect")
-        Catch ex As Exception
-            'Functions.Sendmail(ex.Message, "btnMatchSubDelete_Click ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
-            MsgBox("Employer Maintenance : btnMatchSubDelete_Click : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
-        End Try
-    End Sub
-
-    Private Sub btnRejectAllChanges_Click(sender As System.Object, e As System.EventArgs) Handles btnRejectAllChanges.Click
-        Dim iresult As Integer
-        Try
-            bInitial = True
-
-            iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_AllChanges", isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid")), strCurrentUser)
-            If iresult = 0 Then
-                Using sw As StreamWriter = File.AppendText(path)
-                    sw.WriteLine("EMP.s_Reject_AllChanges " + CStr(isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid"))) + ", " + strCurrentUser)
-                    sw.WriteLine("Go")
-                End Using
-            End If
-
-            Reprocess_Sub_List()
-            bInitial = False
-
-        Catch ex As Exception
-            bInitial = False
-            'Functions.Sendmail(ex.Message, "btnRejectAllChanges_Click ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
-            MsgBox("Employer Maintenance : btnRejectAllChanges_Click : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
-        End Try
-    End Sub
-
-    Private Sub btnAcceptAllChanges_Click(sender As System.Object, e As System.EventArgs) Handles btnAcceptAllChanges.Click
-        Dim iresult As Integer
-        Try
-            bInitial = True
-
-            iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_AllChanges", isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid")), strCurrentUser)
-            If iresult = 0 Then
-                Using sw As StreamWriter = File.AppendText(path)
-                    sw.WriteLine("EMP.s_Accept_AllChanges " + CStr(isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid"))) + ", " + strCurrentUser)
-                    sw.WriteLine("Go")
-                End Using
-            End If
-
-            Reprocess_Sub_List()
-            bInitial = False
-
-        Catch ex As Exception
-            bInitial = False
-            'Functions.Sendmail(ex.Message, "btnAcceptAllChanges_Click ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
-            MsgBox("Employer Maintenance : btnAcceptAllChanges_Click : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
-        End Try
-    End Sub
 
     Private Sub ckbSortAlpha_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles ckbSortAlpha.CheckedChanged
         Reprocess_Sub_List()
@@ -1772,6 +2223,162 @@ Public Class Form1
     End Sub
 
     Private Sub ckbExpandedList_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles ckbExpandedList.CheckedChanged
+        Reprocess_Sub_List()
+    End Sub
 
+   
+    Private Sub btnParticipantsGreaterthan250_Click(sender As System.Object, e As System.EventArgs) Handles btnParticipantsGreaterthan250.Click
+        Dim iresult As Integer
+        Try
+            bInitial = True
+            Me.Cursor = Cursors.AppStarting
+
+            'iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_RemoveNoParticipants", strCurrentUser)
+
+
+            'Dim CN
+            'Using conn As New SqlClient.SqlConnection("Server=NasProSQL1;Database=Testing;timeout=0")
+            Using conn As New SqlClient.SqlConnection(CN)
+                conn.Open()
+                Using cm As New SqlClient.SqlCommand("emp.s_RemoveNoParticipants", conn)
+                    cm.CommandType = CommandType.StoredProcedure
+                    cm.CommandTimeout = 3000
+                    cm.Parameters.Add("@user", SqlDbType.VarChar)
+                    cm.Parameters("@user").Value = strCurrentUser
+
+                    cm.ExecuteNonQuery()
+                End Using
+            End Using
+
+
+            If iresult = 0 Then
+                dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", 1)
+                dgvClean5500_BindData()
+
+                dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", 1)
+                dgvDirty5500_BindData()
+
+                get_DOL_CleanStats()
+            End If
+
+            Me.Cursor = Cursors.Default
+            bInitial = False
+
+        Catch ex As Exception
+            bInitial = False
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnParticipantsGreaterthan250_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnParticipantsGreaterthan250_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnWelfareBNFTCode_Click(sender As System.Object, e As System.EventArgs) Handles btnWelfareBNFTCode.Click
+        Dim iresult As Integer
+        Try
+            bInitial = True
+            Me.Cursor = Cursors.AppStarting
+
+            Using conn As New SqlClient.SqlConnection(CN)
+                conn.Open()
+                Using cm As New SqlClient.SqlCommand("emp.s_RemoveWelfareBenefit", conn)
+                    cm.CommandType = CommandType.StoredProcedure
+                    cm.CommandTimeout = 3000
+                    cm.Parameters.Add("@user", SqlDbType.VarChar)
+                    cm.Parameters("@user").Value = strCurrentUser
+
+                    cm.ExecuteNonQuery()
+                End Using
+            End Using
+
+
+            If iresult = 0 Then
+                dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", 1)
+                dgvClean5500_BindData()
+
+                dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", 1)
+                dgvDirty5500_BindData()
+
+                get_DOL_CleanStats()
+            End If
+
+            Me.Cursor = Cursors.Default
+            bInitial = False
+
+        Catch ex As Exception
+            bInitial = False
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnWelfareBNFTCode_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnWelfareBNFTCode_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnTaxPrepDate_Click(sender As System.Object, e As System.EventArgs) Handles btnTaxPrepDate.Click
+        Dim iresult As Integer
+        Try
+            bInitial = True
+            Me.Cursor = Cursors.AppStarting
+
+            iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_RemovebyTaxDate", TextBox176.Text, strCurrentUser)
+
+            If iresult = 0 Then
+                dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", 1)
+                dgvClean5500_BindData()
+
+                dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", 1)
+                dgvDirty5500_BindData()
+
+                get_DOL_CleanStats()
+            End If
+
+            Me.Cursor = Cursors.Default
+            bInitial = False
+
+        Catch ex As Exception
+            bInitial = False
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnTaxPrepDate_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnTaxPrepDate_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnInjury_Click(sender As System.Object, e As System.EventArgs) Handles btnInjury.Click
+        Dim iresult As Integer
+        Try
+            bInitial = True
+            Me.Cursor = Cursors.AppStarting
+
+            iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_RemoveInjury", strCurrentUser)
+
+            If iresult = 0 Then
+                dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", 1)
+                dgvClean5500_BindData()
+
+                dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", 1)
+                dgvDirty5500_BindData()
+
+                get_DOL_CleanStats()
+            End If
+
+            Me.Cursor = Cursors.Default
+            bInitial = False
+
+        Catch ex As Exception
+            bInitial = False
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnInjury_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnInjury_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub get_DOL_CleanStats()
+        dsDOLCleanStats = SQLHelper.ExecuteDataset(CN, "EMP.s_get_DOLCleanStats")
+
+        If dsDOLCleanStats.Tables(0).Rows.Count > 0 Then
+            Label96.Text = dsDOLCleanStats.Tables(0).Rows(0).Item("Clean") + " Clean"
+            Label97.Text = dsDOLCleanStats.Tables(0).Rows(0).Item("Participants") + " < 250 Participants"
+            Label98.Text = dsDOLCleanStats.Tables(0).Rows(0).Item("WelfareBenefit") + " Welfare Benefit Code"
+            Label99.Text = dsDOLCleanStats.Tables(0).Rows(0).Item("PlanYear") + " Plan Year"
+            Label100.Text = dsDOLCleanStats.Tables(0).Rows(0).Item("Injury") + " Injury"
+        End If
     End Sub
 End Class

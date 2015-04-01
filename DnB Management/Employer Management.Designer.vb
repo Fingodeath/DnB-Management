@@ -150,6 +150,9 @@ Partial Class Form1
         Me.radDemotion = New System.Windows.Forms.RadioButton()
         Me.cmbChangeList = New System.Windows.Forms.ComboBox()
         Me.TabPage2 = New System.Windows.Forms.TabPage()
+        Me.ckbExpandedList = New System.Windows.Forms.CheckBox()
+        Me.LinkLabel3 = New System.Windows.Forms.LinkLabel()
+        Me.ckbSortAlpha = New System.Windows.Forms.CheckBox()
         Me.btnAcceptAllChanges = New System.Windows.Forms.Button()
         Me.btnRejectAllChanges = New System.Windows.Forms.Button()
         Me.TextBox174 = New System.Windows.Forms.TextBox()
@@ -286,6 +289,11 @@ Partial Class Form1
         Me.Label49 = New System.Windows.Forms.Label()
         Me.cmbSubsidiaryBrowser = New System.Windows.Forms.ComboBox()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.Label94 = New System.Windows.Forms.Label()
+        Me.Label93 = New System.Windows.Forms.Label()
+        Me.TextBox175 = New System.Windows.Forms.TextBox()
+        Me.Label92 = New System.Windows.Forms.Label()
+        Me.btnAcceptAllRemainingDeletes = New System.Windows.Forms.Button()
         Me.btnRefresh = New System.Windows.Forms.Button()
         Me.TextBox95 = New System.Windows.Forms.TextBox()
         Me.TextBox94 = New System.Windows.Forms.TextBox()
@@ -332,10 +340,25 @@ Partial Class Form1
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.TabPage4 = New System.Windows.Forms.TabPage()
+        Me.tpMain = New System.Windows.Forms.TabPage()
+        Me.Label95 = New System.Windows.Forms.Label()
+        Me.TextBox176 = New System.Windows.Forms.TextBox()
+        Me.btnTaxPrepDate = New System.Windows.Forms.Button()
+        Me.btnWelfareBNFTCode = New System.Windows.Forms.Button()
+        Me.btnInjury = New System.Windows.Forms.Button()
+        Me.btnParticipantsGreaterthan250 = New System.Windows.Forms.Button()
+        Me.TabControl2 = New System.Windows.Forms.TabControl()
+        Me.TabPage8 = New System.Windows.Forms.TabPage()
+        Me.dgvClean5500 = New System.Windows.Forms.DataGridView()
+        Me.TabPage9 = New System.Windows.Forms.TabPage()
+        Me.dgvDirty5500 = New System.Windows.Forms.DataGridView()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.ckbSortAlpha = New System.Windows.Forms.CheckBox()
-        Me.LinkLabel3 = New System.Windows.Forms.LinkLabel()
-        Me.ckbExpandedList = New System.Windows.Forms.CheckBox()
+        Me.Label96 = New System.Windows.Forms.Label()
+        Me.Label97 = New System.Windows.Forms.Label()
+        Me.Label98 = New System.Windows.Forms.Label()
+        Me.Label99 = New System.Windows.Forms.Label()
+        Me.Label100 = New System.Windows.Forms.Label()
+        Me.CheckBox1 = New System.Windows.Forms.CheckBox()
         Me.TabControl1.SuspendLayout()
         Me.TabPage3.SuspendLayout()
         Me.GroupBox4.SuspendLayout()
@@ -353,6 +376,12 @@ Partial Class Form1
         Me.TabPage1.SuspendLayout()
         Me.GroupBox6.SuspendLayout()
         Me.GroupBox5.SuspendLayout()
+        Me.tpMain.SuspendLayout()
+        Me.TabControl2.SuspendLayout()
+        Me.TabPage8.SuspendLayout()
+        CType(Me.dgvClean5500, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPage9.SuspendLayout()
+        CType(Me.dgvDirty5500, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'TabControl1
@@ -363,6 +392,7 @@ Partial Class Form1
         Me.TabControl1.Controls.Add(Me.TabPage6)
         Me.TabControl1.Controls.Add(Me.TabPage1)
         Me.TabControl1.Controls.Add(Me.TabPage4)
+        Me.TabControl1.Controls.Add(Me.tpMain)
         Me.TabControl1.Location = New System.Drawing.Point(12, 12)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
@@ -1584,9 +1614,42 @@ Partial Class Form1
         Me.TabPage2.Text = "Subsidiary Changed Records"
         Me.TabPage2.UseVisualStyleBackColor = True
         '
+        'ckbExpandedList
+        '
+        Me.ckbExpandedList.AutoSize = True
+        Me.ckbExpandedList.Location = New System.Drawing.Point(95, 83)
+        Me.ckbExpandedList.Name = "ckbExpandedList"
+        Me.ckbExpandedList.Size = New System.Drawing.Size(111, 17)
+        Me.ckbExpandedList.TabIndex = 39
+        Me.ckbExpandedList.Text = "Use Expanded list"
+        Me.ckbExpandedList.UseVisualStyleBackColor = True
+        Me.ckbExpandedList.Visible = False
+        '
+        'LinkLabel3
+        '
+        Me.LinkLabel3.AutoSize = True
+        Me.LinkLabel3.Location = New System.Drawing.Point(811, 93)
+        Me.LinkLabel3.Name = "LinkLabel3"
+        Me.LinkLabel3.Size = New System.Drawing.Size(282, 13)
+        Me.LinkLabel3.TabIndex = 38
+        Me.LinkLabel3.TabStop = True
+        Me.LinkLabel3.Text = "Report on all Corps that all their subs are marked for delete"
+        Me.LinkLabel3.Visible = False
+        '
+        'ckbSortAlpha
+        '
+        Me.ckbSortAlpha.AutoSize = True
+        Me.ckbSortAlpha.Location = New System.Drawing.Point(95, 59)
+        Me.ckbSortAlpha.Name = "ckbSortAlpha"
+        Me.ckbSortAlpha.Size = New System.Drawing.Size(203, 17)
+        Me.ckbSortAlpha.TabIndex = 37
+        Me.ckbSortAlpha.Text = "Sort by Apha instead of by employees"
+        Me.ckbSortAlpha.UseVisualStyleBackColor = True
+        Me.ckbSortAlpha.Visible = False
+        '
         'btnAcceptAllChanges
         '
-        Me.btnAcceptAllChanges.Location = New System.Drawing.Point(382, 88)
+        Me.btnAcceptAllChanges.Location = New System.Drawing.Point(367, 88)
         Me.btnAcceptAllChanges.Name = "btnAcceptAllChanges"
         Me.btnAcceptAllChanges.Size = New System.Drawing.Size(202, 23)
         Me.btnAcceptAllChanges.TabIndex = 36
@@ -2856,6 +2919,11 @@ Partial Class Form1
         '
         'TabPage1
         '
+        Me.TabPage1.Controls.Add(Me.Label94)
+        Me.TabPage1.Controls.Add(Me.Label93)
+        Me.TabPage1.Controls.Add(Me.TextBox175)
+        Me.TabPage1.Controls.Add(Me.Label92)
+        Me.TabPage1.Controls.Add(Me.btnAcceptAllRemainingDeletes)
         Me.TabPage1.Controls.Add(Me.btnRefresh)
         Me.TabPage1.Controls.Add(Me.TextBox95)
         Me.TabPage1.Controls.Add(Me.TextBox94)
@@ -2879,6 +2947,54 @@ Partial Class Form1
         Me.TabPage1.TabIndex = 6
         Me.TabPage1.Text = "Stats"
         Me.TabPage1.UseVisualStyleBackColor = True
+        '
+        'Label94
+        '
+        Me.Label94.AutoSize = True
+        Me.Label94.ForeColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.Label94.Location = New System.Drawing.Point(392, 501)
+        Me.Label94.Name = "Label94"
+        Me.Label94.Size = New System.Drawing.Size(375, 13)
+        Me.Label94.TabIndex = 30
+        Me.Label94.Text = "     The DBA must get this, report to you the information and Delete this record." & _
+    ""
+        '
+        'Label93
+        '
+        Me.Label93.AutoSize = True
+        Me.Label93.ForeColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.Label93.Location = New System.Drawing.Point(392, 488)
+        Me.Label93.Name = "Label93"
+        Me.Label93.Size = New System.Drawing.Size(441, 13)
+        Me.Label93.TabIndex = 29
+        Me.Label93.Text = "* this is a special case where the Corp fell out to subsidiary but fails to get a" & _
+    " Corp to report to."
+        '
+        'TextBox175
+        '
+        Me.TextBox175.Location = New System.Drawing.Point(515, 450)
+        Me.TextBox175.Name = "TextBox175"
+        Me.TextBox175.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox175.TabIndex = 28
+        '
+        'Label92
+        '
+        Me.Label92.AutoSize = True
+        Me.Label92.Location = New System.Drawing.Point(392, 454)
+        Me.Label92.Name = "Label92"
+        Me.Label92.Size = New System.Drawing.Size(102, 13)
+        Me.Label92.TabIndex = 27
+        Me.Label92.Text = "Orphaned Demotion"
+        '
+        'btnAcceptAllRemainingDeletes
+        '
+        Me.btnAcceptAllRemainingDeletes.Location = New System.Drawing.Point(882, 444)
+        Me.btnAcceptAllRemainingDeletes.Name = "btnAcceptAllRemainingDeletes"
+        Me.btnAcceptAllRemainingDeletes.Size = New System.Drawing.Size(171, 23)
+        Me.btnAcceptAllRemainingDeletes.TabIndex = 23
+        Me.btnAcceptAllRemainingDeletes.Text = "Accept all Remaining Deletes"
+        Me.btnAcceptAllRemainingDeletes.UseVisualStyleBackColor = True
+        Me.btnAcceptAllRemainingDeletes.Visible = False
         '
         'btnRefresh
         '
@@ -3280,38 +3396,185 @@ Partial Class Form1
         Me.TabPage4.Text = "Duns to DLN (EIN)"
         Me.TabPage4.UseVisualStyleBackColor = True
         '
-        'ckbSortAlpha
+        'tpMain
         '
-        Me.ckbSortAlpha.AutoSize = True
-        Me.ckbSortAlpha.Location = New System.Drawing.Point(95, 59)
-        Me.ckbSortAlpha.Name = "ckbSortAlpha"
-        Me.ckbSortAlpha.Size = New System.Drawing.Size(203, 17)
-        Me.ckbSortAlpha.TabIndex = 37
-        Me.ckbSortAlpha.Text = "Sort by Apha instead of by employees"
-        Me.ckbSortAlpha.UseVisualStyleBackColor = True
-        Me.ckbSortAlpha.Visible = False
+        Me.tpMain.Controls.Add(Me.CheckBox1)
+        Me.tpMain.Controls.Add(Me.Label95)
+        Me.tpMain.Controls.Add(Me.TextBox176)
+        Me.tpMain.Controls.Add(Me.btnTaxPrepDate)
+        Me.tpMain.Controls.Add(Me.btnWelfareBNFTCode)
+        Me.tpMain.Controls.Add(Me.btnInjury)
+        Me.tpMain.Controls.Add(Me.btnParticipantsGreaterthan250)
+        Me.tpMain.Controls.Add(Me.TabControl2)
+        Me.tpMain.Location = New System.Drawing.Point(4, 22)
+        Me.tpMain.Name = "tpMain"
+        Me.tpMain.Size = New System.Drawing.Size(1254, 735)
+        Me.tpMain.TabIndex = 8
+        Me.tpMain.Text = "Form 5500"
+        Me.tpMain.UseVisualStyleBackColor = True
         '
-        'LinkLabel3
+        'Label95
         '
-        Me.LinkLabel3.AutoSize = True
-        Me.LinkLabel3.Location = New System.Drawing.Point(811, 93)
-        Me.LinkLabel3.Name = "LinkLabel3"
-        Me.LinkLabel3.Size = New System.Drawing.Size(282, 13)
-        Me.LinkLabel3.TabIndex = 38
-        Me.LinkLabel3.TabStop = True
-        Me.LinkLabel3.Text = "Report on all Corps that all their subs are marked for delete"
-        Me.LinkLabel3.Visible = False
+        Me.Label95.AutoSize = True
+        Me.Label95.ForeColor = System.Drawing.Color.Maroon
+        Me.Label95.Location = New System.Drawing.Point(484, 30)
+        Me.Label95.Name = "Label95"
+        Me.Label95.Size = New System.Drawing.Size(65, 13)
+        Me.Label95.TabIndex = 6
+        Me.Label95.Text = "mm/dd/yyyy"
         '
-        'ckbExpandedList
+        'TextBox176
         '
-        Me.ckbExpandedList.AutoSize = True
-        Me.ckbExpandedList.Location = New System.Drawing.Point(95, 83)
-        Me.ckbExpandedList.Name = "ckbExpandedList"
-        Me.ckbExpandedList.Size = New System.Drawing.Size(111, 17)
-        Me.ckbExpandedList.TabIndex = 39
-        Me.ckbExpandedList.Text = "Use Expanded list"
-        Me.ckbExpandedList.UseVisualStyleBackColor = True
-        Me.ckbExpandedList.Visible = False
+        Me.TextBox176.Location = New System.Drawing.Point(377, 24)
+        Me.TextBox176.Name = "TextBox176"
+        Me.TextBox176.Size = New System.Drawing.Size(100, 20)
+        Me.TextBox176.TabIndex = 5
+        '
+        'btnTaxPrepDate
+        '
+        Me.btnTaxPrepDate.Location = New System.Drawing.Point(281, 22)
+        Me.btnTaxPrepDate.Name = "btnTaxPrepDate"
+        Me.btnTaxPrepDate.Size = New System.Drawing.Size(90, 23)
+        Me.btnTaxPrepDate.TabIndex = 4
+        Me.btnTaxPrepDate.Text = "Plan Year Date"
+        Me.btnTaxPrepDate.UseVisualStyleBackColor = True
+        '
+        'btnWelfareBNFTCode
+        '
+        Me.btnWelfareBNFTCode.Location = New System.Drawing.Point(143, 22)
+        Me.btnWelfareBNFTCode.Name = "btnWelfareBNFTCode"
+        Me.btnWelfareBNFTCode.Size = New System.Drawing.Size(123, 23)
+        Me.btnWelfareBNFTCode.TabIndex = 3
+        Me.btnWelfareBNFTCode.Text = "Welfare BNFT Code"
+        Me.btnWelfareBNFTCode.UseVisualStyleBackColor = True
+        '
+        'btnInjury
+        '
+        Me.btnInjury.Location = New System.Drawing.Point(555, 22)
+        Me.btnInjury.Name = "btnInjury"
+        Me.btnInjury.Size = New System.Drawing.Size(75, 23)
+        Me.btnInjury.TabIndex = 2
+        Me.btnInjury.Text = "Injury"
+        Me.btnInjury.UseVisualStyleBackColor = True
+        '
+        'btnParticipantsGreaterthan250
+        '
+        Me.btnParticipantsGreaterthan250.Location = New System.Drawing.Point(18, 22)
+        Me.btnParticipantsGreaterthan250.Name = "btnParticipantsGreaterthan250"
+        Me.btnParticipantsGreaterthan250.Size = New System.Drawing.Size(110, 23)
+        Me.btnParticipantsGreaterthan250.TabIndex = 1
+        Me.btnParticipantsGreaterthan250.Text = "Participants >= 250"
+        Me.btnParticipantsGreaterthan250.UseVisualStyleBackColor = True
+        '
+        'TabControl2
+        '
+        Me.TabControl2.Controls.Add(Me.TabPage8)
+        Me.TabControl2.Controls.Add(Me.TabPage9)
+        Me.TabControl2.Location = New System.Drawing.Point(14, 58)
+        Me.TabControl2.Name = "TabControl2"
+        Me.TabControl2.SelectedIndex = 0
+        Me.TabControl2.Size = New System.Drawing.Size(1237, 674)
+        Me.TabControl2.TabIndex = 0
+        '
+        'TabPage8
+        '
+        Me.TabPage8.Controls.Add(Me.dgvClean5500)
+        Me.TabPage8.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage8.Name = "TabPage8"
+        Me.TabPage8.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage8.Size = New System.Drawing.Size(1229, 648)
+        Me.TabPage8.TabIndex = 0
+        Me.TabPage8.Text = "5500s to Keep"
+        Me.TabPage8.UseVisualStyleBackColor = True
+        '
+        'dgvClean5500
+        '
+        Me.dgvClean5500.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvClean5500.Location = New System.Drawing.Point(6, 6)
+        Me.dgvClean5500.Name = "dgvClean5500"
+        Me.dgvClean5500.Size = New System.Drawing.Size(1217, 636)
+        Me.dgvClean5500.TabIndex = 0
+        '
+        'TabPage9
+        '
+        Me.TabPage9.Controls.Add(Me.Label100)
+        Me.TabPage9.Controls.Add(Me.Label99)
+        Me.TabPage9.Controls.Add(Me.Label98)
+        Me.TabPage9.Controls.Add(Me.Label97)
+        Me.TabPage9.Controls.Add(Me.Label96)
+        Me.TabPage9.Controls.Add(Me.dgvDirty5500)
+        Me.TabPage9.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage9.Name = "TabPage9"
+        Me.TabPage9.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage9.Size = New System.Drawing.Size(1229, 648)
+        Me.TabPage9.TabIndex = 1
+        Me.TabPage9.Text = "5500s to Drop"
+        Me.TabPage9.UseVisualStyleBackColor = True
+        '
+        'dgvDirty5500
+        '
+        Me.dgvDirty5500.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvDirty5500.Location = New System.Drawing.Point(6, 31)
+        Me.dgvDirty5500.Name = "dgvDirty5500"
+        Me.dgvDirty5500.Size = New System.Drawing.Size(1217, 611)
+        Me.dgvDirty5500.TabIndex = 1
+        '
+        'Label96
+        '
+        Me.Label96.AutoSize = True
+        Me.Label96.Location = New System.Drawing.Point(123, 9)
+        Me.Label96.Name = "Label96"
+        Me.Label96.Size = New System.Drawing.Size(34, 13)
+        Me.Label96.TabIndex = 2
+        Me.Label96.Text = "Clean"
+        '
+        'Label97
+        '
+        Me.Label97.AutoSize = True
+        Me.Label97.Location = New System.Drawing.Point(318, 9)
+        Me.Label97.Name = "Label97"
+        Me.Label97.Size = New System.Drawing.Size(89, 13)
+        Me.Label97.TabIndex = 3
+        Me.Label97.Text = "<250 Participants"
+        '
+        'Label98
+        '
+        Me.Label98.AutoSize = True
+        Me.Label98.Location = New System.Drawing.Point(569, 9)
+        Me.Label98.Name = "Label98"
+        Me.Label98.Size = New System.Drawing.Size(108, 13)
+        Me.Label98.TabIndex = 4
+        Me.Label98.Text = "Welfare Benefit Code"
+        '
+        'Label99
+        '
+        Me.Label99.AutoSize = True
+        Me.Label99.Location = New System.Drawing.Point(839, 9)
+        Me.Label99.Name = "Label99"
+        Me.Label99.Size = New System.Drawing.Size(53, 13)
+        Me.Label99.TabIndex = 5
+        Me.Label99.Text = "Plan Year"
+        '
+        'Label100
+        '
+        Me.Label100.AutoSize = True
+        Me.Label100.Location = New System.Drawing.Point(1054, 9)
+        Me.Label100.Name = "Label100"
+        Me.Label100.Size = New System.Drawing.Size(32, 13)
+        Me.Label100.TabIndex = 6
+        Me.Label100.Text = "Injury"
+        '
+        'CheckBox1
+        '
+        Me.CheckBox1.AutoSize = True
+        Me.CheckBox1.Checked = True
+        Me.CheckBox1.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.CheckBox1.Location = New System.Drawing.Point(701, 26)
+        Me.CheckBox1.Name = "CheckBox1"
+        Me.CheckBox1.Size = New System.Drawing.Size(119, 17)
+        Me.CheckBox1.TabIndex = 7
+        Me.CheckBox1.Text = "only use 5K records"
+        Me.CheckBox1.UseVisualStyleBackColor = True
         '
         'Form1
         '
@@ -3322,7 +3585,7 @@ Partial Class Form1
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Form1"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Form1"
+        Me.Text = "Employer Management"
         Me.TabControl1.ResumeLayout(False)
         Me.TabPage3.ResumeLayout(False)
         Me.TabPage3.PerformLayout()
@@ -3354,6 +3617,14 @@ Partial Class Form1
         Me.GroupBox6.PerformLayout()
         Me.GroupBox5.ResumeLayout(False)
         Me.GroupBox5.PerformLayout()
+        Me.tpMain.ResumeLayout(False)
+        Me.tpMain.PerformLayout()
+        Me.TabControl2.ResumeLayout(False)
+        Me.TabPage8.ResumeLayout(False)
+        CType(Me.dgvClean5500, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPage9.ResumeLayout(False)
+        Me.TabPage9.PerformLayout()
+        CType(Me.dgvDirty5500, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
 
     End Sub
@@ -3669,5 +3940,28 @@ Partial Class Form1
     Friend WithEvents ckbSortAlpha As System.Windows.Forms.CheckBox
     Friend WithEvents LinkLabel3 As System.Windows.Forms.LinkLabel
     Friend WithEvents ckbExpandedList As System.Windows.Forms.CheckBox
+    Friend WithEvents btnAcceptAllRemainingDeletes As System.Windows.Forms.Button
+    Friend WithEvents Label94 As System.Windows.Forms.Label
+    Friend WithEvents Label93 As System.Windows.Forms.Label
+    Friend WithEvents TextBox175 As System.Windows.Forms.TextBox
+    Friend WithEvents Label92 As System.Windows.Forms.Label
+    Friend WithEvents tpMain As System.Windows.Forms.TabPage
+    Friend WithEvents btnTaxPrepDate As System.Windows.Forms.Button
+    Friend WithEvents btnWelfareBNFTCode As System.Windows.Forms.Button
+    Friend WithEvents btnInjury As System.Windows.Forms.Button
+    Friend WithEvents btnParticipantsGreaterthan250 As System.Windows.Forms.Button
+    Friend WithEvents TabControl2 As System.Windows.Forms.TabControl
+    Friend WithEvents TabPage8 As System.Windows.Forms.TabPage
+    Friend WithEvents dgvClean5500 As System.Windows.Forms.DataGridView
+    Friend WithEvents TabPage9 As System.Windows.Forms.TabPage
+    Friend WithEvents dgvDirty5500 As System.Windows.Forms.DataGridView
+    Friend WithEvents Label95 As System.Windows.Forms.Label
+    Friend WithEvents TextBox176 As System.Windows.Forms.TextBox
+    Friend WithEvents CheckBox1 As System.Windows.Forms.CheckBox
+    Friend WithEvents Label100 As System.Windows.Forms.Label
+    Friend WithEvents Label99 As System.Windows.Forms.Label
+    Friend WithEvents Label98 As System.Windows.Forms.Label
+    Friend WithEvents Label97 As System.Windows.Forms.Label
+    Friend WithEvents Label96 As System.Windows.Forms.Label
 
 End Class
