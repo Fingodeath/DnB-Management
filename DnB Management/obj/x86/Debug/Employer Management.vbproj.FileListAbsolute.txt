@@ -2,7 +2,6 @@ C:\Projects\DnB Management\DnB Management\bin\Debug\GlobalLibrary.dll
 C:\Projects\DnB Management\DnB Management\bin\Debug\Csla.dll
 C:\Projects\DnB Management\DnB Management\bin\Debug\GlobalLibrary.pdb
 C:\Projects\DnB Management\DnB Management\bin\Debug\GlobalLibrary.xml
-C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.vbprojResolveAssemblyReference.cache
 C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.vbproj.GenerateResource.Cache
 C:\Projects\DnB Management\DnB Management\bin\Debug\Employer Management.exe
 C:\Projects\DnB Management\DnB Management\bin\Debug\Employer Management.pdb
@@ -12,3 +11,12 @@ C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer_Management.Reso
 C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.exe
 C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.xml
 C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.pdb
+C:\Projects\DnB Management\DnB Management\bin\Debug\HLICustomControls.dll
+C:\Projects\DnB Management\DnB Management\bin\Debug\HLICustomControls.pdb
+C:\Projects\DnB Management\DnB Management\bin\Debug\HLICustomControls.xml
+C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.vbprojResolveAssemblyReference.cache
+C:\Projects\DnB Management\DnB Management\bin\Debug\Employer Management.exe.manifest
+C:\Projects\DnB Management\DnB Management\bin\Debug\Employer Management.application
+C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.TrustInfo.xml
+C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.exe.manifest
+C:\Projects\DnB Management\DnB Management\obj\x86\Debug\Employer Management.application

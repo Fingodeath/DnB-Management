@@ -11,4 +11,12 @@ C:\Projects\DnB Management\DnB Management\obj\x86\Release\Employer_Management.Re
 C:\Projects\DnB Management\DnB Management\obj\x86\Release\Employer Management.exe
 C:\Projects\DnB Management\DnB Management\obj\x86\Release\Employer Management.xml
 C:\Projects\DnB Management\DnB Management\obj\x86\Release\Employer Management.pdb
+C:\Projects\DnB Management\DnB Management\bin\Release\HLICustomControls.dll
+C:\Projects\DnB Management\DnB Management\bin\Release\HLICustomControls.pdb
+C:\Projects\DnB Management\DnB Management\bin\Release\HLICustomControls.xml
+C:\Projects\DnB Management\DnB Management\bin\Release\Employer Management.exe.manifest
+C:\Projects\DnB Management\DnB Management\bin\Release\Employer Management.application
 C:\Projects\DnB Management\DnB Management\obj\x86\Release\Employer Management.vbprojResolveAssemblyReference.cache
+C:\Projects\DnB Management\DnB Management\obj\x86\Release\Employer Management.TrustInfo.xml
+C:\Projects\DnB Management\DnB Management\obj\x86\Release\Employer Management.exe.manifest
+C:\Projects\DnB Management\DnB Management\obj\x86\Release\Employer Management.application

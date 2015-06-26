@@ -1,0 +1,44 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+HLICustomControls
+</name>
+</assembly>
+<members>
+<member name="P:HLICustomControls.LookupInfo.Id">
+	<summary>
+ Get the Id of the current object.
+ </summary>
+	<value>A Integer that represents the Id of the current object.</value>
+	<returns>Integer representing the return value.</returns>
+	<remarks></remarks>
+</member><member name="P:HLICustomControls.LookupInfo.Description">
+	<summary>
+ Get the Description of the current object.
+ </summary>
+	<value>A String that represents the Description of the current object.</value>
+	<returns>String representing the return value.</returns>
+	<remarks></remarks>
+</member><member name="M:HLICustomControls.LookupInfo.GetIdValue">
+	<summary>
+ Get the unique id for the current object.
+ </summary>
+	<returns>A value that is the unique id of the object.</returns>
+	<remarks></remarks>
+</member><member name="P:HLICustomControls.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:HLICustomControls.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:HLICustomControls.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+</members>
+</doc>

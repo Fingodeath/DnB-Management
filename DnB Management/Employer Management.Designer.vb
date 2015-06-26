@@ -289,6 +289,10 @@ Partial Class Form1
         Me.Label49 = New System.Windows.Forms.Label()
         Me.cmbSubsidiaryBrowser = New System.Windows.Forms.ComboBox()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.btnAcceptBulkPromotion = New System.Windows.Forms.Button()
+        Me.btnAcceptCorporateDemotion = New System.Windows.Forms.Button()
+        Me.btnAcceptAllAdds = New System.Windows.Forms.Button()
+        Me.btnAcceptCorporatesDeletes = New System.Windows.Forms.Button()
         Me.Label94 = New System.Windows.Forms.Label()
         Me.Label93 = New System.Windows.Forms.Label()
         Me.TextBox175 = New System.Windows.Forms.TextBox()
@@ -340,7 +344,16 @@ Partial Class Form1
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.TabPage4 = New System.Windows.Forms.TabPage()
+        Me.LinkLabel6 = New System.Windows.Forms.LinkLabel()
+        Me.LinkLabel5 = New System.Windows.Forms.LinkLabel()
+        Me.LinkLabel4 = New System.Windows.Forms.LinkLabel()
+        Me.Label104 = New System.Windows.Forms.Label()
+        Me.btnReAssess = New System.Windows.Forms.Button()
+        Me.dgvDuns_Dln = New System.Windows.Forms.DataGridView()
         Me.tpMain = New System.Windows.Forms.TabPage()
+        Me.btnFlexPlans = New System.Windows.Forms.Button()
+        Me.btnRemove5500s = New System.Windows.Forms.Button()
+        Me.ckb5KLimit = New System.Windows.Forms.CheckBox()
         Me.Label95 = New System.Windows.Forms.Label()
         Me.TextBox176 = New System.Windows.Forms.TextBox()
         Me.btnTaxPrepDate = New System.Windows.Forms.Button()
@@ -351,14 +364,47 @@ Partial Class Form1
         Me.TabPage8 = New System.Windows.Forms.TabPage()
         Me.dgvClean5500 = New System.Windows.Forms.DataGridView()
         Me.TabPage9 = New System.Windows.Forms.TabPage()
-        Me.dgvDirty5500 = New System.Windows.Forms.DataGridView()
-        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.Label96 = New System.Windows.Forms.Label()
-        Me.Label97 = New System.Windows.Forms.Label()
-        Me.Label98 = New System.Windows.Forms.Label()
-        Me.Label99 = New System.Windows.Forms.Label()
+        Me.Label101 = New System.Windows.Forms.Label()
         Me.Label100 = New System.Windows.Forms.Label()
-        Me.CheckBox1 = New System.Windows.Forms.CheckBox()
+        Me.Label99 = New System.Windows.Forms.Label()
+        Me.Label98 = New System.Windows.Forms.Label()
+        Me.Label97 = New System.Windows.Forms.Label()
+        Me.Label96 = New System.Windows.Forms.Label()
+        Me.dgvDirty5500 = New System.Windows.Forms.DataGridView()
+        Me.TabPage7 = New System.Windows.Forms.TabPage()
+        Me.btnValidateHealth = New System.Windows.Forms.Button()
+        Me.btnExperience = New System.Windows.Forms.Button()
+        Me.btnFix_FundingGenAsset = New System.Windows.Forms.Button()
+        Me.btnVerifyWelfareBenefit = New System.Windows.Forms.Button()
+        Me.TbcontrolA = New System.Windows.Forms.TabControl()
+        Me.TabPage10 = New System.Windows.Forms.TabPage()
+        Me.dgvSched_A = New System.Windows.Forms.DataGridView()
+        Me.TabPage11 = New System.Windows.Forms.TabPage()
+        Me.dgv_Sched_A_Drop = New System.Windows.Forms.DataGridView()
+        Me.TabPage12 = New System.Windows.Forms.TabPage()
+        Me.btnDeleteMarkedCs = New System.Windows.Forms.Button()
+        Me.btnEliminateNonAdmin = New System.Windows.Forms.Button()
+        Me.btnNormalizePBMNames = New System.Windows.Forms.Button()
+        Me.btnProviderEIN = New System.Windows.Forms.Button()
+        Me.TabControl3 = New System.Windows.Forms.TabControl()
+        Me.TabPage13 = New System.Windows.Forms.TabPage()
+        Me.dgv_ScheduleC = New System.Windows.Forms.DataGridView()
+        Me.TabPage14 = New System.Windows.Forms.TabPage()
+        Me.dgv_Sched_C_Drop = New System.Windows.Forms.DataGridView()
+        Me.PBMs = New System.Windows.Forms.TabPage()
+        Me.btnAddPBM = New System.Windows.Forms.Button()
+        Me.Label103 = New System.Windows.Forms.Label()
+        Me.txtEIN = New System.Windows.Forms.TextBox()
+        Me.Label102 = New System.Windows.Forms.Label()
+        Me.cmbPBM = New System.Windows.Forms.ComboBox()
+        Me.dgvPBMs = New System.Windows.Forms.DataGridView()
+        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
+        Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
+        Me.ToolStripStatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.ToolStripStatusLabel2 = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.ToolStripStatusLabel3 = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.ToolStripStatusLabel4 = New System.Windows.Forms.ToolStripStatusLabel()
+        Me.btnDelete_As = New System.Windows.Forms.Button()
         Me.TabControl1.SuspendLayout()
         Me.TabPage3.SuspendLayout()
         Me.GroupBox4.SuspendLayout()
@@ -376,12 +422,29 @@ Partial Class Form1
         Me.TabPage1.SuspendLayout()
         Me.GroupBox6.SuspendLayout()
         Me.GroupBox5.SuspendLayout()
+        Me.TabPage4.SuspendLayout()
+        CType(Me.dgvDuns_Dln, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.tpMain.SuspendLayout()
         Me.TabControl2.SuspendLayout()
         Me.TabPage8.SuspendLayout()
         CType(Me.dgvClean5500, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabPage9.SuspendLayout()
         CType(Me.dgvDirty5500, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPage7.SuspendLayout()
+        Me.TbcontrolA.SuspendLayout()
+        Me.TabPage10.SuspendLayout()
+        CType(Me.dgvSched_A, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPage11.SuspendLayout()
+        CType(Me.dgv_Sched_A_Drop, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPage12.SuspendLayout()
+        Me.TabControl3.SuspendLayout()
+        Me.TabPage13.SuspendLayout()
+        CType(Me.dgv_ScheduleC, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.TabPage14.SuspendLayout()
+        CType(Me.dgv_Sched_C_Drop, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.PBMs.SuspendLayout()
+        CType(Me.dgvPBMs, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.StatusStrip1.SuspendLayout()
         Me.SuspendLayout()
         '
         'TabControl1
@@ -393,10 +456,13 @@ Partial Class Form1
         Me.TabControl1.Controls.Add(Me.TabPage1)
         Me.TabControl1.Controls.Add(Me.TabPage4)
         Me.TabControl1.Controls.Add(Me.tpMain)
+        Me.TabControl1.Controls.Add(Me.TabPage7)
+        Me.TabControl1.Controls.Add(Me.TabPage12)
+        Me.TabControl1.Controls.Add(Me.PBMs)
         Me.TabControl1.Location = New System.Drawing.Point(12, 12)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(1262, 761)
+        Me.TabControl1.Size = New System.Drawing.Size(1287, 751)
         Me.TabControl1.TabIndex = 0
         '
         'TabPage3
@@ -421,7 +487,7 @@ Partial Class Form1
         Me.TabPage3.Controls.Add(Me.cmbChangeList)
         Me.TabPage3.Location = New System.Drawing.Point(4, 22)
         Me.TabPage3.Name = "TabPage3"
-        Me.TabPage3.Size = New System.Drawing.Size(1254, 735)
+        Me.TabPage3.Size = New System.Drawing.Size(1279, 725)
         Me.TabPage3.TabIndex = 2
         Me.TabPage3.Text = "Corporate Changed Records"
         Me.TabPage3.UseVisualStyleBackColor = True
@@ -1609,7 +1675,7 @@ Partial Class Form1
         Me.TabPage2.Controls.Add(Me.cmbSubList)
         Me.TabPage2.Location = New System.Drawing.Point(4, 22)
         Me.TabPage2.Name = "TabPage2"
-        Me.TabPage2.Size = New System.Drawing.Size(1254, 735)
+        Me.TabPage2.Size = New System.Drawing.Size(1279, 725)
         Me.TabPage2.TabIndex = 7
         Me.TabPage2.Text = "Subsidiary Changed Records"
         Me.TabPage2.UseVisualStyleBackColor = True
@@ -2812,7 +2878,7 @@ Partial Class Form1
         Me.TabPage5.Controls.Add(Me.dgvCorporate)
         Me.TabPage5.Location = New System.Drawing.Point(4, 22)
         Me.TabPage5.Name = "TabPage5"
-        Me.TabPage5.Size = New System.Drawing.Size(1254, 735)
+        Me.TabPage5.Size = New System.Drawing.Size(1279, 725)
         Me.TabPage5.TabIndex = 4
         Me.TabPage5.Text = "Corporate Browser"
         Me.TabPage5.UseVisualStyleBackColor = True
@@ -2867,7 +2933,7 @@ Partial Class Form1
         Me.TabPage6.Controls.Add(Me.cmbSubsidiaryBrowser)
         Me.TabPage6.Location = New System.Drawing.Point(4, 22)
         Me.TabPage6.Name = "TabPage6"
-        Me.TabPage6.Size = New System.Drawing.Size(1254, 735)
+        Me.TabPage6.Size = New System.Drawing.Size(1279, 725)
         Me.TabPage6.TabIndex = 5
         Me.TabPage6.Text = "Subsidiary Browser"
         Me.TabPage6.UseVisualStyleBackColor = True
@@ -2894,10 +2960,10 @@ Partial Class Form1
         Me.dgvSubsidiaryBrowser.AllowUserToAddRows = False
         Me.dgvSubsidiaryBrowser.AllowUserToDeleteRows = False
         Me.dgvSubsidiaryBrowser.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgvSubsidiaryBrowser.Location = New System.Drawing.Point(26, 56)
+        Me.dgvSubsidiaryBrowser.Location = New System.Drawing.Point(3, 56)
         Me.dgvSubsidiaryBrowser.Name = "dgvSubsidiaryBrowser"
         Me.dgvSubsidiaryBrowser.ReadOnly = True
-        Me.dgvSubsidiaryBrowser.Size = New System.Drawing.Size(1202, 655)
+        Me.dgvSubsidiaryBrowser.Size = New System.Drawing.Size(1273, 655)
         Me.dgvSubsidiaryBrowser.TabIndex = 4
         '
         'Label49
@@ -2919,6 +2985,10 @@ Partial Class Form1
         '
         'TabPage1
         '
+        Me.TabPage1.Controls.Add(Me.btnAcceptBulkPromotion)
+        Me.TabPage1.Controls.Add(Me.btnAcceptCorporateDemotion)
+        Me.TabPage1.Controls.Add(Me.btnAcceptAllAdds)
+        Me.TabPage1.Controls.Add(Me.btnAcceptCorporatesDeletes)
         Me.TabPage1.Controls.Add(Me.Label94)
         Me.TabPage1.Controls.Add(Me.Label93)
         Me.TabPage1.Controls.Add(Me.TextBox175)
@@ -2943,16 +3013,52 @@ Partial Class Form1
         Me.TabPage1.Controls.Add(Me.Label2)
         Me.TabPage1.Location = New System.Drawing.Point(4, 22)
         Me.TabPage1.Name = "TabPage1"
-        Me.TabPage1.Size = New System.Drawing.Size(1254, 735)
+        Me.TabPage1.Size = New System.Drawing.Size(1279, 725)
         Me.TabPage1.TabIndex = 6
         Me.TabPage1.Text = "Stats"
         Me.TabPage1.UseVisualStyleBackColor = True
+        '
+        'btnAcceptBulkPromotion
+        '
+        Me.btnAcceptBulkPromotion.Location = New System.Drawing.Point(399, 513)
+        Me.btnAcceptBulkPromotion.Name = "btnAcceptBulkPromotion"
+        Me.btnAcceptBulkPromotion.Size = New System.Drawing.Size(216, 23)
+        Me.btnAcceptBulkPromotion.TabIndex = 34
+        Me.btnAcceptBulkPromotion.Text = "Accept all Remaining Corporate Promotion"
+        Me.btnAcceptBulkPromotion.UseVisualStyleBackColor = True
+        '
+        'btnAcceptCorporateDemotion
+        '
+        Me.btnAcceptCorporateDemotion.Location = New System.Drawing.Point(399, 487)
+        Me.btnAcceptCorporateDemotion.Name = "btnAcceptCorporateDemotion"
+        Me.btnAcceptCorporateDemotion.Size = New System.Drawing.Size(216, 23)
+        Me.btnAcceptCorporateDemotion.TabIndex = 33
+        Me.btnAcceptCorporateDemotion.Text = "Accept all Remaining Corporate Demotion"
+        Me.btnAcceptCorporateDemotion.UseVisualStyleBackColor = True
+        '
+        'btnAcceptAllAdds
+        '
+        Me.btnAcceptAllAdds.Location = New System.Drawing.Point(399, 539)
+        Me.btnAcceptAllAdds.Name = "btnAcceptAllAdds"
+        Me.btnAcceptAllAdds.Size = New System.Drawing.Size(216, 23)
+        Me.btnAcceptAllAdds.TabIndex = 32
+        Me.btnAcceptAllAdds.Text = "Accept all Remaining Corporate Adds"
+        Me.btnAcceptAllAdds.UseVisualStyleBackColor = True
+        '
+        'btnAcceptCorporatesDeletes
+        '
+        Me.btnAcceptCorporatesDeletes.Location = New System.Drawing.Point(399, 565)
+        Me.btnAcceptCorporatesDeletes.Name = "btnAcceptCorporatesDeletes"
+        Me.btnAcceptCorporatesDeletes.Size = New System.Drawing.Size(216, 23)
+        Me.btnAcceptCorporatesDeletes.TabIndex = 31
+        Me.btnAcceptCorporatesDeletes.Text = "Accept all Remaining Corporate Deletes"
+        Me.btnAcceptCorporatesDeletes.UseVisualStyleBackColor = True
         '
         'Label94
         '
         Me.Label94.AutoSize = True
         Me.Label94.ForeColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.Label94.Location = New System.Drawing.Point(392, 501)
+        Me.Label94.Location = New System.Drawing.Point(392, 615)
         Me.Label94.Name = "Label94"
         Me.Label94.Size = New System.Drawing.Size(375, 13)
         Me.Label94.TabIndex = 30
@@ -2963,7 +3069,7 @@ Partial Class Form1
         '
         Me.Label93.AutoSize = True
         Me.Label93.ForeColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.Label93.Location = New System.Drawing.Point(392, 488)
+        Me.Label93.Location = New System.Drawing.Point(392, 602)
         Me.Label93.Name = "Label93"
         Me.Label93.Size = New System.Drawing.Size(441, 13)
         Me.Label93.TabIndex = 29
@@ -2994,7 +3100,6 @@ Partial Class Form1
         Me.btnAcceptAllRemainingDeletes.TabIndex = 23
         Me.btnAcceptAllRemainingDeletes.Text = "Accept all Remaining Deletes"
         Me.btnAcceptAllRemainingDeletes.UseVisualStyleBackColor = True
-        Me.btnAcceptAllRemainingDeletes.Visible = False
         '
         'btnRefresh
         '
@@ -3389,16 +3494,83 @@ Partial Class Form1
         '
         'TabPage4
         '
+        Me.TabPage4.Controls.Add(Me.LinkLabel6)
+        Me.TabPage4.Controls.Add(Me.LinkLabel5)
+        Me.TabPage4.Controls.Add(Me.LinkLabel4)
+        Me.TabPage4.Controls.Add(Me.Label104)
+        Me.TabPage4.Controls.Add(Me.btnReAssess)
+        Me.TabPage4.Controls.Add(Me.dgvDuns_Dln)
         Me.TabPage4.Location = New System.Drawing.Point(4, 22)
         Me.TabPage4.Name = "TabPage4"
-        Me.TabPage4.Size = New System.Drawing.Size(1254, 735)
+        Me.TabPage4.Size = New System.Drawing.Size(1279, 725)
         Me.TabPage4.TabIndex = 3
         Me.TabPage4.Text = "Duns to DLN (EIN)"
         Me.TabPage4.UseVisualStyleBackColor = True
         '
+        'LinkLabel6
+        '
+        Me.LinkLabel6.AutoSize = True
+        Me.LinkLabel6.Location = New System.Drawing.Point(860, 680)
+        Me.LinkLabel6.Name = "LinkLabel6"
+        Me.LinkLabel6.Size = New System.Drawing.Size(268, 13)
+        Me.LinkLabel6.TabIndex = 5
+        Me.LinkLabel6.TabStop = True
+        Me.LinkLabel6.Text = "Match Corporate to 5500 based on Partial Name Match"
+        '
+        'LinkLabel5
+        '
+        Me.LinkLabel5.AutoSize = True
+        Me.LinkLabel5.Location = New System.Drawing.Point(679, 680)
+        Me.LinkLabel5.Name = "LinkLabel5"
+        Me.LinkLabel5.Size = New System.Drawing.Size(148, 13)
+        Me.LinkLabel5.TabIndex = 4
+        Me.LinkLabel5.TabStop = True
+        Me.LinkLabel5.Text = "Match by Corporate Hierarchy"
+        '
+        'LinkLabel4
+        '
+        Me.LinkLabel4.AutoSize = True
+        Me.LinkLabel4.Location = New System.Drawing.Point(378, 680)
+        Me.LinkLabel4.Name = "LinkLabel4"
+        Me.LinkLabel4.Size = New System.Drawing.Size(273, 13)
+        Me.LinkLabel4.TabIndex = 3
+        Me.LinkLabel4.TabStop = True
+        Me.LinkLabel4.Text = "Report : Those Corporations without an associated 5500"
+        '
+        'Label104
+        '
+        Me.Label104.AutoSize = True
+        Me.Label104.ForeColor = System.Drawing.Color.DarkRed
+        Me.Label104.Location = New System.Drawing.Point(53, 701)
+        Me.Label104.Name = "Label104"
+        Me.Label104.Size = New System.Drawing.Size(840, 13)
+        Me.Label104.TabIndex = 2
+        Me.Label104.Text = "*Since 5500s can be rolled up to the parent, if you see a subsidiary DUNS, then t" & _
+    "he 5500 was associated to that DUNS and DLN, not the parent and was rolled up to" & _
+    " the parent."
+        '
+        'btnReAssess
+        '
+        Me.btnReAssess.Location = New System.Drawing.Point(73, 9)
+        Me.btnReAssess.Name = "btnReAssess"
+        Me.btnReAssess.Size = New System.Drawing.Size(75, 23)
+        Me.btnReAssess.TabIndex = 1
+        Me.btnReAssess.Text = "Reassess"
+        Me.btnReAssess.UseVisualStyleBackColor = True
+        '
+        'dgvDuns_Dln
+        '
+        Me.dgvDuns_Dln.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvDuns_Dln.Location = New System.Drawing.Point(43, 38)
+        Me.dgvDuns_Dln.Name = "dgvDuns_Dln"
+        Me.dgvDuns_Dln.Size = New System.Drawing.Size(1215, 634)
+        Me.dgvDuns_Dln.TabIndex = 0
+        '
         'tpMain
         '
-        Me.tpMain.Controls.Add(Me.CheckBox1)
+        Me.tpMain.Controls.Add(Me.btnFlexPlans)
+        Me.tpMain.Controls.Add(Me.btnRemove5500s)
+        Me.tpMain.Controls.Add(Me.ckb5KLimit)
         Me.tpMain.Controls.Add(Me.Label95)
         Me.tpMain.Controls.Add(Me.TextBox176)
         Me.tpMain.Controls.Add(Me.btnTaxPrepDate)
@@ -3408,10 +3580,40 @@ Partial Class Form1
         Me.tpMain.Controls.Add(Me.TabControl2)
         Me.tpMain.Location = New System.Drawing.Point(4, 22)
         Me.tpMain.Name = "tpMain"
-        Me.tpMain.Size = New System.Drawing.Size(1254, 735)
+        Me.tpMain.Size = New System.Drawing.Size(1279, 725)
         Me.tpMain.TabIndex = 8
         Me.tpMain.Text = "Form 5500"
         Me.tpMain.UseVisualStyleBackColor = True
+        '
+        'btnFlexPlans
+        '
+        Me.btnFlexPlans.Location = New System.Drawing.Point(636, 22)
+        Me.btnFlexPlans.Name = "btnFlexPlans"
+        Me.btnFlexPlans.Size = New System.Drawing.Size(121, 23)
+        Me.btnFlexPlans.TabIndex = 9
+        Me.btnFlexPlans.Text = "Flex/Reimbusement"
+        Me.btnFlexPlans.UseVisualStyleBackColor = True
+        '
+        'btnRemove5500s
+        '
+        Me.btnRemove5500s.Location = New System.Drawing.Point(1054, 25)
+        Me.btnRemove5500s.Name = "btnRemove5500s"
+        Me.btnRemove5500s.Size = New System.Drawing.Size(94, 23)
+        Me.btnRemove5500s.TabIndex = 8
+        Me.btnRemove5500s.Text = "Remove 5500s"
+        Me.btnRemove5500s.UseVisualStyleBackColor = True
+        '
+        'ckb5KLimit
+        '
+        Me.ckb5KLimit.AutoSize = True
+        Me.ckb5KLimit.Checked = True
+        Me.ckb5KLimit.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.ckb5KLimit.Location = New System.Drawing.Point(778, 29)
+        Me.ckb5KLimit.Name = "ckb5KLimit"
+        Me.ckb5KLimit.Size = New System.Drawing.Size(119, 17)
+        Me.ckb5KLimit.TabIndex = 7
+        Me.ckb5KLimit.Text = "only use 5K records"
+        Me.ckb5KLimit.UseVisualStyleBackColor = True
         '
         'Label95
         '
@@ -3497,6 +3699,7 @@ Partial Class Form1
         '
         'TabPage9
         '
+        Me.TabPage9.Controls.Add(Me.Label101)
         Me.TabPage9.Controls.Add(Me.Label100)
         Me.TabPage9.Controls.Add(Me.Label99)
         Me.TabPage9.Controls.Add(Me.Label98)
@@ -3511,76 +3714,384 @@ Partial Class Form1
         Me.TabPage9.Text = "5500s to Drop"
         Me.TabPage9.UseVisualStyleBackColor = True
         '
-        'dgvDirty5500
+        'Label101
         '
-        Me.dgvDirty5500.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgvDirty5500.Location = New System.Drawing.Point(6, 31)
-        Me.dgvDirty5500.Name = "dgvDirty5500"
-        Me.dgvDirty5500.Size = New System.Drawing.Size(1217, 611)
-        Me.dgvDirty5500.TabIndex = 1
-        '
-        'Label96
-        '
-        Me.Label96.AutoSize = True
-        Me.Label96.Location = New System.Drawing.Point(123, 9)
-        Me.Label96.Name = "Label96"
-        Me.Label96.Size = New System.Drawing.Size(34, 13)
-        Me.Label96.TabIndex = 2
-        Me.Label96.Text = "Clean"
-        '
-        'Label97
-        '
-        Me.Label97.AutoSize = True
-        Me.Label97.Location = New System.Drawing.Point(318, 9)
-        Me.Label97.Name = "Label97"
-        Me.Label97.Size = New System.Drawing.Size(89, 13)
-        Me.Label97.TabIndex = 3
-        Me.Label97.Text = "<250 Participants"
-        '
-        'Label98
-        '
-        Me.Label98.AutoSize = True
-        Me.Label98.Location = New System.Drawing.Point(569, 9)
-        Me.Label98.Name = "Label98"
-        Me.Label98.Size = New System.Drawing.Size(108, 13)
-        Me.Label98.TabIndex = 4
-        Me.Label98.Text = "Welfare Benefit Code"
-        '
-        'Label99
-        '
-        Me.Label99.AutoSize = True
-        Me.Label99.Location = New System.Drawing.Point(839, 9)
-        Me.Label99.Name = "Label99"
-        Me.Label99.Size = New System.Drawing.Size(53, 13)
-        Me.Label99.TabIndex = 5
-        Me.Label99.Text = "Plan Year"
+        Me.Label101.AutoSize = True
+        Me.Label101.Location = New System.Drawing.Point(1057, 8)
+        Me.Label101.Name = "Label101"
+        Me.Label101.Size = New System.Drawing.Size(104, 13)
+        Me.Label101.TabIndex = 7
+        Me.Label101.Text = "Flex/Reimbursement"
         '
         'Label100
         '
         Me.Label100.AutoSize = True
-        Me.Label100.Location = New System.Drawing.Point(1054, 9)
+        Me.Label100.Location = New System.Drawing.Point(889, 8)
         Me.Label100.Name = "Label100"
         Me.Label100.Size = New System.Drawing.Size(32, 13)
         Me.Label100.TabIndex = 6
         Me.Label100.Text = "Injury"
         '
-        'CheckBox1
+        'Label99
         '
-        Me.CheckBox1.AutoSize = True
-        Me.CheckBox1.Checked = True
-        Me.CheckBox1.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.CheckBox1.Location = New System.Drawing.Point(701, 26)
-        Me.CheckBox1.Name = "CheckBox1"
-        Me.CheckBox1.Size = New System.Drawing.Size(119, 17)
-        Me.CheckBox1.TabIndex = 7
-        Me.CheckBox1.Text = "only use 5K records"
-        Me.CheckBox1.UseVisualStyleBackColor = True
+        Me.Label99.AutoSize = True
+        Me.Label99.Location = New System.Drawing.Point(700, 8)
+        Me.Label99.Name = "Label99"
+        Me.Label99.Size = New System.Drawing.Size(53, 13)
+        Me.Label99.TabIndex = 5
+        Me.Label99.Text = "Plan Year"
+        '
+        'Label98
+        '
+        Me.Label98.AutoSize = True
+        Me.Label98.Location = New System.Drawing.Point(456, 8)
+        Me.Label98.Name = "Label98"
+        Me.Label98.Size = New System.Drawing.Size(108, 13)
+        Me.Label98.TabIndex = 4
+        Me.Label98.Text = "Welfare Benefit Code"
+        '
+        'Label97
+        '
+        Me.Label97.AutoSize = True
+        Me.Label97.Location = New System.Drawing.Point(231, 8)
+        Me.Label97.Name = "Label97"
+        Me.Label97.Size = New System.Drawing.Size(89, 13)
+        Me.Label97.TabIndex = 3
+        Me.Label97.Text = "<250 Participants"
+        '
+        'Label96
+        '
+        Me.Label96.AutoSize = True
+        Me.Label96.Location = New System.Drawing.Point(61, 8)
+        Me.Label96.Name = "Label96"
+        Me.Label96.Size = New System.Drawing.Size(34, 13)
+        Me.Label96.TabIndex = 2
+        Me.Label96.Text = "Clean"
+        '
+        'dgvDirty5500
+        '
+        Me.dgvDirty5500.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvDirty5500.Location = New System.Drawing.Point(6, 25)
+        Me.dgvDirty5500.Name = "dgvDirty5500"
+        Me.dgvDirty5500.Size = New System.Drawing.Size(1217, 617)
+        Me.dgvDirty5500.TabIndex = 1
+        '
+        'TabPage7
+        '
+        Me.TabPage7.Controls.Add(Me.btnDelete_As)
+        Me.TabPage7.Controls.Add(Me.btnValidateHealth)
+        Me.TabPage7.Controls.Add(Me.btnExperience)
+        Me.TabPage7.Controls.Add(Me.btnFix_FundingGenAsset)
+        Me.TabPage7.Controls.Add(Me.btnVerifyWelfareBenefit)
+        Me.TabPage7.Controls.Add(Me.TbcontrolA)
+        Me.TabPage7.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage7.Name = "TabPage7"
+        Me.TabPage7.Size = New System.Drawing.Size(1279, 725)
+        Me.TabPage7.TabIndex = 9
+        Me.TabPage7.Text = "Schedule A"
+        Me.TabPage7.UseVisualStyleBackColor = True
+        '
+        'btnValidateHealth
+        '
+        Me.btnValidateHealth.Location = New System.Drawing.Point(511, 9)
+        Me.btnValidateHealth.Name = "btnValidateHealth"
+        Me.btnValidateHealth.Size = New System.Drawing.Size(109, 23)
+        Me.btnValidateHealth.TabIndex = 5
+        Me.btnValidateHealth.Text = "Validate Health ind"
+        Me.btnValidateHealth.UseVisualStyleBackColor = True
+        '
+        'btnExperience
+        '
+        Me.btnExperience.Location = New System.Drawing.Point(376, 9)
+        Me.btnExperience.Name = "btnExperience"
+        Me.btnExperience.Size = New System.Drawing.Size(104, 23)
+        Me.btnExperience.TabIndex = 4
+        Me.btnExperience.Text = "Calc Experience"
+        Me.btnExperience.UseVisualStyleBackColor = True
+        '
+        'btnFix_FundingGenAsset
+        '
+        Me.btnFix_FundingGenAsset.Location = New System.Drawing.Point(221, 9)
+        Me.btnFix_FundingGenAsset.Name = "btnFix_FundingGenAsset"
+        Me.btnFix_FundingGenAsset.Size = New System.Drawing.Size(124, 23)
+        Me.btnFix_FundingGenAsset.TabIndex = 3
+        Me.btnFix_FundingGenAsset.Text = "Funding Gen Asset Fix"
+        Me.btnFix_FundingGenAsset.UseVisualStyleBackColor = True
+        '
+        'btnVerifyWelfareBenefit
+        '
+        Me.btnVerifyWelfareBenefit.Location = New System.Drawing.Point(66, 9)
+        Me.btnVerifyWelfareBenefit.Name = "btnVerifyWelfareBenefit"
+        Me.btnVerifyWelfareBenefit.Size = New System.Drawing.Size(124, 23)
+        Me.btnVerifyWelfareBenefit.TabIndex = 2
+        Me.btnVerifyWelfareBenefit.Text = "Verify Welfare Benefit"
+        Me.btnVerifyWelfareBenefit.UseVisualStyleBackColor = True
+        '
+        'TbcontrolA
+        '
+        Me.TbcontrolA.Controls.Add(Me.TabPage10)
+        Me.TbcontrolA.Controls.Add(Me.TabPage11)
+        Me.TbcontrolA.Location = New System.Drawing.Point(3, 40)
+        Me.TbcontrolA.Name = "TbcontrolA"
+        Me.TbcontrolA.SelectedIndex = 0
+        Me.TbcontrolA.Size = New System.Drawing.Size(1273, 674)
+        Me.TbcontrolA.TabIndex = 1
+        '
+        'TabPage10
+        '
+        Me.TabPage10.Controls.Add(Me.dgvSched_A)
+        Me.TabPage10.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage10.Name = "TabPage10"
+        Me.TabPage10.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage10.Size = New System.Drawing.Size(1265, 648)
+        Me.TabPage10.TabIndex = 0
+        Me.TabPage10.Text = "Schedule A to Keep"
+        Me.TabPage10.UseVisualStyleBackColor = True
+        '
+        'dgvSched_A
+        '
+        Me.dgvSched_A.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvSched_A.Location = New System.Drawing.Point(6, 6)
+        Me.dgvSched_A.Name = "dgvSched_A"
+        Me.dgvSched_A.Size = New System.Drawing.Size(1253, 636)
+        Me.dgvSched_A.TabIndex = 0
+        '
+        'TabPage11
+        '
+        Me.TabPage11.Controls.Add(Me.dgv_Sched_A_Drop)
+        Me.TabPage11.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage11.Name = "TabPage11"
+        Me.TabPage11.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage11.Size = New System.Drawing.Size(1265, 648)
+        Me.TabPage11.TabIndex = 1
+        Me.TabPage11.Text = "Schedule A to Drop"
+        Me.TabPage11.UseVisualStyleBackColor = True
+        '
+        'dgv_Sched_A_Drop
+        '
+        Me.dgv_Sched_A_Drop.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgv_Sched_A_Drop.Location = New System.Drawing.Point(6, 31)
+        Me.dgv_Sched_A_Drop.Name = "dgv_Sched_A_Drop"
+        Me.dgv_Sched_A_Drop.Size = New System.Drawing.Size(1217, 611)
+        Me.dgv_Sched_A_Drop.TabIndex = 1
+        '
+        'TabPage12
+        '
+        Me.TabPage12.Controls.Add(Me.btnDeleteMarkedCs)
+        Me.TabPage12.Controls.Add(Me.btnEliminateNonAdmin)
+        Me.TabPage12.Controls.Add(Me.btnNormalizePBMNames)
+        Me.TabPage12.Controls.Add(Me.btnProviderEIN)
+        Me.TabPage12.Controls.Add(Me.TabControl3)
+        Me.TabPage12.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage12.Name = "TabPage12"
+        Me.TabPage12.Size = New System.Drawing.Size(1279, 725)
+        Me.TabPage12.TabIndex = 10
+        Me.TabPage12.Text = "Schedule C"
+        Me.TabPage12.UseVisualStyleBackColor = True
+        '
+        'btnDeleteMarkedCs
+        '
+        Me.btnDeleteMarkedCs.Location = New System.Drawing.Point(1140, 19)
+        Me.btnDeleteMarkedCs.Name = "btnDeleteMarkedCs"
+        Me.btnDeleteMarkedCs.Size = New System.Drawing.Size(113, 23)
+        Me.btnDeleteMarkedCs.TabIndex = 9
+        Me.btnDeleteMarkedCs.Text = "Delete Marked Cs"
+        Me.btnDeleteMarkedCs.UseVisualStyleBackColor = True
+        '
+        'btnEliminateNonAdmin
+        '
+        Me.btnEliminateNonAdmin.Location = New System.Drawing.Point(337, 19)
+        Me.btnEliminateNonAdmin.Name = "btnEliminateNonAdmin"
+        Me.btnEliminateNonAdmin.Size = New System.Drawing.Size(122, 23)
+        Me.btnEliminateNonAdmin.TabIndex = 8
+        Me.btnEliminateNonAdmin.Text = "Eliminate Non-Admin"
+        Me.btnEliminateNonAdmin.UseVisualStyleBackColor = True
+        '
+        'btnNormalizePBMNames
+        '
+        Me.btnNormalizePBMNames.Location = New System.Drawing.Point(188, 19)
+        Me.btnNormalizePBMNames.Name = "btnNormalizePBMNames"
+        Me.btnNormalizePBMNames.Size = New System.Drawing.Size(126, 23)
+        Me.btnNormalizePBMNames.TabIndex = 7
+        Me.btnNormalizePBMNames.Text = "Normalize PBM Names"
+        Me.btnNormalizePBMNames.UseVisualStyleBackColor = True
+        '
+        'btnProviderEIN
+        '
+        Me.btnProviderEIN.Location = New System.Drawing.Point(80, 19)
+        Me.btnProviderEIN.Name = "btnProviderEIN"
+        Me.btnProviderEIN.Size = New System.Drawing.Size(87, 23)
+        Me.btnProviderEIN.TabIndex = 1
+        Me.btnProviderEIN.Text = "Provider/EIN"
+        Me.btnProviderEIN.UseVisualStyleBackColor = True
+        '
+        'TabControl3
+        '
+        Me.TabControl3.Controls.Add(Me.TabPage13)
+        Me.TabControl3.Controls.Add(Me.TabPage14)
+        Me.TabControl3.Location = New System.Drawing.Point(17, 58)
+        Me.TabControl3.Name = "TabControl3"
+        Me.TabControl3.SelectedIndex = 0
+        Me.TabControl3.Size = New System.Drawing.Size(1246, 657)
+        Me.TabControl3.TabIndex = 0
+        '
+        'TabPage13
+        '
+        Me.TabPage13.Controls.Add(Me.dgv_ScheduleC)
+        Me.TabPage13.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage13.Name = "TabPage13"
+        Me.TabPage13.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage13.Size = New System.Drawing.Size(1238, 631)
+        Me.TabPage13.TabIndex = 0
+        Me.TabPage13.Text = "Schedule C to Keep"
+        Me.TabPage13.UseVisualStyleBackColor = True
+        '
+        'dgv_ScheduleC
+        '
+        Me.dgv_ScheduleC.AllowUserToAddRows = False
+        Me.dgv_ScheduleC.AllowUserToOrderColumns = True
+        Me.dgv_ScheduleC.AllowUserToResizeRows = False
+        Me.dgv_ScheduleC.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgv_ScheduleC.Location = New System.Drawing.Point(6, 6)
+        Me.dgv_ScheduleC.Name = "dgv_ScheduleC"
+        Me.dgv_ScheduleC.Size = New System.Drawing.Size(1226, 588)
+        Me.dgv_ScheduleC.TabIndex = 0
+        '
+        'TabPage14
+        '
+        Me.TabPage14.Controls.Add(Me.dgv_Sched_C_Drop)
+        Me.TabPage14.Location = New System.Drawing.Point(4, 22)
+        Me.TabPage14.Name = "TabPage14"
+        Me.TabPage14.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabPage14.Size = New System.Drawing.Size(1238, 631)
+        Me.TabPage14.TabIndex = 1
+        Me.TabPage14.Text = "Schedule C to Drop"
+        Me.TabPage14.UseVisualStyleBackColor = True
+        '
+        'dgv_Sched_C_Drop
+        '
+        Me.dgv_Sched_C_Drop.AllowUserToAddRows = False
+        Me.dgv_Sched_C_Drop.AllowUserToOrderColumns = True
+        Me.dgv_Sched_C_Drop.AllowUserToResizeRows = False
+        Me.dgv_Sched_C_Drop.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgv_Sched_C_Drop.Location = New System.Drawing.Point(6, 6)
+        Me.dgv_Sched_C_Drop.Name = "dgv_Sched_C_Drop"
+        Me.dgv_Sched_C_Drop.Size = New System.Drawing.Size(1226, 619)
+        Me.dgv_Sched_C_Drop.TabIndex = 0
+        '
+        'PBMs
+        '
+        Me.PBMs.Controls.Add(Me.btnAddPBM)
+        Me.PBMs.Controls.Add(Me.Label103)
+        Me.PBMs.Controls.Add(Me.txtEIN)
+        Me.PBMs.Controls.Add(Me.Label102)
+        Me.PBMs.Controls.Add(Me.cmbPBM)
+        Me.PBMs.Controls.Add(Me.dgvPBMs)
+        Me.PBMs.Location = New System.Drawing.Point(4, 22)
+        Me.PBMs.Name = "PBMs"
+        Me.PBMs.Size = New System.Drawing.Size(1279, 725)
+        Me.PBMs.TabIndex = 11
+        Me.PBMs.Text = "PBMs"
+        Me.PBMs.UseVisualStyleBackColor = True
+        '
+        'btnAddPBM
+        '
+        Me.btnAddPBM.Location = New System.Drawing.Point(720, 222)
+        Me.btnAddPBM.Name = "btnAddPBM"
+        Me.btnAddPBM.Size = New System.Drawing.Size(75, 23)
+        Me.btnAddPBM.TabIndex = 5
+        Me.btnAddPBM.Text = "Add"
+        Me.btnAddPBM.UseVisualStyleBackColor = True
+        '
+        'Label103
+        '
+        Me.Label103.AutoSize = True
+        Me.Label103.Location = New System.Drawing.Point(625, 178)
+        Me.Label103.Name = "Label103"
+        Me.Label103.Size = New System.Drawing.Size(25, 13)
+        Me.Label103.TabIndex = 4
+        Me.Label103.Text = "EIN"
+        '
+        'txtEIN
+        '
+        Me.txtEIN.Location = New System.Drawing.Point(720, 175)
+        Me.txtEIN.Name = "txtEIN"
+        Me.txtEIN.Size = New System.Drawing.Size(100, 20)
+        Me.txtEIN.TabIndex = 3
+        '
+        'Label102
+        '
+        Me.Label102.AutoSize = True
+        Me.Label102.Location = New System.Drawing.Point(625, 126)
+        Me.Label102.Name = "Label102"
+        Me.Label102.Size = New System.Drawing.Size(30, 13)
+        Me.Label102.TabIndex = 2
+        Me.Label102.Text = "PBM"
+        '
+        'cmbPBM
+        '
+        Me.cmbPBM.FormattingEnabled = True
+        Me.cmbPBM.Location = New System.Drawing.Point(720, 123)
+        Me.cmbPBM.Name = "cmbPBM"
+        Me.cmbPBM.Size = New System.Drawing.Size(300, 21)
+        Me.cmbPBM.TabIndex = 1
+        '
+        'dgvPBMs
+        '
+        Me.dgvPBMs.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvPBMs.Location = New System.Drawing.Point(32, 26)
+        Me.dgvPBMs.Name = "dgvPBMs"
+        Me.dgvPBMs.Size = New System.Drawing.Size(402, 693)
+        Me.dgvPBMs.TabIndex = 0
+        '
+        'StatusStrip1
+        '
+        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripStatusLabel1, Me.ToolStripStatusLabel2, Me.ToolStripStatusLabel3, Me.ToolStripStatusLabel4})
+        Me.StatusStrip1.Location = New System.Drawing.Point(0, 763)
+        Me.StatusStrip1.Name = "StatusStrip1"
+        Me.StatusStrip1.Size = New System.Drawing.Size(1311, 22)
+        Me.StatusStrip1.TabIndex = 1
+        Me.StatusStrip1.Text = "StatusStrip1"
+        '
+        'ToolStripStatusLabel1
+        '
+        Me.ToolStripStatusLabel1.Name = "ToolStripStatusLabel1"
+        Me.ToolStripStatusLabel1.Size = New System.Drawing.Size(51, 17)
+        Me.ToolStripStatusLabel1.Text = "Multiple"
+        '
+        'ToolStripStatusLabel2
+        '
+        Me.ToolStripStatusLabel2.Name = "ToolStripStatusLabel2"
+        Me.ToolStripStatusLabel2.Size = New System.Drawing.Size(121, 17)
+        Me.ToolStripStatusLabel2.Text = "ToolStripStatusLabel2"
+        '
+        'ToolStripStatusLabel3
+        '
+        Me.ToolStripStatusLabel3.Name = "ToolStripStatusLabel3"
+        Me.ToolStripStatusLabel3.Size = New System.Drawing.Size(121, 17)
+        Me.ToolStripStatusLabel3.Text = "ToolStripStatusLabel3"
+        '
+        'ToolStripStatusLabel4
+        '
+        Me.ToolStripStatusLabel4.Name = "ToolStripStatusLabel4"
+        Me.ToolStripStatusLabel4.Size = New System.Drawing.Size(121, 17)
+        Me.ToolStripStatusLabel4.Text = "ToolStripStatusLabel4"
+        '
+        'btnDelete_As
+        '
+        Me.btnDelete_As.Location = New System.Drawing.Point(1127, 22)
+        Me.btnDelete_As.Name = "btnDelete_As"
+        Me.btnDelete_As.Size = New System.Drawing.Size(113, 23)
+        Me.btnDelete_As.TabIndex = 10
+        Me.btnDelete_As.Text = "Delete Marked As"
+        Me.btnDelete_As.UseVisualStyleBackColor = True
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1286, 785)
+        Me.ClientSize = New System.Drawing.Size(1311, 785)
+        Me.Controls.Add(Me.StatusStrip1)
         Me.Controls.Add(Me.TabControl1)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "Form1"
@@ -3617,6 +4128,9 @@ Partial Class Form1
         Me.GroupBox6.PerformLayout()
         Me.GroupBox5.ResumeLayout(False)
         Me.GroupBox5.PerformLayout()
+        Me.TabPage4.ResumeLayout(False)
+        Me.TabPage4.PerformLayout()
+        CType(Me.dgvDuns_Dln, System.ComponentModel.ISupportInitialize).EndInit()
         Me.tpMain.ResumeLayout(False)
         Me.tpMain.PerformLayout()
         Me.TabControl2.ResumeLayout(False)
@@ -3625,7 +4139,25 @@ Partial Class Form1
         Me.TabPage9.ResumeLayout(False)
         Me.TabPage9.PerformLayout()
         CType(Me.dgvDirty5500, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPage7.ResumeLayout(False)
+        Me.TbcontrolA.ResumeLayout(False)
+        Me.TabPage10.ResumeLayout(False)
+        CType(Me.dgvSched_A, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPage11.ResumeLayout(False)
+        CType(Me.dgv_Sched_A_Drop, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPage12.ResumeLayout(False)
+        Me.TabControl3.ResumeLayout(False)
+        Me.TabPage13.ResumeLayout(False)
+        CType(Me.dgv_ScheduleC, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.TabPage14.ResumeLayout(False)
+        CType(Me.dgv_Sched_C_Drop, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.PBMs.ResumeLayout(False)
+        Me.PBMs.PerformLayout()
+        CType(Me.dgvPBMs, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.StatusStrip1.ResumeLayout(False)
+        Me.StatusStrip1.PerformLayout()
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
     Friend WithEvents TabControl1 As System.Windows.Forms.TabControl
@@ -3957,11 +4489,57 @@ Partial Class Form1
     Friend WithEvents dgvDirty5500 As System.Windows.Forms.DataGridView
     Friend WithEvents Label95 As System.Windows.Forms.Label
     Friend WithEvents TextBox176 As System.Windows.Forms.TextBox
-    Friend WithEvents CheckBox1 As System.Windows.Forms.CheckBox
+    Friend WithEvents ckb5KLimit As System.Windows.Forms.CheckBox
     Friend WithEvents Label100 As System.Windows.Forms.Label
     Friend WithEvents Label99 As System.Windows.Forms.Label
     Friend WithEvents Label98 As System.Windows.Forms.Label
     Friend WithEvents Label97 As System.Windows.Forms.Label
     Friend WithEvents Label96 As System.Windows.Forms.Label
+    Friend WithEvents TabPage7 As System.Windows.Forms.TabPage
+    Friend WithEvents TbcontrolA As System.Windows.Forms.TabControl
+    Friend WithEvents TabPage10 As System.Windows.Forms.TabPage
+    Friend WithEvents dgvSched_A As System.Windows.Forms.DataGridView
+    Friend WithEvents TabPage11 As System.Windows.Forms.TabPage
+    Friend WithEvents dgv_Sched_A_Drop As System.Windows.Forms.DataGridView
+    Friend WithEvents btnVerifyWelfareBenefit As System.Windows.Forms.Button
+    Friend WithEvents btnFix_FundingGenAsset As System.Windows.Forms.Button
+    Friend WithEvents btnExperience As System.Windows.Forms.Button
+    Friend WithEvents btnRemove5500s As System.Windows.Forms.Button
+    Friend WithEvents btnFlexPlans As System.Windows.Forms.Button
+    Friend WithEvents Label101 As System.Windows.Forms.Label
+    Friend WithEvents dgvDuns_Dln As System.Windows.Forms.DataGridView
+    Friend WithEvents TabPage12 As System.Windows.Forms.TabPage
+    Friend WithEvents TabControl3 As System.Windows.Forms.TabControl
+    Friend WithEvents TabPage13 As System.Windows.Forms.TabPage
+    Friend WithEvents TabPage14 As System.Windows.Forms.TabPage
+    Friend WithEvents dgv_ScheduleC As System.Windows.Forms.DataGridView
+    Friend WithEvents dgv_Sched_C_Drop As System.Windows.Forms.DataGridView
+    Friend WithEvents btnProviderEIN As System.Windows.Forms.Button
+    Friend WithEvents btnValidateHealth As System.Windows.Forms.Button
+    Friend WithEvents PBMs As System.Windows.Forms.TabPage
+    Friend WithEvents dgvPBMs As System.Windows.Forms.DataGridView
+    Friend WithEvents btnNormalizePBMNames As System.Windows.Forms.Button
+    Friend WithEvents btnEliminateNonAdmin As System.Windows.Forms.Button
+    Friend WithEvents btnAddPBM As System.Windows.Forms.Button
+    Friend WithEvents Label103 As System.Windows.Forms.Label
+    Friend WithEvents txtEIN As System.Windows.Forms.TextBox
+    Friend WithEvents Label102 As System.Windows.Forms.Label
+    Friend WithEvents cmbPBM As System.Windows.Forms.ComboBox
+    Friend WithEvents btnReAssess As System.Windows.Forms.Button
+    Friend WithEvents StatusStrip1 As System.Windows.Forms.StatusStrip
+    Friend WithEvents ToolStripStatusLabel1 As System.Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents ToolStripStatusLabel2 As System.Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents ToolStripStatusLabel3 As System.Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents ToolStripStatusLabel4 As System.Windows.Forms.ToolStripStatusLabel
+    Friend WithEvents Label104 As System.Windows.Forms.Label
+    Friend WithEvents btnAcceptCorporatesDeletes As System.Windows.Forms.Button
+    Friend WithEvents btnAcceptAllAdds As System.Windows.Forms.Button
+    Friend WithEvents btnAcceptCorporateDemotion As System.Windows.Forms.Button
+    Friend WithEvents btnAcceptBulkPromotion As System.Windows.Forms.Button
+    Friend WithEvents LinkLabel4 As System.Windows.Forms.LinkLabel
+    Friend WithEvents LinkLabel5 As System.Windows.Forms.LinkLabel
+    Friend WithEvents LinkLabel6 As System.Windows.Forms.LinkLabel
+    Friend WithEvents btnDeleteMarkedCs As System.Windows.Forms.Button
+    Friend WithEvents btnDelete_As As System.Windows.Forms.Button
 
 End Class

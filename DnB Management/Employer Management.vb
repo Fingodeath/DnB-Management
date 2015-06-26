@@ -3,6 +3,8 @@ Imports System.Net.Mail
 Imports System.IO
 Imports GlobalLibrary
 Imports System.Data.SqlClient
+Imports System.ComponentModel
+
 Public Class Form1
 
 
@@ -12,7 +14,7 @@ Public Class Form1
     'Private Development As New GlobalLibrary.Development("Testing")
     'Private Development As New GlobalLibrary.Development("DataRepository")
 
-    Private DBParameters As New GlobalLibrary.DBParameters(Enums.DatabaseMode.Development, "NASPROSQL1")
+    Private DBParameters As New GlobalLibrary.DBParameters(Enums.DatabaseMode.Production, "NASPROSQL1")
     Private Functions As New GlobalLibrary.Functions
     Private SQLHelper As New GlobalLibrary.SqlHelper
     Private usrApplicationManagment As New GlobalLibrary.ApplicationAccess.DRUser()
@@ -22,9 +24,10 @@ Public Class Form1
 
 
     Private filePath As String
-    Private bInitial As Boolean
+    Private bInitial As Boolean = True
     Private strCurrentUser As String
     Public Userid As String
+    Private boolReadOnly As Boolean
 
     Private dsNewCompanies As DataSet
     Private dsDBGlobal As DataSet
@@ -43,35 +46,20 @@ Public Class Form1
     Private dsDOLF5500 As DataSet
     Private dsDOLF5500Deletes As DataSet
     Private dsDOLCleanStats As DataSet
+    Private dsDOLScheduleA As DataSet
+    Private dsDOLScheduleA_Deletes As DataSet
+    Private dsDOLScheduleC As DataSet
+    Private dsDOLScheduleC_Deletes As DataSet
+    Private dsDuns_Dln As DataSet
+    Private dsPBMs As DataSet
+    Private dsPBMList As DataSet
     Dim path As String = "\\nasprosql1\Dunn & Bradstreet\DnBFlow.sql"
-
-
-
+    Dim b5KLimit As Boolean = True
 
 
     Private Sub Form1_Load(sender As Object, e As System.EventArgs) Handles Me.Load
-        'Command() is the value of whatever parameters are passed to a VB windows application in the form
-        'of one big long string with user defined delimeters
-        'by performing a split command we can separate out the passed parameters
-        Dim strParameters() As String = Split(Command(), "|")
-        If strParameters.Length < 1 Or strParameters(0) = "" Then
-            '*** the following commented lines are used for testing purposes
-            'Mode = "Update"
-            'MyDate = 8583
-            'TextDate = "July 1, 2013"
-            'MsgBox("You have entered outside of the Dashboard or there was an error loading")
-            'Me.Close()
-            'Exit Sub
-        Else
-            'Mode = strParameters(0)
-            'MyDate = strParameters(1)
-            'TextDate = strParameters(2)
-        End If
 
         Userid = ApplicationAccess.DRUser.UserID
-
-        'mark the fact that we aren't in production
-        Functions.ResetBackColorOnView(Me, DBParameters.Backcolor)
 
         Select Case DBParameters.DatabaseMode
             Case Enums.DatabaseMode.Production
@@ -87,32 +75,30 @@ Public Class Form1
         Try
             bInitial = True
             'set the user access
-            'If Not ApplicationAccess.DRUser.HasAccess("HIX_Maintenance", "Access") Then
-            '    Functions.Sendmail("Entry Denial", "Form Load", "", MyDate, "HIX_Maintenance")
-            '    MsgBox("You do not have permission to access this application")
-            '    Me.Close()
-            '    Exit Sub
-            'End If
+            If Not ApplicationAccess.DRUser.HasAccess("Employer Management", "Access") Then
+                Functions.Sendmail("Entry Denial", "Form Load", ApplicationAccess.DRUser.UserID, "", "Employer Management")
+                MsgBox("You do not have permission to access this application")
+                Me.Close()
+                Exit Sub
+            End If
             strCurrentUser = ApplicationAccess.DRUser.UserID
-            'Me.Caption = "Health Insurance Exchange Management Tool      " _
-            '        & "           Welcome " _
-            '        & ApplicationAccess.DRUser.UserProperties("FirstName") + " " _
-            '        & ApplicationAccess.DRUser.UserProperties("LastName")
+            Me.Text = "Employer Management Tool      " _
+                    & "           Welcome " _
+                    & ApplicationAccess.DRUser.UserProperties("FirstName") + " " _
+                    & ApplicationAccess.DRUser.UserProperties("LastName")
 
+            ToolStripStatusLabel1.Text = "Database Server Name:  " + DBParameters.ServerName
+            ToolStripStatusLabel2.Text = "     Database:  " + DBParameters.databaseName
+            ToolStripStatusLabel3.Text = "     Database Mode:  " + DBParameters.DatabaseMode.ToString
+            ToolStripStatusLabel4.Text = "          Version: 1.0.9.14"
 
-            'Me.DatabaseMode = DBParameters.DatabaseMode.ToString
-            'Me.DatabaseName = DBParameters.databaseName
-            'Me.ServerName = DBParameters.ServerName
-            'Me.Version = String.Format("Version: {1}.{0}.{0}.{0}", My.Application.Info.Version.Build, My.Application.Info.Version.Major, My.Application.Info.Version.Minor, My.Application.Info.Version.MinorRevision)
-            Me.BackColor = DBParameters.Backcolor
+            If Not ApplicationAccess.DRUser.HasAccess("Employer Management", "Update") Then
+                boolReadOnly = True
+            Else
+                boolReadOnly = False
+            End If
 
-            'dsNewCompanies = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "DnB.Get_New_DUNS")
-            'cmbNewGlobals.DataSource = dsNewCompanies.Tables(0)
-            'cmbNewGlobals.DisplayMember = dsNewCompanies.Tables(0).Columns("Name").ToString
-
-            'dsoldDBGlobal = SQLHelper.ExecuteDataset(CN, "DnB.s_Get_Dropped_DUNS")
-            'cmbDroppedCompanies.DataSource = dsoldDBGlobal.Tables(0)
-            'cmbDroppedCompanies.DisplayMember = dsoldDBGlobal.Tables(0).Columns("Name").ToString
+            Functions.ResetBackColorOnView(Me, Me.DBParameters.Backcolor)
 
             dsCorporateList = SQLHelper.ExecuteDataset(CN, "emp.s_get_Corporate_list")
             dgvCorporate_FormatGrid()
@@ -126,18 +112,44 @@ Public Class Form1
             dsStats = SQLHelper.ExecuteDataset(CN, "emp.s_Get_Stats")
             fillstats()
 
-            dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", 1)
+            dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", b5KLimit)
             dgvClean5500_FormatGrid()
             dgvClean5500_BindData()
 
-            dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", 1)
-            dgvdirty5500_FormatGrid()
+            dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", b5KLimit)
+            dgvDirty5500_FormatGrid()
             dgvDirty5500_BindData()
+
+            dsDOLScheduleA = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_A")
+            dgvSched_A_FormatGrid()
+            dgvSched_A_BindData()
+
+            dsDOLScheduleA_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_A")
+            dgv_Sched_A_Drop_FormatGrid()
+            dgv_Sched_A_Drop_BindData()
+
+            dsDOLScheduleC = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_C")
+            dgvSched_C_FormatGrid()
+            dgvSched_C_BindData()
+
+            dsDOLScheduleC_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_C")
+            dgv_Sched_C_Drop_FormatGrid()
+            dgv_Sched_C_Drop_BindData()
+
+            dsDuns_Dln = SQLHelper.ExecuteDataset(CN, "emp.s_get_Duns_Dln")
+            dgvDuns_Dln_FormatGrid()
+            dgvDuns_Dln_BindData()
+
+            dsPBMs = SQLHelper.ExecuteDataset(CN, "emp.s_get_PBMs")
+            dgvPBMs_FormatGrid()
+            dgvPBMs_BindData()
+
+            dsPBMList = SQLHelper.ExecuteDataset(CN, "MOV.s_GetExternalPBMCNames")
+            cmbPBM.DataSource = dsPBMList.Tables(0)
+            cmbPBM.DisplayMember = dsPBMList.Tables(0).Columns("PBMCName").ToString
 
             get_DOL_CleanStats()
 
-        
-            TabControl1.Controls.Remove(TabControl1.TabPages("TabPage4"))
             Label44.Visible = False
             Label46.Visible = False
             Label47.Visible = False
@@ -151,6 +163,13 @@ Public Class Form1
             ToolTip1.SetToolTip(btnRejectAllChanges, "All subsidiares for this Coprporation that are slated for delete are changed to 'No Change' so they won't be deleted.")
             ToolTip1.SetToolTip(ckbExpandedList, "Expands the list to include companies where employees here is greater than 100")
             ToolTip1.SetToolTip(btnAcceptAllRemainingDeletes, "Caution, this clears all the subsidiaries that are marked for deletion.  The amount of records affected is listed above")
+            ToolTip1.SetToolTip(btnProviderEIN, "Eliminates those Schedule Cs with no Provider and no Provider EIN")
+            ToolTip1.SetToolTip(btnRemove5500s, "This removes all the 5500s that were marked for deletion.  It also removes any associated Duns to DLN, Schedule A and Schedule C records")
+            ToolTip1.SetToolTip(btnVerifyWelfareBenefit, "Marks those records where Welfare Benfit Code not in 4A or 4Q")
+            ToolTip1.SetToolTip(btnFix_FundingGenAsset, "Sets funding Gen asset to 1 where it is not and Wlfr bnft stop loss ind = 1")
+            ToolTip1.SetToolTip(btnExperience, "recalculates the Experience and Non Experience RatedPremiumsPMPM where the stored number is incorrect.")
+            ToolTip1.SetToolTip(btnEliminateNonAdmin, "Marks non-admin records ('employee', 'Atorney','Auditior', etc.) for deletion")
+            ToolTip1.SetToolTip(txtEIN, "EIN must be 9 characters in length with leading zeros.  Valid characters are 0-9.")
 
             bInitial = False
         Catch ex As Exception
@@ -614,51 +633,52 @@ Public Class Form1
         Dim iresult As Integer
         Dim indexpointer As Int16
         Try
-            bInitial = True
-            indexpointer = cmbChangeList.SelectedIndex
+            If Not boolReadOnly Then
+                bInitial = True
+                indexpointer = cmbChangeList.SelectedIndex
 
+                If radDemotion.Checked Or radDoubleDemotion.Checked Then
+                    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Demotion", cmbChangeList.SelectedValue(0), strCurrentUser)
+                    'objWriter.WriteLine("EMP.s_Accept_Demotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                    Using sw As StreamWriter = File.AppendText(path)
+                        sw.WriteLine("EMP.s_Accept_Demotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                        sw.WriteLine("Go")
+                    End Using
+                ElseIf radPromotion.Checked Then
+                    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Promotion", cmbChangeList.SelectedValue(0), strCurrentUser)
+                    'objWriter.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                    Using sw As StreamWriter = File.AppendText(path)
+                        sw.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                        sw.WriteLine("Go")
+                    End Using
+                ElseIf radDeletion.Checked Then
+                    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Delete", cmbChangeList.SelectedValue(0), strCurrentUser)
+                    'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                    Using sw As StreamWriter = File.AppendText(path)
+                        sw.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                        sw.WriteLine("Go")
+                    End Using
+                ElseIf radAddition.Checked Then
+                    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
+                    'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                    Using sw As StreamWriter = File.AppendText(path)
+                        sw.WriteLine("EMP.s_Accept_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                        sw.WriteLine("Go")
+                    End Using
+                End If
 
+                If iresult = 0 Then
+                    Reprocess_Change_List()
+                End If
 
-            If radDemotion.Checked Or radDoubleDemotion.Checked Then
-                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Demotion", cmbChangeList.SelectedValue(0), strCurrentUser)
-                'objWriter.WriteLine("EMP.s_Accept_Demotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                Using sw As StreamWriter = File.AppendText(path)
-                    sw.WriteLine("EMP.s_Accept_Demotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                    sw.WriteLine("Go")
-                End Using
-            ElseIf radPromotion.Checked Then
-                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Promotion", cmbChangeList.SelectedValue(0), strCurrentUser)
-                'objWriter.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                Using sw As StreamWriter = File.AppendText(path)
-                    sw.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                    sw.WriteLine("Go")
-                End Using
-            ElseIf radDeletion.Checked Then
-                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Delete", cmbChangeList.SelectedValue(0), strCurrentUser)
-                'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                Using sw As StreamWriter = File.AppendText(path)
-                    sw.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                    sw.WriteLine("Go")
-                End Using
-            ElseIf radAddition.Checked Then
-                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
-                'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                Using sw As StreamWriter = File.AppendText(path)
-                    sw.WriteLine("EMP.s_Accept_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                    sw.WriteLine("Go")
-                End Using
+                'If dsChangeRecords.Tables(0).Rows.Count >= indexpointer + 1 Then
+                '    cmbChangeList.SelectedIndex = indexpointer
+                'Else
+                '    cmbChangeList.SelectedIndex = 1
+                'End If
+                bInitial = False
             End If
-
-            If iresult = 0 Then
-                Reprocess_Change_List()
-            End If
-
-            'If dsChangeRecords.Tables(0).Rows.Count >= indexpointer + 1 Then
-            '    cmbChangeList.SelectedIndex = indexpointer
-            'Else
-            '    cmbChangeList.SelectedIndex = 1
-            'End If
-            bInitial = False
+    
 
         Catch ex As Exception
             bInitial = False
@@ -670,27 +690,30 @@ Public Class Form1
     Private Sub btnRejectChange_Click(sender As System.Object, e As System.EventArgs) Handles btnRejectChange.Click
         Dim iresult As Integer
         Try
-            bInitial = True
-            If radAddition.Checked And cmbChangeList.SelectedIndex >= 0 Then
-                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
-                If iresult = 0 Then
-                    Using sw As StreamWriter = File.AppendText(path)
-                        sw.WriteLine("EMP.s_Reject_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                        sw.WriteLine("Go")
-                    End Using
+            If Not boolReadOnly Then
+                bInitial = True
+                If radAddition.Checked And cmbChangeList.SelectedIndex >= 0 Then
+                    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
+                    If iresult = 0 Then
+                        Using sw As StreamWriter = File.AppendText(path)
+                            sw.WriteLine("EMP.s_Reject_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                            sw.WriteLine("Go")
+                        End Using
+                    End If
+                Else
+                    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Demotion", cmbChangeList.SelectedValue(0), strCurrentUser)
+                    If iresult = 0 Then
+                        Using sw As StreamWriter = File.AppendText(path)
+                            sw.WriteLine("EMP.s_Reject_Demotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                            sw.WriteLine("Go")
+                        End Using
+                    End If
                 End If
-            Else
-                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Demotion", cmbChangeList.SelectedValue(0), strCurrentUser)
-                If iresult = 0 Then
-                    Using sw As StreamWriter = File.AppendText(path)
-                        sw.WriteLine("EMP.s_Reject_Demotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                        sw.WriteLine("Go")
-                    End Using
-                End If
+
+                Reprocess_Change_List()
+                bInitial = False
             End If
 
-            Reprocess_Change_List()
-            bInitial = False
 
         Catch ex As Exception
             bInitial = False
@@ -745,43 +768,45 @@ Public Class Form1
         Dim iresult As Integer
         Dim indexpointer As Int16
         Try
-            bInitial = True
-            indexpointer = cmbSubList.SelectedIndex
+            If Not boolReadOnly Then
+                bInitial = True
+                indexpointer = cmbSubList.SelectedIndex
 
-            If radSubDemotion.Checked Or radSubDoubleDemotion.Checked Then
-                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_SubDemotion", cmbSubList.SelectedValue(0), strCurrentUser)
-                Using sw As StreamWriter = File.AppendText(path)
-                    sw.WriteLine("EMP.s_Accept_SubDemotion " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
-                    sw.WriteLine("Go")
-                End Using
-                'ElseIf radPromotion.Checked Then
-                '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Promotion", cmbChangeList.SelectedValue(0), strCurrentUser)
-                '    'objWriter.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                '    Using sw As StreamWriter = File.AppendText(path)
-                '        sw.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                '        sw.WriteLine("Go")
-                '    End Using
-            ElseIf radSubDelete.Checked Then
-                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_SubDelete", cmbSubList.SelectedValue(0), strCurrentUser)
-                'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                Using sw As StreamWriter = File.AppendText(path)
-                    sw.WriteLine("EMP.s_Accept_SubDelete " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
-                    sw.WriteLine("Go")
-                End Using
-                'ElseIf radAddition.Checked Then
-                '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
-                '    'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                '    Using sw As StreamWriter = File.AppendText(path)
-                '        sw.WriteLine("EMP.s_Accept_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-                '        sw.WriteLine("Go")
-                '    End Using
+                If radSubDemotion.Checked Or radSubDoubleDemotion.Checked Then
+                    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_SubDemotion", cmbSubList.SelectedValue(0), strCurrentUser)
+                    Using sw As StreamWriter = File.AppendText(path)
+                        sw.WriteLine("EMP.s_Accept_SubDemotion " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
+                        sw.WriteLine("Go")
+                    End Using
+                    'ElseIf radPromotion.Checked Then
+                    '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Promotion", cmbChangeList.SelectedValue(0), strCurrentUser)
+                    '    'objWriter.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                    '    Using sw As StreamWriter = File.AppendText(path)
+                    '        sw.WriteLine("EMP.s_Accept_Promotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                    '        sw.WriteLine("Go")
+                    '    End Using
+                ElseIf radSubDelete.Checked Then
+                    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_SubDelete", cmbSubList.SelectedValue(0), strCurrentUser)
+                    'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                    Using sw As StreamWriter = File.AppendText(path)
+                        sw.WriteLine("EMP.s_Accept_SubDelete " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
+                        sw.WriteLine("Go")
+                    End Using
+                    'ElseIf radAddition.Checked Then
+                    '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
+                    '    'objWriter.WriteLine("EMP.s_Accept_Delete " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                    '    Using sw As StreamWriter = File.AppendText(path)
+                    '        sw.WriteLine("EMP.s_Accept_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                    '        sw.WriteLine("Go")
+                    '    End Using
+                End If
+
+                If iresult = 0 Then
+                    Reprocess_Sub_List()
+                End If
+
+                bInitial = False
             End If
-
-            If iresult = 0 Then
-                Reprocess_Sub_List()
-            End If
-
-            bInitial = False
 
         Catch ex As Exception
             bInitial = False
@@ -793,40 +818,42 @@ Public Class Form1
     Private Sub btnRejectSubChange_Click(sender As System.Object, e As System.EventArgs) Handles btnRejectSubChange.Click
         Dim iresult As Integer
         Try
-            bInitial = True
-            If radSubDemotion.Checked Then
-                MsgBox("There currently is no solution for this.  Please contact the DBA/Developer for a solution")
-            ElseIf radSubDoubleDemotion.Checked Then
-                MsgBox("There currently is no solution for this.  Please contact the DBA/Developer for a solution")
-            ElseIf radSubDelete.Checked Then
-                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_SubDelete", cmbSubList.SelectedValue(0), strCurrentUser)
-                If iresult = 0 Then
-                    Using sw As StreamWriter = File.AppendText(path)
-                        sw.WriteLine("EMP.s_Reject_SubDelete " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
-                        sw.WriteLine("Go")
-                    End Using
+            If Not boolReadOnly Then
+                bInitial = True
+                If radSubDemotion.Checked Then
+                    MsgBox("There currently is no solution for this.  Please contact the DBA/Developer for a solution")
+                ElseIf radSubDoubleDemotion.Checked Then
+                    MsgBox("There currently is no solution for this.  Please contact the DBA/Developer for a solution")
+                ElseIf radSubDelete.Checked Then
+                    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_SubDelete", cmbSubList.SelectedValue(0), strCurrentUser)
+                    If iresult = 0 Then
+                        Using sw As StreamWriter = File.AppendText(path)
+                            sw.WriteLine("EMP.s_Reject_SubDelete " + CStr(cmbSubList.SelectedValue(0)) + ", " + strCurrentUser)
+                            sw.WriteLine("Go")
+                        End Using
+                    End If
                 End If
-            End If
-            'If radAddition.Checked Then
-            '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
-            '    If iresult = 0 Then
-            '        Using sw As StreamWriter = File.AppendText(path)
-            '            sw.WriteLine("EMP.s_Reject_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-            '            sw.WriteLine("Go")
-            '        End Using
-            '    End If
-            'Else
-            '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Demotion", cmbChangeList.SelectedValue(0), strCurrentUser)
-            '    If iresult = 0 Then
-            '        Using sw As StreamWriter = File.AppendText(path)
-            '            sw.WriteLine("EMP.s_Reject_Demotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
-            '            sw.WriteLine("Go")
-            '        End Using
-            '    End If
-            'End If
+                'If radAddition.Checked Then
+                '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Addition", cmbChangeList.SelectedValue(0), strCurrentUser)
+                '    If iresult = 0 Then
+                '        Using sw As StreamWriter = File.AppendText(path)
+                '            sw.WriteLine("EMP.s_Reject_Addition " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                '            sw.WriteLine("Go")
+                '        End Using
+                '    End If
+                'Else
+                '    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_Demotion", cmbChangeList.SelectedValue(0), strCurrentUser)
+                '    If iresult = 0 Then
+                '        Using sw As StreamWriter = File.AppendText(path)
+                '            sw.WriteLine("EMP.s_Reject_Demotion " + CStr(cmbChangeList.SelectedValue(0)) + ", " + strCurrentUser)
+                '            sw.WriteLine("Go")
+                '        End Using
+                '    End If
+                'End If
 
-            Reprocess_Sub_List()
-            bInitial = False
+                Reprocess_Sub_List()
+                bInitial = False
+            End If
 
         Catch ex As Exception
             bInitial = False
@@ -843,8 +870,10 @@ Public Class Form1
     Private Sub btnMatchSubDelete_Click(sender As System.Object, e As System.EventArgs) Handles btnMatchSubDelete.Click
 
         Try
-            SQLHelper.ExecuteDataset(CN, "emp.s_MatchDeletionstoAdditions")
-            MsgBox("Records removed.  Please review in the stats tab to see the effect")
+            If Not boolReadOnly Then
+                SQLHelper.ExecuteDataset(CN, "emp.s_MatchDeletionstoAdditions")
+                MsgBox("Records removed.  Please review in the stats tab to see the effect")
+            End If
         Catch ex As Exception
             'Functions.Sendmail(ex.Message, "btnMatchSubDelete_Click ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
             MsgBox("Employer Maintenance : btnMatchSubDelete_Click : " + cmbSubList.SelectedValue(1) + " : " + ex.Message)
@@ -854,23 +883,26 @@ Public Class Form1
     Private Sub btnRejectAllChanges_Click(sender As System.Object, e As System.EventArgs) Handles btnRejectAllChanges.Click
         Dim iresult As Integer
         Try
-            bInitial = True
+            If Not boolReadOnly Then
+                bInitial = True
 
-            If isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid")) = "" Then
-                MsgBox("This subsidiary is missing a Parent")
-            Else
-                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_AllChanges", isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid")), strCurrentUser)
-                If iresult = 0 Then
-                    Using sw As StreamWriter = File.AppendText(path)
-                        sw.WriteLine("EMP.s_Reject_AllChanges " + CStr(isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid"))) + ", " + strCurrentUser)
-                        sw.WriteLine("Go")
-                    End Using
+                If isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid")) = "" Then
+                    MsgBox("This subsidiary is missing a Parent")
+                Else
+                    iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Reject_AllChanges", isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid")), strCurrentUser)
+                    If iresult = 0 Then
+                        Using sw As StreamWriter = File.AppendText(path)
+                            sw.WriteLine("EMP.s_Reject_AllChanges " + CStr(isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid"))) + ", " + strCurrentUser)
+                            sw.WriteLine("Go")
+                        End Using
+                    End If
                 End If
+
+
+                Reprocess_Sub_List()
+                bInitial = False
+
             End If
-
-
-            Reprocess_Sub_List()
-            bInitial = False
 
         Catch ex As Exception
             bInitial = False
@@ -882,19 +914,20 @@ Public Class Form1
     Private Sub btnAcceptAllChanges_Click(sender As System.Object, e As System.EventArgs) Handles btnAcceptAllChanges.Click
         Dim iresult As Integer
         Try
-            bInitial = True
+            If Not boolReadOnly Then
+                bInitial = True
 
-            iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_AllChanges", isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid")), strCurrentUser)
-            If iresult = 0 Then
-                Using sw As StreamWriter = File.AppendText(path)
-                    sw.WriteLine("EMP.s_Accept_AllChanges " + CStr(isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid"))) + ", " + strCurrentUser)
-                    sw.WriteLine("Go")
-                End Using
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_AllChanges", isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid")), strCurrentUser)
+                If iresult = 0 Then
+                    Using sw As StreamWriter = File.AppendText(path)
+                        sw.WriteLine("EMP.s_Accept_AllChanges " + CStr(isnull(dsSubChangeRecords.Tables(0).Rows(0).Item("parentid"))) + ", " + strCurrentUser)
+                        sw.WriteLine("Go")
+                    End Using
+                End If
+
+                Reprocess_Sub_List()
+                bInitial = False
             End If
-
-            Reprocess_Sub_List()
-            bInitial = False
-
         Catch ex As Exception
             bInitial = False
             'Functions.Sendmail(ex.Message, "btnAcceptAllChanges_Click ", cmbSubList.SelectedValue(1), 0, "Employer Maintenance")
@@ -905,25 +938,24 @@ Public Class Form1
     Private Sub btnAcceptAllRemainingDeletes_Click(sender As System.Object, e As System.EventArgs) Handles btnAcceptAllRemainingDeletes.Click
         Dim iresult As Integer
         Try
-            bInitial = True
+            If Not boolReadOnly Then
 
-            iresult = MsgBox("This will delete all of the " + TextBox11.Text + " records marked for deletion.  Are you sure you want to do this?", MsgBoxStyle.YesNo)
-            If iresult = 6 Then
-                Me.Cursor = Cursors.AppStarting
-                'Dim CN
-                Using conn As New SqlClient.SqlConnection(CN)
-                    conn.Open()
-                    Using cm As New SqlClient.SqlCommand("emp.s_Delete_Remaining", conn)
-                        cm.CommandType = CommandType.StoredProcedure
-                        cm.CommandTimeout = 500
-                        cm.ExecuteNonQuery()
-                    End Using
-                End Using
-                Me.Cursor = Cursors.Default
+                bInitial = True
+
+                iresult = MsgBox("This will delete all of the " + TextBox11.Text + " records marked for deletion.  Are you sure you want to do this?  If you select 'OK' then you must wait for the mail confirmation.", MsgBoxStyle.YesNo)
+                If iresult = 6 Then
+                    Me.Cursor = Cursors.AppStarting
+
+                    GlobalLibrary.SqlHelper.ExecuteScalar(CN, "dbo.s_UpdateETLParameter", "Employer Management", "_User", strCurrentUser)
+
+                    RUN_DTSX_Package("Delete Remaining Employers")
+
+                    Me.Cursor = Cursors.Default
+                End If
+
+                'Reprocess_Sub_List()
+                bInitial = False
             End If
-
-            Reprocess_Sub_List()
-            bInitial = False
 
         Catch ex As Exception
             bInitial = False
@@ -932,6 +964,459 @@ Public Class Form1
             MsgBox("Employer Maintenance : btnAcceptAllRemainingDeletes_Click : " + ex.Message)
         End Try
     End Sub
+
+    Private Sub btnWelfareBNFTCode_Click(sender As System.Object, e As System.EventArgs) Handles btnWelfareBNFTCode.Click
+        Dim iresult As Integer
+        Try
+            If Not boolReadOnly Then
+                bInitial = True
+                Me.Cursor = Cursors.AppStarting
+
+                Using conn As New SqlClient.SqlConnection(CN)
+                    conn.Open()
+                    Using cm As New SqlClient.SqlCommand("emp.s_RemoveWelfareBenefit", conn)
+                        cm.CommandType = CommandType.StoredProcedure
+                        cm.CommandTimeout = 3000
+                        cm.Parameters.Add("@user", SqlDbType.VarChar)
+                        cm.Parameters("@user").Value = strCurrentUser
+
+                        cm.ExecuteNonQuery()
+                    End Using
+                End Using
+
+
+                If iresult = 0 Then
+                    dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", b5KLimit)
+                    dgvClean5500_BindData()
+
+                    dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", b5KLimit)
+                    dgvDirty5500_BindData()
+
+                    get_DOL_CleanStats()
+                End If
+
+                Me.Cursor = Cursors.Default
+                bInitial = False
+            End If
+
+        Catch ex As Exception
+            bInitial = False
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnWelfareBNFTCode_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnWelfareBNFTCode_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnTaxPrepDate_Click(sender As System.Object, e As System.EventArgs) Handles btnTaxPrepDate.Click
+        Dim iresult As Integer
+        Try
+            If Not boolReadOnly Then
+                bInitial = True
+                Me.Cursor = Cursors.AppStarting
+
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_RemovebyTaxDate", TextBox176.Text, strCurrentUser)
+
+                If iresult = 0 Then
+                    dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", b5KLimit)
+                    dgvClean5500_BindData()
+
+                    dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", b5KLimit)
+                    dgvDirty5500_BindData()
+
+                    get_DOL_CleanStats()
+                End If
+
+                Me.Cursor = Cursors.Default
+                bInitial = False
+            End If
+
+        Catch ex As Exception
+            bInitial = False
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnTaxPrepDate_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnTaxPrepDate_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnInjury_Click(sender As System.Object, e As System.EventArgs) Handles btnInjury.Click
+        Dim iresult As Integer
+        Try
+            If Not boolReadOnly Then
+                bInitial = True
+                Me.Cursor = Cursors.AppStarting
+
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_RemoveInjury", strCurrentUser)
+
+                If iresult = 0 Then
+                    dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", b5KLimit)
+                    dgvClean5500_BindData()
+
+                    dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", b5KLimit)
+                    dgvDirty5500_BindData()
+
+                    get_DOL_CleanStats()
+                End If
+
+                Me.Cursor = Cursors.Default
+                bInitial = False
+            End If
+
+        Catch ex As Exception
+            bInitial = False
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnInjury_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnInjury_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnParticipantsGreaterthan250_Click(sender As System.Object, e As System.EventArgs) Handles btnParticipantsGreaterthan250.Click
+        Dim iresult As Integer
+        Try
+            If Not boolReadOnly Then
+                bInitial = True
+                Me.Cursor = Cursors.AppStarting
+
+                'iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_RemoveNoParticipants", strCurrentUser)
+
+
+                'Dim CN
+                'Using conn As New SqlClient.SqlConnection("Server=NasProSQL1;Database=Testing;timeout=0")
+                Using conn As New SqlClient.SqlConnection(CN)
+                    conn.Open()
+                    Using cm As New SqlClient.SqlCommand("emp.s_RemoveNoParticipants", conn)
+                        cm.CommandType = CommandType.StoredProcedure
+                        cm.CommandTimeout = 3000
+                        cm.Parameters.Add("@user", SqlDbType.VarChar)
+                        cm.Parameters("@user").Value = strCurrentUser
+
+                        cm.ExecuteNonQuery()
+                    End Using
+                End Using
+
+
+                If iresult = 0 Then
+                    dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", b5KLimit)
+                    dgvClean5500_BindData()
+
+                    dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", b5KLimit)
+                    dgvDirty5500_BindData()
+
+                    get_DOL_CleanStats()
+                End If
+
+                Me.Cursor = Cursors.Default
+                bInitial = False
+            End If
+
+        Catch ex As Exception
+            bInitial = False
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnParticipantsGreaterthan250_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnParticipantsGreaterthan250_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnValidateHealth_Click(sender As System.Object, e As System.EventArgs) Handles btnValidateHealth.Click
+        Dim dsFix As New DataSet
+        Try
+            If Not boolReadOnly Then
+                Me.Cursor = Cursors.AppStarting
+                dsFix = SQLHelper.ExecuteDataset(CN, "Emp.s_Clean_Health_Ind")
+
+                dsDOLScheduleA = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_A")
+                dgvSched_A_BindData()
+
+                dsDOLScheduleA_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_A")
+                dgv_Sched_A_Drop_BindData()
+
+                Me.Cursor = Cursors.Default
+
+                If dsFix.Tables.Count = 0 Then
+                    MsgBox("No records fixed")
+                Else
+                    MsgBox(CStr(dsFix.Tables(0).Rows(0).Item(0).ToString) + " records fixed.")
+                End If
+            End If
+
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnValidateHealth_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnValidateHealth_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnNormalizePBMNames_Click(sender As System.Object, e As System.EventArgs) Handles btnNormalizePBMNames.Click
+        Dim dsFix As New DataSet
+        Try
+            If Not boolReadOnly Then
+                Me.Cursor = Cursors.AppStarting
+                dsFix = SQLHelper.ExecuteDataset(CN, "Emp.s_NormalizePBMNames")
+
+                dsDOLScheduleC = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_C")
+                dgvSched_C_BindData()
+
+                dsDOLScheduleC_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_C")
+                dgv_Sched_C_Drop_BindData()
+
+                Me.Cursor = Cursors.Default
+                If dsFix.Tables.Count = 0 Then
+                    MsgBox("No records fixed")
+                Else
+                    MsgBox(CStr(dsFix.Tables(0).Rows(0).Item(0).ToString) + " records fixed.")
+                End If
+            End If
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnNormalizePBMNames_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnNormalizePBMNames_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnEliminateNonAdmin_Click(sender As System.Object, e As System.EventArgs) Handles btnEliminateNonAdmin.Click
+        Dim dsFix As New DataSet
+        Try
+            If Not boolReadOnly Then
+                Me.Cursor = Cursors.AppStarting
+                dsFix = SQLHelper.ExecuteDataset(CN, "Emp.s_Eliminate_Non_Admins")
+
+                dsDOLScheduleC = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_C")
+                dgvSched_C_BindData()
+
+                dsDOLScheduleC_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_C")
+                dgv_Sched_C_Drop_BindData()
+
+                Me.Cursor = Cursors.Default
+                If dsFix.Tables.Count = 0 Then
+                    MsgBox("No records fixed")
+                Else
+                    MsgBox(CStr(dsFix.Tables(0).Rows(0).Item(0).ToString) + " records fixed.")
+                End If
+            End If
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnEliminateNonAdmin_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnEliminateNonAdmin_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnAddPBM_Click(sender As System.Object, e As System.EventArgs) Handles btnAddPBM.Click
+        Dim dsFix As Int16
+        Try
+            If Not boolReadOnly Then
+                'Me.Cursor = Cursors.AppStarting
+                dsFix = SQLHelper.ExecuteScalar(CN, "Emp.s_CheckPBMAdd", cmbPBM.SelectedValue(0), txtEIN.Text)
+
+                If dsFix = 0 Then
+                    SQLHelper.ExecuteNonQuery(CN, "Emp.s_PBMAdd", cmbPBM.SelectedValue(0), txtEIN.Text)
+                    MsgBox("Record Added")
+                    dsPBMs = SQLHelper.ExecuteDataset(CN, "emp.s_get_PBMs")
+                    dgvPBMs_BindData()
+                ElseIf dsFix = 1 Then
+                    MsgBox("Valid characters are 0-9")
+                ElseIf dsFix = 3 Then
+                    MsgBox("EIN must be 9 characters in length with leading zeros.")
+                ElseIf dsFix = 2 Then
+                    MsgBox("This EIN is already in the table")
+                Else
+                    MsgBox("Unhandled error")
+                End If
+
+            End If
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnAddPBM_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnAddPBM_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnVerifyWelfareBenefit_Click(sender As System.Object, e As System.EventArgs) Handles btnVerifyWelfareBenefit.Click
+        Dim dsfix As New DataSet
+
+
+        Try
+            If Not boolReadOnly Then
+                Me.Cursor = Cursors.AppStarting
+                dsfix = SQLHelper.ExecuteDataset(CN, "Emp.s_Clean_StopLoss")
+
+                If dsfix.Tables.Count = 0 Then
+                    MsgBox("No records fixed")
+                Else
+                    MsgBox(CStr(dsfix.Tables(0).Rows(0).Item(0).ToString) + " records fixed.")
+                End If
+
+                dsDOLScheduleA = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_A")
+                dgvSched_A_BindData()
+
+                dsDOLScheduleA_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_A")
+                dgv_Sched_A_Drop_BindData()
+
+                Me.Cursor = Cursors.Default
+            End If
+
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnVerifyWelfareBenefit_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnVerifyWelfareBenefit_Click : " + ex.Message)
+        End Try
+
+    End Sub
+
+    Private Sub btnFix_FundingGenAsset_Click(sender As System.Object, e As System.EventArgs) Handles btnFix_FundingGenAsset.Click
+        Dim dsFix As New DataSet
+        Try
+            If Not boolReadOnly Then
+                Me.Cursor = Cursors.AppStarting
+                dsFix = SQLHelper.ExecuteDataset(CN, "Emp.s_Clean_ScheduleA_FundingGenAsset")
+
+                Me.Cursor = Cursors.Default
+                If dsFix.Tables.Count = 0 Then
+                    MsgBox("No records fixed")
+                Else
+                    MsgBox(CStr(dsFix.Tables(0).Rows(0).Item(0).ToString) + " records fixed.")
+                End If
+            End If
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnFix_FundingGenAsset_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnFix_FundingGenAsset_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnExperience_Click(sender As System.Object, e As System.EventArgs) Handles btnExperience.Click
+        Dim dsFix As New DataSet
+        Try
+            If Not boolReadOnly Then
+                Me.Cursor = Cursors.AppStarting
+                dsFix = SQLHelper.ExecuteDataset(CN, "Emp.s_Clean_ScheduleA_Experience")
+
+                dsDOLScheduleA = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_A")
+                dgvSched_A_BindData()
+
+                dsDOLScheduleA_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_A")
+                dgv_Sched_A_Drop_BindData()
+
+                Me.Cursor = Cursors.Default
+                If dsFix.Tables.Count = 0 Then
+                    MsgBox("No records fixed")
+                Else
+                    MsgBox(CStr(dsFix.Tables(0).Rows(0).Item(0).ToString) + " records fixed.")
+                End If
+            End If
+
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnExperience_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnExperience_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnRemove5500s_Click(sender As System.Object, e As System.EventArgs) Handles btnRemove5500s.Click
+        Dim iresult As Integer
+
+        Try
+            If Not boolReadOnly Then
+                iresult = MsgBox("This will delete all of the 5500s that are marked for deletion along with their associated Schedule A and C's  Are you sure you want to do this?", MsgBoxStyle.YesNo)
+                If iresult = 6 Then
+                    Me.Cursor = Cursors.AppStarting
+                    Using conn As New SqlClient.SqlConnection(CN)
+                        conn.Open()
+                        Using cm As New SqlClient.SqlCommand("emp.s_Delete_5500s", conn)
+                            cm.CommandType = CommandType.StoredProcedure
+                            cm.CommandTimeout = 500
+                            cm.ExecuteNonQuery()
+                        End Using
+                    End Using
+
+                    dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", b5KLimit)
+                    dgvClean5500_BindData()
+
+                    dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", b5KLimit)
+                    dgvDirty5500_BindData()
+
+                    dsDOLScheduleA = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_A")
+                    dgvSched_A_BindData()
+
+                    dsDOLScheduleA_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_A")
+                    dgv_Sched_A_Drop_BindData()
+
+                    dsDOLScheduleC = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_C")
+                    dgvSched_C_BindData()
+
+                    dsDOLScheduleC_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_C")
+                    dgv_Sched_C_Drop_BindData()
+
+                    Me.Cursor = Cursors.Default
+                End If
+            End If
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "btnRemove5500s_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnRemove5500s_Click : " + ex.Message)
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    Private Sub btnFlexPlans_Click(sender As System.Object, e As System.EventArgs) Handles btnFlexPlans.Click
+        Dim iresult As Integer
+        Try
+            If Not boolReadOnly Then
+                bInitial = True
+                Me.Cursor = Cursors.AppStarting
+
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_RemoveFlex_ReimbursementPlans", strCurrentUser)
+
+                If iresult = 0 Then
+                    dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", b5KLimit)
+                    dgvClean5500_BindData()
+
+                    dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", b5KLimit)
+                    dgvDirty5500_BindData()
+
+                    get_DOL_CleanStats()
+                End If
+
+                Me.Cursor = Cursors.Default
+                bInitial = False
+            End If
+
+        Catch ex As Exception
+            bInitial = False
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnFlexPlans_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnFlexPlans_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnProviderEIN_Click(sender As System.Object, e As System.EventArgs) Handles btnProviderEIN.Click
+        Dim dsfix As New DataSet
+
+
+        Try
+            If Not boolReadOnly Then
+                Me.Cursor = Cursors.AppStarting
+
+                dsfix = SQLHelper.ExecuteDataset(CN, "Emp.s_Clean_ScheduleC_NoProviderEIN")
+
+                If dsfix.Tables.Count = 0 Then
+                    MsgBox("No records fixed")
+                Else
+                    MsgBox(CStr(dsfix.Tables(0).Rows(0).Item(0).ToString) + " records fixed.")
+                End If
+
+                dsDOLScheduleC = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_C")
+                dgvSched_C_BindData()
+
+                dsDOLScheduleC_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_C")
+                dgv_Sched_C_Drop_BindData()
+
+                Me.Cursor = Cursors.Default
+            End If
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnVerifyWelfareBenefit_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnVerifyWelfareBenefit_Click : " + ex.Message)
+        End Try
+    End Sub
+
 #End Region
 
 
@@ -1061,6 +1546,44 @@ Public Class Form1
             End With
             dgvCorporate.Columns.Add(colEmployees)
 
+            'Set DataGridView textbox Column for ImportAnalysis
+            Dim colStatusCode As New DataGridViewTextBoxColumn
+            With colStatusCode
+                .DataPropertyName = "Status Code"
+                .HeaderText = "Status Code"
+                .Name = "Status Code"
+                .Width = 53
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+            End With
+            dgvCorporate.Columns.Add(colStatusCode)
+
+
+            'Set DataGridView textbox Column for ImportAnalysis
+            Dim colSubsidiaryCode As New DataGridViewTextBoxColumn
+            With colSubsidiaryCode
+                .DataPropertyName = "Subsidiary Code"
+                .HeaderText = "Subsidiary Code"
+                .Name = "Subsidiary Code"
+                .Width = 65
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+            End With
+            dgvCorporate.Columns.Add(colSubsidiaryCode)
+
+
+            'Set DataGridView textbox Column for ImportAnalysis
+            Dim colHierarchyCode As New DataGridViewTextBoxColumn
+            With colHierarchyCode
+                .DataPropertyName = "Hierarchy Code"
+                .HeaderText = "Hierarchy Code"
+                .Name = "Hierarchy Code"
+                .Width = 65
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+            End With
+            dgvCorporate.Columns.Add(colHierarchyCode)
+
             ''don't allow columns to be sorted
             'Dim i As Integer
             'For i = 0 To dgvCorporate.Columns.Count - 1
@@ -1080,7 +1603,9 @@ Public Class Form1
                 Me.dgvCorporate.Rows.Add(dsCorporateList.Tables(0).Rows(i).Item(0), dsCorporateList.Tables(0).Rows(i).Item(1), _
                                     dsCorporateList.Tables(0).Rows(i).Item(2), dsCorporateList.Tables(0).Rows(i).Item(3), _
                                     dsCorporateList.Tables(0).Rows(i).Item(4), dsCorporateList.Tables(0).Rows(i).Item(5), _
-                                    dsCorporateList.Tables(0).Rows(i).Item(6), dsCorporateList.Tables(0).Rows(i).Item(7))
+                                    dsCorporateList.Tables(0).Rows(i).Item(6), dsCorporateList.Tables(0).Rows(i).Item(7), _
+                                    dsCorporateList.Tables(0).Rows(i).Item(8), dsCorporateList.Tables(0).Rows(i).Item(9), _
+                                    dsCorporateList.Tables(0).Rows(i).Item(10))
 
             Next
         Catch ex As Exception
@@ -1088,7 +1613,6 @@ Public Class Form1
             MsgBox("Employer Maintenance : dgvCorporate_BindData  : " + ex.Message)
         End Try
     End Sub
-
 
     Private Sub dgvSubsidiaryBrowser_FormatGrid()
         'This is a general formatting grid subroutine for the HMO, PPO, HMOMedicare, HMOMedicaid datagrids
@@ -1113,6 +1637,7 @@ Public Class Form1
                 columnHeaderStyle.WrapMode = DataGridViewTriState.True
                 'set into place the previously defined header styles
                 .ColumnHeadersDefaultCellStyle = columnHeaderStyle
+                .RowHeadersWidth = 32
             End With
             'Set DataGridView textbox Column for Duns
             Dim colDUNS As New DataGridViewTextBoxColumn
@@ -1120,7 +1645,7 @@ Public Class Form1
                 .DataPropertyName = "DUNS"
                 .Name = "DUNS"
                 .Visible = True
-                .Width = 78
+                .Width = 75
             End With
             dgvSubsidiaryBrowser.Columns.Add(colDUNS)
 
@@ -1131,7 +1656,8 @@ Public Class Form1
                 '.HeaderText = "MCO Name"
                 .Name = "EmployerID"
                 .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
-                .Width = 79
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                .Width = 70
             End With
             dgvSubsidiaryBrowser.Columns.Add(colEmployerID)
 
@@ -1142,7 +1668,7 @@ Public Class Form1
                 .DataPropertyName = "BusinessName"
                 .HeaderText = "Business Name"
                 .Name = "BusinessName"
-                .Width = 300
+                .Width = 270
                 .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
                 .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
                 '.DefaultCellStyle.Format = "##,##0"
@@ -1155,7 +1681,7 @@ Public Class Form1
                 .DataPropertyName = "Address"
                 .HeaderText = "Address"
                 .Name = "Address"
-                .Width = 280
+                .Width = 245
                 .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
                 .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
                 '.DefaultCellStyle.Format = "##.00"
@@ -1168,7 +1694,7 @@ Public Class Form1
                 .DataPropertyName = "City"
                 .HeaderText = "City"
                 .Name = "City"
-                .Width = 130
+                .Width = 125
                 .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
                 .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
                 '.DefaultCellStyle.Format = "##.00"
@@ -1181,7 +1707,7 @@ Public Class Form1
                 .DataPropertyName = "State"
                 .HeaderText = "State"
                 .Name = "State"
-                .Width = 55
+                .Width = 40
                 .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
                 .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
                 '.DefaultCellStyle.Format = "##.00"
@@ -1194,7 +1720,7 @@ Public Class Form1
                 .DataPropertyName = "ImportAnalysis"
                 .HeaderText = "Import Analysis"
                 .Name = "ImportAnalysis"
-                .Width = 80
+                .Width = 75
                 .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
                 .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
                 '.DefaultCellStyle.Format = "##.00"
@@ -1227,12 +1753,49 @@ Public Class Form1
             End With
             dgvSubsidiaryBrowser.Columns.Add(colEmployeesTotal)
 
+            'Set DataGridView textbox Column for ImportAnalysis
+            Dim colStatusCode As New DataGridViewTextBoxColumn
+            With colStatusCode
+                .DataPropertyName = "Status Code"
+                .HeaderText = "Status Code"
+                .Name = "Status Code"
+                .Width = 53
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+            End With
+            dgvSubsidiaryBrowser.Columns.Add(colStatusCode)
+
+
+            'Set DataGridView textbox Column for ImportAnalysis
+            Dim colSubsidiaryCode As New DataGridViewTextBoxColumn
+            With colSubsidiaryCode
+                .DataPropertyName = "Subsidiary Code"
+                .HeaderText = "Subsidiary Code"
+                .Name = "Subsidiary Code"
+                .Width = 65
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+            End With
+            dgvSubsidiaryBrowser.Columns.Add(colSubsidiaryCode)
+
+
+            'Set DataGridView textbox Column for ImportAnalysis
+            Dim colHierarchyCode As New DataGridViewTextBoxColumn
+            With colHierarchyCode
+                .DataPropertyName = "Hierarchy Code"
+                .HeaderText = "Hierarchy Code"
+                .Name = "Hierarchy Code"
+                .Width = 65
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+            End With
+            dgvSubsidiaryBrowser.Columns.Add(colHierarchyCode)
+
         Catch ex As Exception
             Functions.Sendmail(ex.Message, "dgvSubsidiaryBrowser_FormatGrid", 0, 0, "Employer Maintenance")
             MsgBox("Employer Maintenance : dgvSubsidiaryBrowser_FormatGrid  : " + ex.Message)
         End Try
     End Sub
-
 
     Private Sub dgvSubsidiaryBrowser_BindData()
         Try
@@ -1245,7 +1808,8 @@ Public Class Form1
                                         dsSubsidiaryList.Tables(0).Rows(i).Item(2), dsSubsidiaryList.Tables(0).Rows(i).Item(3), _
                                         dsSubsidiaryList.Tables(0).Rows(i).Item(4), dsSubsidiaryList.Tables(0).Rows(i).Item(5), _
                                         dsSubsidiaryList.Tables(0).Rows(i).Item(6), dsSubsidiaryList.Tables(0).Rows(i).Item(7), _
-                                        dsSubsidiaryList.Tables(0).Rows(i).Item(8))
+                                        dsSubsidiaryList.Tables(0).Rows(i).Item(8), dsSubsidiaryList.Tables(0).Rows(i).Item(9), _
+                                        dsSubsidiaryList.Tables(0).Rows(i).Item(10), dsSubsidiaryList.Tables(0).Rows(i).Item(11))
                 Next
             Else
                 TextBox90.Text = "None"
@@ -1255,7 +1819,6 @@ Public Class Form1
             MsgBox("Employer Maintenance : dgvSubsidiaryBrowser_BindData  : " + ex.Message)
         End Try
     End Sub
-
 
     Private Sub dgvClean5500_FormatGrid()
         'This is a general formatting grid subroutine for the HMO, PPO, HMOMedicare, HMOMedicaid datagrids
@@ -1371,18 +1934,18 @@ Public Class Form1
             End With
             dgvClean5500.Columns.Add(colTYPE_WELFARE_BNFT_CODE)
 
-            'Set DataGridView textbox Column for Form_Tax_Prd
-            Dim colForm_Tax_Prd As New DataGridViewTextBoxColumn
-            With colForm_Tax_Prd
-                .DataPropertyName = "Form_Tax_Prd"
-                .HeaderText = "Tax Prepared"
-                .Name = "Form_Tax_Prd"
+            'Set DataGridView textbox Column for [FUNDING_INSURANCE_IND]
+            Dim colFunding_Insurance_Ind As New DataGridViewTextBoxColumn
+            With colFunding_Insurance_Ind
+                .DataPropertyName = "FUNDING_INSURANCE_IND"
+                .HeaderText = "Funding Insurance"
+                .Name = "FUNDING_INSURANCE_IND"
                 .Width = 70
                 .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
                 .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
-                .DefaultCellStyle.Format = "MM/dd/yyyy"
+                '.DefaultCellStyle.Format = "MM/dd/yyyy"
             End With
-            dgvClean5500.Columns.Add(colForm_Tax_Prd)
+            dgvClean5500.Columns.Add(colFunding_Insurance_Ind)
 
             'Set DataGridView textbox Column for ACK_ID
             Dim colACK_ID As New DataGridViewTextBoxColumn
@@ -1390,7 +1953,7 @@ Public Class Form1
                 .DataPropertyName = "ACK_ID"
                 .HeaderText = "ACK_ID"
                 .Name = "ACK_ID"
-                .Width = 150
+                .Width = 225
                 .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
                 .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
                 '.DefaultCellStyle.Format = "##.00"
@@ -1403,7 +1966,7 @@ Public Class Form1
                 .DataPropertyName = "Dailytimedimid"
                 .HeaderText = "Date ID"
                 .Name = "Dailytimedimid"
-                .Width = 60
+                .Width = 55
                 .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
                 .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
                 '.DefaultCellStyle.Format = "##.00"
@@ -1445,7 +2008,6 @@ Public Class Form1
             MsgBox("Employer Maintenance : dgvClean5500_BindData  : " + ex.Message)
         End Try
     End Sub
-
 
     Private Sub dgvDirty5500_FormatGrid()
         'This is a general formatting grid subroutine for the HMO, PPO, HMOMedicare, HMOMedicaid datagrids
@@ -1574,17 +2136,17 @@ Public Class Form1
             dgvDirty5500.Columns.Add(colTYPE_WELFARE_BNFT_CODE)
 
             'Set DataGridView textbox Column for Form_Tax_Prd
-            Dim colForm_Tax_Prd As New DataGridViewTextBoxColumn
-            With colForm_Tax_Prd
-                .DataPropertyName = "Form_Tax_Prd"
-                .HeaderText = "Tax Prepared"
-                .Name = "Form_Tax_Prd"
+            Dim colFunding_Insurance_Ind As New DataGridViewTextBoxColumn
+            With colFunding_Insurance_Ind
+                .DataPropertyName = "FUNDING_INSURANCE_IND"
+                .HeaderText = "Funding Insurance"
+                .Name = "FUNDING_INSURANCE_IND"
                 .Width = 70
                 .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
                 .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
-                .DefaultCellStyle.Format = "MM/dd/yyyy"
+                '.DefaultCellStyle.Format = "MM/dd/yyyy"
             End With
-            dgvDirty5500.Columns.Add(colForm_Tax_Prd)
+            dgvDirty5500.Columns.Add(colFunding_Insurance_Ind)
 
             'Set DataGridView textbox Column for ACK_ID
             Dim colACK_ID As New DataGridViewTextBoxColumn
@@ -1649,12 +2211,1310 @@ Public Class Form1
         End Try
     End Sub
 
+    Private Sub dgvClean5500_UserDeletingRow(ByVal sender As System.Object, e As DataGridViewRowCancelEventArgs) Handles dgvClean5500.UserDeletingRow
+        Dim iResult As Integer, sortColumn As DataGridViewColumn, myindex As Integer, mysortcolumn As Integer
+        Dim SetSortOrder As ListSortDirection
+        Dim GridSortOrder As SortOrder
+
+        Try
+            e.Cancel = True ' never actually delete the row.
+            If Not bInitial And Not boolReadOnly Then
+                bInitial = True
+                If dgvClean5500.SelectedRows.Count > 1 Then
+                    MsgBox("please only select 1 row to delete at a time")
+
+                Else
+
+                    sortColumn = dgvClean5500.SortedColumn
+
+
+                    If Not sortColumn Is Nothing Then
+                        mysortcolumn = sortColumn.Index
+                        GridSortOrder = dgvClean5500.SortOrder
+                    End If
+
+                    myindex = dgvClean5500.CurrentRow.Index
+
+                    iResult = SQLHelper.ExecuteScalar(CN, "Emp.s_UserDelete_5500", _
+                                                      dgvClean5500.SelectedRows(0).Cells("SPONS_DFE_EIN").Value.ToString, _
+                                                      dgvClean5500.SelectedRows(0).Cells("SPONS_DFE_PN").Value.ToString,
+                                                      Userid)
+                    If iResult = 0 Then
+                        MsgBox("Record marked for deletion")
+                    Else
+                        MsgBox("Delete failed")
+                    End If
+
+
+                    Me.Cursor = Cursors.AppStarting
+
+                    dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", b5KLimit)
+                    dgvClean5500_BindData()
+
+                    dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", b5KLimit)
+                    dgvDirty5500_BindData()
+
+                    get_DOL_CleanStats()
+
+                    If GridSortOrder = Windows.Forms.SortOrder.Ascending Then
+                        SetSortOrder = ListSortDirection.Ascending
+                    ElseIf GridSortOrder = Windows.Forms.SortOrder.Descending Then
+                        SetSortOrder = ListSortDirection.Descending
+                    ElseIf GridSortOrder = Windows.Forms.SortOrder.None Then
+                        SetSortOrder = ListSortDirection.Ascending
+                    Else : GridSortOrder = ListSortDirection.Ascending
+                        MsgBox("not good")
+                    End If
+
+                    If Not sortColumn Is Nothing Then
+                        dgvClean5500.Sort(sortColumn, SetSortOrder)
+                        Me.dgvClean5500.CurrentCell = Me.dgvClean5500(mysortcolumn, myindex)
+                    End If
 
 
 
+                    Me.Cursor = Cursors.Default
+                    bInitial = False
+                End If
+            End If
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "dgvClean5500_UserDeletingRow ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvClean5500_UserDeletingRow : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvdirty5500_UserDeletingRow(ByVal sender As System.Object, e As DataGridViewRowCancelEventArgs) Handles dgvDirty5500.UserDeletingRow
+        Dim iResult As Integer, sortColumn As DataGridViewColumn, myindex As Integer, mysortcolumn As Integer
+        Dim SetSortOrder As ListSortDirection
+        Dim GridSortOrder As SortOrder
+
+        Try
+            e.Cancel = True ' never actually delete the row.
+            If Not bInitial And Not boolReadOnly Then
+                bInitial = True
+                If dgvDirty5500.SelectedRows.Count > 1 Then
+                    MsgBox("please only select 1 row to delete at a time")
+                Else
+
+                    sortColumn = dgvClean5500.SortedColumn
+
+                    If Not sortColumn Is Nothing Then
+                        mysortcolumn = sortColumn.Index
+                        GridSortOrder = dgvDirty5500.SortOrder
+                    End If
+
+                    myindex = dgvDirty5500.CurrentRow.Index
+
+                    iResult = SQLHelper.ExecuteScalar(CN, "Emp.s_User_UnDelete_5500", _
+                                                      dgvDirty5500.SelectedRows(0).Cells("SPONS_DFE_EIN").Value.ToString, _
+                                                      dgvDirty5500.SelectedRows(0).Cells("SPONS_DFE_PN").Value.ToString,
+                                                      Userid)
+                    If iResult = 0 Then
+                        MsgBox("Record unmarked for deletion")
+                    Else
+                        MsgBox("Undelete failed")
+                    End If
+
+
+                    Me.Cursor = Cursors.AppStarting
+
+                    dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", b5KLimit)
+                    dgvClean5500_BindData()
+
+                    dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", b5KLimit)
+                    dgvDirty5500_BindData()
+
+                    get_DOL_CleanStats()
+
+                    If GridSortOrder = Windows.Forms.SortOrder.Ascending Then
+                        SetSortOrder = ListSortDirection.Ascending
+                    ElseIf GridSortOrder = Windows.Forms.SortOrder.Descending Then
+                        SetSortOrder = ListSortDirection.Descending
+                    ElseIf GridSortOrder = Windows.Forms.SortOrder.None Then
+                        SetSortOrder = ListSortDirection.Ascending
+                    Else : GridSortOrder = ListSortDirection.Ascending
+                        MsgBox("not good")
+                    End If
+
+                    If Not sortColumn Is Nothing Then
+                        dgvDirty5500.Sort(sortColumn, SetSortOrder)
+                        Me.dgvDirty5500.CurrentCell = Me.dgvDirty5500(mysortcolumn, myindex)
+                    End If
+                    Me.Cursor = Cursors.Default
+                    bInitial = False
+                End If
+
+            End If
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "dgvDirty5500_UserUnDeletingRow ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvDirty5500_UserUnDeletingRow : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvSched_A_FormatGrid()
+        'This is a general formatting grid subroutine for the HMO, PPO, HMOMedicare, HMOMedicaid datagrids
+        Try
+            'set Visual Basic Datagrid Header style to false so we can use our own
+            'The key statement required to get the column and row styles to work
+            'Visual Header styles must be shut off
+            dgvSched_A.EnableHeadersVisualStyles = False
+            'go and set the styles
+            With dgvSched_A
+                'the following line is necessary for manual column sizing 
+                .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
+                'let the columns size their heights on their own
+                .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+                '*** header settings
+                'header backcolor, text color, font bold, font, multiline and alignment
+                Dim columnHeaderStyle As New DataGridViewCellStyle
+                columnHeaderStyle.BackColor = Color.FromArgb(0, 52, 104)
+                columnHeaderStyle.ForeColor = Color.White
+                columnHeaderStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                columnHeaderStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                columnHeaderStyle.WrapMode = DataGridViewTriState.True
+                'set into place the previously defined header styles
+                .ColumnHeadersDefaultCellStyle = columnHeaderStyle
+                .RowHeadersWidth = 30
+            End With
+            'Set DataGridView textbox Column for Duns
+            Dim colDOLID As New DataGridViewTextBoxColumn
+            With colDOLID
+                .DataPropertyName = "DOLID"
+                .Name = "DOLID"
+                .Width = 55
+            End With
+            dgvSched_A.Columns.Add(colDOLID)
+
+            'Set DataGridView textbox Column for ImportAnalysis
+            Dim colFormID As New DataGridViewTextBoxColumn
+            With colFormID
+                .DataPropertyName = "Form_ID"
+                .HeaderText = "Form ID"
+                .Name = "Form_ID"
+                .Width = 50
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                .Visible = False
+            End With
+            dgvSched_A.Columns.Add(colFormID)
+
+            'Set DataGridView textbox Column for ACK_ID
+            Dim colACK_ID As New DataGridViewTextBoxColumn
+            With colACK_ID
+                .DataPropertyName = "ACK_ID"
+                .HeaderText = "ACK_ID"
+                .Name = "ACK_ID"
+                .Width = 225
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvSched_A.Columns.Add(colACK_ID)
+
+            'Set DataGridView textbox Column for Carrier
+            Dim colCarrier As New DataGridViewTextBoxColumn
+            With colCarrier
+                .DataPropertyName = "Carrier"
+                .HeaderText = "Carrier"
+                .Name = "Carrier"
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .Width = 300
+            End With
+            dgvSched_A.Columns.Add(colCarrier)
+
+
+            'Set DataGridView textbox Column for NAIC_Code
+            Dim colNAIC_Code As New DataGridViewTextBoxColumn
+            With colNAIC_Code
+                .DataPropertyName = "NAIC_Code"
+                .HeaderText = "NAIC Code"
+                .Name = "NAIC_Code"
+                .Width = 55
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+            End With
+            dgvSched_A.Columns.Add(colNAIC_Code)
+
+            'Set DataGridView textbox Column for Business Name
+            Dim colHealth As New DataGridViewTextBoxColumn
+            With colHealth
+                .DataPropertyName = "Health"
+                .HeaderText = "Health"
+                .Name = "Health"
+                .Width = 50
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+            End With
+            dgvSched_A.Columns.Add(colHealth)
+
+
+            'Set DataGridView textbox Column for Vision
+            Dim colVision As New DataGridViewTextBoxColumn
+            With colVision
+                .DataPropertyName = "Vision"
+                .HeaderText = "Vision"
+                .Name = "Vision"
+                .Width = 50
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+            End With
+            dgvSched_A.Columns.Add(colVision)
+
+            'Set DataGridView textbox Column for Dental
+            Dim colDental As New DataGridViewTextBoxColumn
+            With colDental
+                .DataPropertyName = "Dental"
+                .HeaderText = "Dental"
+                .Name = "Dental"
+                .Width = 50
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+            End With
+            dgvSched_A.Columns.Add(colDental)
+
+            'Set DataGridView textbox Column for StopLoss
+            Dim colStopLoss As New DataGridViewTextBoxColumn
+            With colStopLoss
+                .DataPropertyName = "StopLoss"
+                .HeaderText = "Stop Loss"
+                .Name = "StopLoss"
+                .Width = 50
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvSched_A.Columns.Add(colStopLoss)
+
+
+            'Set DataGridView textbox Column for HMO
+            Dim colHMO As New DataGridViewTextBoxColumn
+            With colHMO
+                .DataPropertyName = "HMO"
+                .HeaderText = "HMO"
+                .Name = "HMO"
+                .Width = 50
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvSched_A.Columns.Add(colHMO)
+
+            'Set DataGridView textbox Column for PPO
+            Dim colPPO As New DataGridViewTextBoxColumn
+            With colPPO
+                .DataPropertyName = "PPO"
+                .HeaderText = "PPO"
+                .Name = "PPO"
+                .Width = 50
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "MM/dd/yyyy"
+            End With
+            dgvSched_A.Columns.Add(colPPO)
+
+            'Set DataGridView textbox Column for Indemnity
+            Dim colIndemnity As New DataGridViewTextBoxColumn
+            With colIndemnity
+                .DataPropertyName = "Indemnity"
+                .HeaderText = "Indemnity"
+                .Name = "Indemnity"
+                .Width = 55
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "MM/dd/yyyy"
+            End With
+            dgvSched_A.Columns.Add(colIndemnity)
+
+            'Set DataGridView textbox Column for Drug
+            Dim colDrug As New DataGridViewTextBoxColumn
+            With colDrug
+                .DataPropertyName = "Drug"
+                .HeaderText = "Drug"
+                .Name = "Drug"
+                .Width = 50
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvSched_A.Columns.Add(colDrug)
+
+            'Set DataGridView textbox Column for INS_PRSN_COVERED_EOY_CNT
+            Dim colINS_PRSN_COVERED_EOY_CNT As New DataGridViewTextBoxColumn
+            With colINS_PRSN_COVERED_EOY_CNT
+                .DataPropertyName = "INS_PRSN_COVERED_EOY_CNT"
+                .HeaderText = "Covered Count"
+                .Name = "INS_PRSN_COVERED_EOY_CNT"
+                .Width = 62
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                .DefaultCellStyle.Format = "##,##0"
+            End With
+            dgvSched_A.Columns.Add(colINS_PRSN_COVERED_EOY_CNT)
+
+            'Set DataGridView textbox Column for ExperienceRatedPremiumsPMPM
+            Dim colExperienceRatedPremiumsPMPM As New DataGridViewTextBoxColumn
+            With colExperienceRatedPremiumsPMPM
+                .DataPropertyName = "ExperienceRatedPremiumsPMPM"
+                .HeaderText = "Experience Rated Premiums PMPM"
+                .Name = "ExperienceRatedPremiumsPMPM"
+                .Width = 80
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                .DefaultCellStyle.Format = "c0"
+            End With
+            dgvSched_A.Columns.Add(colExperienceRatedPremiumsPMPM)
+
+            'Set DataGridView textbox Column for NonExperienceRatedPremiumsPMPM
+            Dim colNonExperienceRatedPremiumsPMPM As New DataGridViewTextBoxColumn
+            With colNonExperienceRatedPremiumsPMPM
+                .DataPropertyName = "NonExperienceRatedPremiumsPMPM"
+                .HeaderText = "Non Experience Rated Premiums PMPM"
+                .Name = "NonExperienceRatedPremiumsPMPM"
+                .Width = 80
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                .DefaultCellStyle.Format = "c0"
+            End With
+            dgvSched_A.Columns.Add(colNonExperienceRatedPremiumsPMPM)
+
+            'Set DataGridView textbox Column for ImportAnalysis
+            Dim colOtherText As New DataGridViewTextBoxColumn
+            With colOtherText
+                .DataPropertyName = "OtherText"
+                .HeaderText = "Other Text"
+                .Name = "OtherText"
+                .Width = 300
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "MM/dd/yyyy"
+            End With
+            dgvSched_A.Columns.Add(colOtherText)
+
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgvSched_A_FormatGrid", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvSched_A_FormatGrid " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvSched_A_BindData()
+        Try
+            dgvSched_A.Rows.Clear()
+            For i As Integer = 0 To dsDOLScheduleA.Tables(0).Rows.Count - 1
+                Me.dgvSched_A.Rows.Add(dsDOLScheduleA.Tables(0).Rows(i).Item(0), dsDOLScheduleA.Tables(0).Rows(i).Item(16), _
+                                    dsDOLScheduleA.Tables(0).Rows(i).Item(15), _
+                                    dsDOLScheduleA.Tables(0).Rows(i).Item(1), dsDOLScheduleA.Tables(0).Rows(i).Item(2), _
+                                    dsDOLScheduleA.Tables(0).Rows(i).Item(3), dsDOLScheduleA.Tables(0).Rows(i).Item(4), _
+                                    dsDOLScheduleA.Tables(0).Rows(i).Item(5), dsDOLScheduleA.Tables(0).Rows(i).Item(6), _
+                                    dsDOLScheduleA.Tables(0).Rows(i).Item(7), dsDOLScheduleA.Tables(0).Rows(i).Item(8), _
+                                    dsDOLScheduleA.Tables(0).Rows(i).Item(9), dsDOLScheduleA.Tables(0).Rows(i).Item(10), _
+                                    dsDOLScheduleA.Tables(0).Rows(i).Item(12), dsDOLScheduleA.Tables(0).Rows(i).Item(13), _
+                                    dsDOLScheduleA.Tables(0).Rows(i).Item(14), dsDOLScheduleA.Tables(0).Rows(i).Item(11))
+            Next
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgvSched_A_BindData", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvSched_A_BindData  : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgv_Sched_A_Drop_FormatGrid()
+        'This is a general formatting grid subroutine for the HMO, PPO, HMOMedicare, HMOMedicaid datagrids
+        Try
+            'set Visual Basic Datagrid Header style to false so we can use our own
+            'The key statement required to get the column and row styles to work
+            'Visual Header styles must be shut off
+            dgv_Sched_A_Drop.EnableHeadersVisualStyles = False
+            'go and set the styles
+            With dgv_Sched_A_Drop
+                'the following line is necessary for manual column sizing 
+                .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
+                'let the columns size their heights on their own
+                .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+                '*** header settings
+                'header backcolor, text color, font bold, font, multiline and alignment
+                Dim columnHeaderStyle As New DataGridViewCellStyle
+                columnHeaderStyle.BackColor = Color.FromArgb(0, 52, 104)
+                columnHeaderStyle.ForeColor = Color.White
+                columnHeaderStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                columnHeaderStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                columnHeaderStyle.WrapMode = DataGridViewTriState.True
+                'set into place the previously defined header styles
+                .ColumnHeadersDefaultCellStyle = columnHeaderStyle
+            End With
+            'Set DataGridView textbox Column for Duns
+            Dim colDOLID As New DataGridViewTextBoxColumn
+            With colDOLID
+                .DataPropertyName = "DOLID"
+                .Name = "DOLID"
+                .Visible = False
+                .Width = 78
+            End With
+            dgv_Sched_A_Drop.Columns.Add(colDOLID)
+
+            'Set DataGridView textbox Column for Form_ID
+            Dim colForm_ID As New DataGridViewTextBoxColumn
+            With colForm_ID
+                .DataPropertyName = "Form_ID"
+                .HeaderText = "Form ID"
+                .Name = "Form_ID"
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .Width = 55
+            End With
+            dgv_Sched_A_Drop.Columns.Add(colForm_ID)
+
+
+            'Set DataGridView textbox Column for DataDate
+            Dim colDataDate As New DataGridViewTextBoxColumn
+            With colDataDate
+                .DataPropertyName = "DataDate"
+                .HeaderText = "Data Date"
+                .Name = "DataDate"
+                .Width = 60
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgv_Sched_A_Drop.Columns.Add(colDataDate)
+
+            'Set DataGridView textbox Column for Business Name
+            Dim colBeginDate As New DataGridViewTextBoxColumn
+            With colBeginDate
+                .DataPropertyName = "BeginDate"
+                .HeaderText = "Begin Date"
+                .Name = "BeginDate"
+                .Width = 75
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##,##0"
+            End With
+            dgv_Sched_A_Drop.Columns.Add(colBeginDate)
+
+
+            'Set DataGridView textbox Column for CarrierName
+            Dim colCarrierName As New DataGridViewTextBoxColumn
+            With colCarrierName
+                .DataPropertyName = "CarrierName"
+                .HeaderText = "Carrier Name"
+                .Name = "CarrierName"
+                .Width = 450
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgv_Sched_A_Drop.Columns.Add(colCarrierName)
+
+            'Set DataGridView textbox Column for EIN
+            Dim colEIN As New DataGridViewTextBoxColumn
+            With colEIN
+                .DataPropertyName = "EIN"
+                .HeaderText = "EIN"
+                .Name = "EIN"
+                .Width = 80
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgv_Sched_A_Drop.Columns.Add(colEIN)
+
+
+            'Set DataGridView textbox Column for NAICCode
+            Dim colNAICCode As New DataGridViewTextBoxColumn
+            With colNAICCode
+                .DataPropertyName = "NAICCode"
+                .HeaderText = "NAIC Code"
+                .Name = "NAICCode"
+                .Width = 60
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgv_Sched_A_Drop.Columns.Add(colNAICCode)
+
+            'Set DataGridView textbox Column for BrokerComm
+            Dim colBrokerComm As New DataGridViewTextBoxColumn
+            With colBrokerComm
+                .DataPropertyName = "BrokerComm"
+                .HeaderText = "Broker Comm"
+                .Name = "BrokerComm"
+                .Width = 85
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                .DefaultCellStyle.Format = "c0"
+            End With
+            dgv_Sched_A_Drop.Columns.Add(colBrokerComm)
+
+            'Set DataGridView textbox Column for Analysis
+            Dim colAnalysis As New DataGridViewTextBoxColumn
+            With colAnalysis
+                .DataPropertyName = "Analysis"
+                .HeaderText = "Analysis"
+                .Name = "Analysis"
+                .Width = 200
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+            End With
+            dgv_Sched_A_Drop.Columns.Add(colAnalysis)
+
+
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgv_Sched_A_Drop_FormatGrid", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgv_Sched_A_Drop_FormatGrid " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgv_Sched_A_Drop_BindData()
+        Try
+            dgv_Sched_A_Drop.Rows.Clear()
+            For i As Integer = 0 To dsDOLScheduleA_Deletes.Tables(0).Rows.Count - 1
+                Me.dgv_Sched_A_Drop.Rows.Add(dsDOLScheduleA_Deletes.Tables(0).Rows(i).Item(0), dsDOLScheduleA_Deletes.Tables(0).Rows(i).Item(1), _
+                                    dsDOLScheduleA_Deletes.Tables(0).Rows(i).Item(2), _
+                                    dsDOLScheduleA_Deletes.Tables(0).Rows(i).Item(3), dsDOLScheduleA_Deletes.Tables(0).Rows(i).Item(4), _
+                                    dsDOLScheduleA_Deletes.Tables(0).Rows(i).Item(5), dsDOLScheduleA_Deletes.Tables(0).Rows(i).Item(6), _
+                                    dsDOLScheduleA_Deletes.Tables(0).Rows(i).Item(7), dsDOLScheduleA_Deletes.Tables(0).Rows(i).Item(8))
+            Next
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgv_Sched_A_Drop_BindData", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgv_Sched_A_Drop_BindData  : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvSched_C_FormatGrid()
+        'This is a general formatting grid subroutine for the HMO, PPO, HMOMedicare, HMOMedicaid datagrids
+        Try
+            'set Visual Basic Datagrid Header style to false so we can use our own
+            'The key statement required to get the column and row styles to work
+            'Visual Header styles must be shut off
+            dgv_ScheduleC.EnableHeadersVisualStyles = False
+            'go and set the styles
+            With dgv_ScheduleC
+                'the following line is necessary for manual column sizing 
+                .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
+                'let the columns size their heights on their own
+                .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+                '*** header settings
+                'header backcolor, text color, font bold, font, multiline and alignment
+                Dim columnHeaderStyle As New DataGridViewCellStyle
+                columnHeaderStyle.BackColor = Color.FromArgb(0, 52, 104)
+                columnHeaderStyle.ForeColor = Color.White
+                columnHeaderStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                columnHeaderStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                columnHeaderStyle.WrapMode = DataGridViewTriState.True
+                'set into place the previously defined header styles
+                .ColumnHeadersDefaultCellStyle = columnHeaderStyle
+            End With
+            'Set DataGridView textbox Column for Duns
+            Dim colDOLID As New DataGridViewTextBoxColumn
+            With colDOLID
+                .DataPropertyName = "DOLID"
+                .Name = "DOLID"
+                .Width = 55
+            End With
+            dgv_ScheduleC.Columns.Add(colDOLID)
+
+            'Set DataGridView textbox Column for Row_Number
+            Dim colRow_Number As New DataGridViewTextBoxColumn
+            With colRow_Number
+                .DataPropertyName = "Row_Number"
+                .HeaderText = "Row Number"
+                .Name = "Row_Number"
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .Width = 55
+            End With
+            dgv_ScheduleC.Columns.Add(colRow_Number)
+
+
+            'Set DataGridView textbox Column for EIN
+            Dim colEIN As New DataGridViewTextBoxColumn
+            With colEIN
+                .DataPropertyName = "EIN"
+                .HeaderText = "EIN"
+                .Name = "EIN"
+                .Width = 75
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "$#,##0"
+            End With
+            dgv_ScheduleC.Columns.Add(colEIN)
+
+            'Set DataGridView textbox Column for Business Name
+            Dim colAck_ID As New DataGridViewTextBoxColumn
+            With colAck_ID
+                .DataPropertyName = "Ack_ID"
+                .HeaderText = "ACK ID"
+                .Name = "Ack_ID"
+                .Width = 225
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##,##0"
+            End With
+            dgv_ScheduleC.Columns.Add(colAck_ID)
+
+
+            'Set DataGridView textbox Column for Provider_Name
+            Dim colProvider_Name As New DataGridViewTextBoxColumn
+            With colProvider_Name
+                .DataPropertyName = "Provider_Name"
+                .HeaderText = "Provider Name"
+                .Name = "Provider_Name"
+                .Width = 300
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "c0"
+            End With
+            dgv_ScheduleC.Columns.Add(colProvider_Name)
+
+            'Set DataGridView textbox Column for Provider_EIN
+            Dim colProvider_EIN As New DataGridViewTextBoxColumn
+            With colProvider_EIN
+                .DataPropertyName = "Provider_EIN"
+                .HeaderText = "Provider EIN"
+                .Name = "Provider_EIN"
+                .Width = 75
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgv_ScheduleC.Columns.Add(colProvider_EIN)
+
+
+            'Set DataGridView textbox Column for Relation
+            Dim colRelation As New DataGridViewTextBoxColumn
+            With colRelation
+                .DataPropertyName = "Relation"
+                .HeaderText = "Relation"
+                .Name = "Relation"
+                .Width = 175
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgv_ScheduleC.Columns.Add(colRelation)
+
+            'Set DataGridView textbox Column for Direct_Comp_Amt
+            Dim colDirect_Comp_Amt As New DataGridViewTextBoxColumn
+            With colDirect_Comp_Amt
+                .DataPropertyName = "Direct_Comp_Amt"
+                .HeaderText = "Direct Comp Amt"
+                .Name = "Direct_Comp_Amt"
+                .Width = 100
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                .DefaultCellStyle.Format = "c2"
+            End With
+            dgv_ScheduleC.Columns.Add(colDirect_Comp_Amt)
+
+            'Set DataGridView textbox Column for Tot_ind_comp_Amt
+            Dim colTot_ind_comp_Amt As New DataGridViewTextBoxColumn
+            With colTot_ind_comp_Amt
+                .DataPropertyName = "Tot_ind_comp_Amt"
+                .HeaderText = "Tot ind comp Amt"
+                .Name = "Tot_ind_comp_Amt"
+                .Width = 100
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                .DefaultCellStyle.Format = "c2"
+            End With
+            dgv_ScheduleC.Columns.Add(colTot_ind_comp_Amt)
+
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgvSchedule_C_FormatGrid", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvSchedule_C_FormatGrid " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvSched_C_BindData()
+        Try
+            dgv_ScheduleC.Rows.Clear()
+            For i As Integer = 0 To dsDOLScheduleC.Tables(0).Rows.Count - 1
+                Me.dgv_ScheduleC.Rows.Add(dsDOLScheduleC.Tables(0).Rows(i).Item(0), dsDOLScheduleC.Tables(0).Rows(i).Item(1), _
+                                    dsDOLScheduleC.Tables(0).Rows(i).Item(2), _
+                                    dsDOLScheduleC.Tables(0).Rows(i).Item(3), dsDOLScheduleC.Tables(0).Rows(i).Item(4), _
+                                    dsDOLScheduleC.Tables(0).Rows(i).Item(5), dsDOLScheduleC.Tables(0).Rows(i).Item(6), _
+                                    dsDOLScheduleC.Tables(0).Rows(i).Item(7), dsDOLScheduleC.Tables(0).Rows(i).Item(8))
+            Next
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgvSched_C_BindData", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvSched_C_BindData  : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgv_Sched_C_Drop_FormatGrid()
+        'This is a general formatting grid subroutine for the HMO, PPO, HMOMedicare, HMOMedicaid datagrids
+        Try
+            'set Visual Basic Datagrid Header style to false so we can use our own
+            'The key statement required to get the column and row styles to work
+            'Visual Header styles must be shut off
+            dgv_Sched_C_Drop.EnableHeadersVisualStyles = False
+            'go and set the styles
+            With dgv_Sched_C_Drop
+                'the following line is necessary for manual column sizing 
+                .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
+                'let the columns size their heights on their own
+                .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+                '*** header settings
+                'header backcolor, text color, font bold, font, multiline and alignment
+                Dim columnHeaderStyle As New DataGridViewCellStyle
+                columnHeaderStyle.BackColor = Color.FromArgb(0, 52, 104)
+                columnHeaderStyle.ForeColor = Color.White
+                columnHeaderStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                columnHeaderStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                columnHeaderStyle.WrapMode = DataGridViewTriState.True
+                'set into place the previously defined header styles
+                .ColumnHeadersDefaultCellStyle = columnHeaderStyle
+                .RowHeadersWidth = 32
+            End With
+            'Set DataGridView textbox Column for Duns
+            Dim colDOLID As New DataGridViewTextBoxColumn
+            With colDOLID
+                .DataPropertyName = "DOLID"
+                .Name = "DOLID"
+                .Visible = False
+                .Width = 78
+            End With
+            dgv_Sched_C_Drop.Columns.Add(colDOLID)
+
+            'Set DataGridView textbox Column for ROW_ORDER
+            Dim colROW_ORDER As New DataGridViewTextBoxColumn
+            With colROW_ORDER
+                .DataPropertyName = "ROW_ORDER"
+                .HeaderText = "Row Order"
+                .Name = "ROW_ORDER"
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .Width = 35
+            End With
+            dgv_Sched_C_Drop.Columns.Add(colROW_ORDER)
+
+
+            'Set DataGridView textbox Column for EIN
+            Dim colEIN As New DataGridViewTextBoxColumn
+            With colEIN
+                .DataPropertyName = "EIN"
+                .HeaderText = "EIN"
+                .Name = "EIN"
+                .Width = 75
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgv_Sched_C_Drop.Columns.Add(colEIN)
+
+            'Set DataGridView textbox Column for Business Name
+            Dim colAck_ID As New DataGridViewTextBoxColumn
+            With colAck_ID
+                .DataPropertyName = "Ack_ID"
+                .HeaderText = "ACK_ID"
+                .Name = "Ack_ID"
+                .Width = 225
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##,##0"
+            End With
+            dgv_Sched_C_Drop.Columns.Add(colAck_ID)
+
+
+            'Set DataGridView textbox Column for Provider_Name
+            Dim colProvider_Name As New DataGridViewTextBoxColumn
+            With colProvider_Name
+                .DataPropertyName = "Provider_Name"
+                .HeaderText = "Provider Name"
+                .Name = "Provider_Name"
+                .Width = 300
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgv_Sched_C_Drop.Columns.Add(colProvider_Name)
+
+            'Set DataGridView textbox Column for Provider_EIN
+            Dim colProvider_EIN As New DataGridViewTextBoxColumn
+            With colProvider_EIN
+                .DataPropertyName = "Provider_EIN"
+                .HeaderText = "Provider_EIN"
+                .Name = "Provider_EIN"
+                .Width = 75
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgv_Sched_C_Drop.Columns.Add(colProvider_EIN)
+
+            'Set DataGridView textbox Column for Relation
+            Dim colRelation As New DataGridViewTextBoxColumn
+            With colRelation
+                .DataPropertyName = "Relation"
+                .HeaderText = "Relation"
+                .Name = "Relation"
+                .Width = 175
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgv_Sched_C_Drop.Columns.Add(colRelation)
+
+
+            'Set DataGridView textbox Column for Direct_Comp_Amt
+            Dim colDirect_Comp_Amt As New DataGridViewTextBoxColumn
+            With colDirect_Comp_Amt
+                .DataPropertyName = "Direct_Comp_Amt"
+                .HeaderText = "Direct Comp Amt"
+                .Name = "Direct_Comp_Amt"
+                .Width = 95
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                .DefaultCellStyle.Format = "c2"
+            End With
+            dgv_Sched_C_Drop.Columns.Add(colDirect_Comp_Amt)
+
+            'Set DataGridView textbox Column for Tot_ind_comp_Amt
+            Dim colTot_ind_comp_Amt As New DataGridViewTextBoxColumn
+            With colTot_ind_comp_Amt
+                .DataPropertyName = "Tot_ind_comp_Amt"
+                .HeaderText = "Tot ind comp Amt"
+                .Name = "Tot_ind_comp_Amt"
+                .Width = 95
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                .DefaultCellStyle.Format = "c2"
+            End With
+            dgv_Sched_C_Drop.Columns.Add(colTot_ind_comp_Amt)
+
+            'Set DataGridView textbox Column for Analysis
+            Dim colAnalysis As New DataGridViewTextBoxColumn
+            With colAnalysis
+                .DataPropertyName = "Analysis"
+                .HeaderText = "Analysis"
+                .Name = "Analysis"
+                .Width = 100
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+            End With
+            dgv_Sched_C_Drop.Columns.Add(colAnalysis)
+
+
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgv_Sched_C_Drop_FormatGrid", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgv_Sched_C_Drop_FormatGrid  : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgv_Sched_C_Drop_BindData()
+        Try
+            dgv_Sched_C_Drop.Rows.Clear()
+            For i As Integer = 0 To dsDOLScheduleC_Deletes.Tables(0).Rows.Count - 1
+                Me.dgv_Sched_C_Drop.Rows.Add(dsDOLScheduleC_Deletes.Tables(0).Rows(i).Item(0), dsDOLScheduleC_Deletes.Tables(0).Rows(i).Item(1), _
+                                    dsDOLScheduleC_Deletes.Tables(0).Rows(i).Item(2), _
+                                    dsDOLScheduleC_Deletes.Tables(0).Rows(i).Item(3), dsDOLScheduleC_Deletes.Tables(0).Rows(i).Item(4), _
+                                    dsDOLScheduleC_Deletes.Tables(0).Rows(i).Item(5), dsDOLScheduleC_Deletes.Tables(0).Rows(i).Item(6), _
+                                    dsDOLScheduleC_Deletes.Tables(0).Rows(i).Item(7), dsDOLScheduleC_Deletes.Tables(0).Rows(i).Item(8), _
+                                    dsDOLScheduleC_Deletes.Tables(0).Rows(i).Item(9))
+            Next
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgv_Sched_C_Drop_BindData", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgv_Sched_C_Drop_BindData  : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvDuns_Dln_FormatGrid()
+        'This is a general formatting grid subroutine for the HMO, PPO, HMOMedicare, HMOMedicaid datagrids
+        Try
+            'set Visual Basic Datagrid Header style to false so we can use our own
+            'The key statement required to get the column and row styles to work
+            'Visual Header styles must be shut off
+            dgvDuns_Dln.EnableHeadersVisualStyles = False
+            'go and set the styles
+            With dgvDuns_Dln
+                'the following line is necessary for manual column sizing 
+                .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
+                'let the columns size their heights on their own
+                .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+                '*** header settings
+                'header backcolor, text color, font bold, font, multiline and alignment
+                Dim columnHeaderStyle As New DataGridViewCellStyle
+                columnHeaderStyle.BackColor = Color.FromArgb(0, 52, 104)
+                columnHeaderStyle.ForeColor = Color.White
+                columnHeaderStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                columnHeaderStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                columnHeaderStyle.WrapMode = DataGridViewTriState.True
+                'set into place the previously defined header styles
+                .ColumnHeadersDefaultCellStyle = columnHeaderStyle
+                .RowHeadersWidth = 28
+            End With
+            'Set DataGridView textbox Column for Duns
+            Dim colDOLID As New DataGridViewTextBoxColumn
+            With colDOLID
+                .DataPropertyName = "DOLID"
+                .Name = "DOLID"
+                .Visible = False
+                '.Width = 70
+            End With
+            dgvDuns_Dln.Columns.Add(colDOLID)
+
+            'Set DataGridView textbox Column for DUNS
+            Dim colDUNS As New DataGridViewTextBoxColumn
+            With colDUNS
+                .DataPropertyName = "DUNS"
+                .HeaderText = "DUNS"
+                .Name = "DUNS"
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .Width = 90
+            End With
+            dgvDuns_Dln.Columns.Add(colDUNS)
+
+
+            'Set DataGridView textbox Column for BusinessName
+            Dim colBusinessName As New DataGridViewTextBoxColumn
+            With colBusinessName
+                .DataPropertyName = "BusinessName"
+                .HeaderText = "Business Name"
+                .Name = "BusinessName"
+                .Width = 290
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvDuns_Dln.Columns.Add(colBusinessName)
+
+            'Set DataGridView textbox Column for Business Name
+            Dim colEIN As New DataGridViewTextBoxColumn
+            With colEIN
+                .DataPropertyName = "EIN"
+                .HeaderText = "EIN"
+                .Name = "EIN"
+                .Width = 80
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##,##0"
+            End With
+            dgvDuns_Dln.Columns.Add(colEIN)
+
+
+            'Set DataGridView textbox Column for PN
+            Dim colPN As New DataGridViewTextBoxColumn
+            With colPN
+                .DataPropertyName = "PN"
+                .HeaderText = "PN"
+                .Name = "PN"
+                .Width = 36
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvDuns_Dln.Columns.Add(colPN)
+
+            'Set DataGridView textbox Column for DLN
+            Dim colDLN As New DataGridViewTextBoxColumn
+            With colDLN
+                .DataPropertyName = "DLN"
+                .HeaderText = "DLN"
+                .Name = "DLN"
+                .Width = 225
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvDuns_Dln.Columns.Add(colDLN)
+
+            'Set DataGridView textbox Column for PlanName
+            Dim colPlanName As New DataGridViewTextBoxColumn
+            With colPlanName
+                .DataPropertyName = "PlanName"
+                .HeaderText = "Plan Name"
+                .Name = "PlanName"
+                .Width = 445
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+            End With
+            dgvDuns_Dln.Columns.Add(colPlanName)
+
+            'Set DataGridView textbox Column for Subsidiary DUNS
+            Dim colSubsidiaryDUNS As New DataGridViewTextBoxColumn
+            With colSubsidiaryDUNS
+                .DataPropertyName = "Subsidiary DUNS"
+                .HeaderText = "Subsidiary DUNS"
+                .Name = "SubsidiaryDUNS"
+                .Width = 90
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvDuns_Dln.Columns.Add(colSubsidiaryDUNS)
+
+            'Set DataGridView textbox Column for SubsidiaryEIN
+            Dim colSubsidiaryEIN As New DataGridViewTextBoxColumn
+            With colSubsidiaryEIN
+                .DataPropertyName = "Subsidiary EIN"
+                .HeaderText = "Subsidiary EIN"
+                .Name = "SubsidiaryEIN"
+                .Width = 80
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+            End With
+            dgvDuns_Dln.Columns.Add(colSubsidiaryEIN)
+
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgvDuns_Dln_FormatGrid", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvDuns_Dln_FormatGrid " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvDuns_Dln_BindData()
+        Try
+            dgvDuns_Dln.Rows.Clear()
+            For i As Integer = 0 To dsDuns_Dln.Tables(0).Rows.Count - 1
+                Me.dgvDuns_Dln.Rows.Add(dsDuns_Dln.Tables(0).Rows(i).Item(0), dsDuns_Dln.Tables(0).Rows(i).Item(1), _
+                                    dsDuns_Dln.Tables(0).Rows(i).Item(2), _
+                                    dsDuns_Dln.Tables(0).Rows(i).Item(3), dsDuns_Dln.Tables(0).Rows(i).Item(4), _
+                                    dsDuns_Dln.Tables(0).Rows(i).Item(5), dsDuns_Dln.Tables(0).Rows(i).Item(6), _
+                                    dsDuns_Dln.Tables(0).Rows(i).Item(7), dsDuns_Dln.Tables(0).Rows(i).Item(8))
+            Next
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgvDuns_Dln_BindData", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvDuns_Dln_BindData  : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvPBMs_FormatGrid()
+        'This is a general formatting grid subroutine for the HMO, PPO, HMOMedicare, HMOMedicaid datagrids
+        Try
+            'set Visual Basic Datagrid Header style to false so we can use our own
+            'The key statement required to get the column and row styles to work
+            'Visual Header styles must be shut off
+            dgvPBMs.EnableHeadersVisualStyles = False
+            'go and set the styles
+            With dgvPBMs
+                'the following line is necessary for manual column sizing 
+                .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
+                'let the columns size their heights on their own
+                .ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+                '*** header settings
+                'header backcolor, text color, font bold, font, multiline and alignment
+                Dim columnHeaderStyle As New DataGridViewCellStyle
+                columnHeaderStyle.BackColor = Color.FromArgb(0, 52, 104)
+                columnHeaderStyle.ForeColor = Color.White
+                columnHeaderStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                columnHeaderStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                columnHeaderStyle.WrapMode = DataGridViewTriState.True
+                'set into place the previously defined header styles
+                .ColumnHeadersDefaultCellStyle = columnHeaderStyle
+                .RowHeadersWidth = 50
+            End With
+
+
+            'Set DataGridView textbox Column for PBMCName
+            Dim colPBMCName As New DataGridViewTextBoxColumn
+            With colPBMCName
+                .DataPropertyName = "PBMCName"
+                .HeaderText = "PBMC Name"
+                .Name = "PBMCName"
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .Width = 175
+            End With
+            dgvPBMs.Columns.Add(colPBMCName)
+
+            'Set DataGridView textbox Column for Business Name
+            Dim colEIN As New DataGridViewTextBoxColumn
+            With colEIN
+                .DataPropertyName = "EIN"
+                .HeaderText = "EIN"
+                .Name = "EIN"
+                .Width = 90
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##,##0"
+            End With
+            dgvPBMs.Columns.Add(colEIN)
+
+
+            'Set DataGridView textbox Column for ExternalPBMCDimID
+            Dim colExternalPBMCDimID As New DataGridViewTextBoxColumn
+            With colExternalPBMCDimID
+                .DataPropertyName = "ExternalPBMCDimID"
+                .HeaderText = "External PBMC DimID"
+                .Name = "ExternalPBMCDimID"
+                .Width = 80
+                .DefaultCellStyle.Font = New Font("Arial", 9, FontStyle.Regular)
+                .DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft
+                '.DefaultCellStyle.Format = "##.00"
+            End With
+            dgvPBMs.Columns.Add(colExternalPBMCDimID)
+
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgvPBMs_FormatGrid", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvPBMs_FormatGrid " + cmbChangeList.SelectedValue(1) + " : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvPBMs_BindData()
+        Try
+            dgvPBMs.Rows.Clear()
+            For i As Integer = 0 To dsPBMs.Tables(0).Rows.Count - 1
+                Me.dgvPBMs.Rows.Add(dsPBMs.Tables(0).Rows(i).Item(0), dsPBMs.Tables(0).Rows(i).Item(1), _
+                                    dsPBMs.Tables(0).Rows(i).Item(2))
+            Next
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "dgvPBMs_BindData", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvPBMs_BindData  : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgvSched_A_UserDeletingRow(ByVal sender As System.Object, e As DataGridViewRowCancelEventArgs) Handles dgvSched_A.UserDeletingRow
+        Dim iResult As Integer, sortColumn As DataGridViewColumn, myindex As Integer, mysortcolumn As Integer, iResult2 As Integer
+        Dim SetSortOrder As ListSortDirection
+        Dim GridSortOrder As SortOrder
+        Try
+            If Not bInitial And Not boolReadOnly Then
+                bInitial = True
+                If dgvSched_A.SelectedRows.Count > 1 Then
+                    MsgBox("please only select 1 row to delete at a time")
+                Else
+
+                    sortColumn = dgvSched_A.SortedColumn
+
+                    If Not sortColumn Is Nothing Then
+                        mysortcolumn = sortColumn.Index
+                        GridSortOrder = dgvSched_A.SortOrder
+                    End If
+
+                    myindex = dgvSched_A.CurrentRow.Index
+
+                    iResult = MsgBox("Do you wish to make this a Schedule C record?  Press 'Yes' to do so, 'No' to Delete or 'Cancel' to return", MsgBoxStyle.YesNoCancel)
+
+                    e.Cancel = True
+
+                    If iResult = 6 Then
+                        iResult2 = SQLHelper.ExecuteScalar(CN, "Emp.s_MoveScheduleAtoC", _
+                                                      dgvSched_A.Rows(dgvSched_A.CurrentRow.Index).Cells("DOLID").Value.ToString, _
+                                                      dgvSched_A.Rows(dgvSched_A.CurrentRow.Index).Cells("Form_ID").Value.ToString, _
+                                                      Userid)
+                        If iResult2 = 0 Then
+                            MsgBox("Record movved")
+                            Me.Cursor = Cursors.AppStarting
+
+                            dsDOLScheduleA = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_A")
+                            dgvSched_A_BindData()
+
+                            dsDOLScheduleC = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_C")
+                            dgvSched_C_BindData()
+                        Else
+                            MsgBox("Move failed")
+                        End If
+                    ElseIf iResult = 2 Then
+                        'just mark it as delete.
+                        iResult2 = SQLHelper.ExecuteScalar(CN, "Emp.s_UserDelete_ScheduleA", _
+                                                      dgvSched_A.Rows(dgvSched_A.CurrentRow.Index).Cells("DOLID").Value.ToString, _
+                                                      dgvSched_A.Rows(dgvSched_A.CurrentRow.Index).Cells("Form_ID").Value.ToString, _
+                                                      Userid)
+                        If iResult2 = 0 Then
+                            MsgBox("Record marked for deletion")
+                        Else
+                            MsgBox("Delete failed")
+                        End If
+                    End If ' no need to do anything special for 'No'
+
+
+
+                    Me.Cursor = Cursors.AppStarting
+
+                    dsDOLScheduleA = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_A")
+                    dgvSched_A_BindData()
+
+                    dsDOLScheduleA_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_A")
+                    dgv_Sched_A_Drop_BindData()
+
+                    If GridSortOrder = Windows.Forms.SortOrder.Ascending Then
+                        SetSortOrder = ListSortDirection.Ascending
+                    ElseIf GridSortOrder = Windows.Forms.SortOrder.Descending Then
+                        SetSortOrder = ListSortDirection.Descending
+                    ElseIf GridSortOrder = Windows.Forms.SortOrder.None Then
+                        SetSortOrder = ListSortDirection.Ascending
+                    Else : GridSortOrder = ListSortDirection.Ascending
+                        MsgBox("not good")
+                    End If
+
+                    If Not sortColumn Is Nothing Then
+                        dgvSched_A.Sort(sortColumn, SetSortOrder)
+                        Me.dgvSched_A.CurrentCell = Me.dgvSched_A(mysortcolumn, myindex)
+                    End If
+
+                    Me.Cursor = Cursors.Default
+                    bInitial = False
+                End If
+            End If
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "dgvSched_A_UserDeletingRow ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgvSched_A_UserDeletingRow : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub dgv_Sched_A_Drop_UserDeletingRow(ByVal sender As System.Object, e As DataGridViewRowCancelEventArgs) Handles dgv_Sched_A_Drop.UserDeletingRow
+        Dim iResult As Integer, sortColumn As DataGridViewColumn, myindex As Integer, mysortcolumn As Integer
+        Dim SetSortOrder As ListSortDirection
+        Dim GridSortOrder As SortOrder
+
+        Try
+            e.Cancel = True ' never actually delete the row.
+            If Not bInitial And Not boolReadOnly Then
+                bInitial = True
+                If dgv_Sched_A_Drop.SelectedRows.Count > 1 Then
+                    MsgBox("please only select 1 row to delete at a time")
+                Else
+
+                    sortColumn = dgv_Sched_A_Drop.SortedColumn
+
+                    If Not sortColumn Is Nothing Then
+                        mysortcolumn = sortColumn.Index
+                        GridSortOrder = dgv_Sched_A_Drop.SortOrder
+                    End If
+
+                    myindex = dgv_Sched_A_Drop.CurrentRow.Index
+
+                    iResult = SQLHelper.ExecuteScalar(CN, "Emp.s_User_UnDelete_ScheduleA", _
+                                                      dgv_Sched_A_Drop.Rows(dgv_Sched_A_Drop.CurrentRow.Index).Cells("DOLID").Value.ToString, _
+                                                      dgv_Sched_A_Drop.Rows(dgv_Sched_A_Drop.CurrentRow.Index).Cells("Form_ID").Value.ToString, _
+                                                      Userid)
+                    If iResult = 0 Then
+                        MsgBox("Record unmarked for deletion")
+                    Else
+                        MsgBox("Undelete failed")
+                    End If
+
+
+                    Me.Cursor = Cursors.AppStarting
+
+                    dsDOLScheduleA = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_A")
+                    dgvSched_A_BindData()
+
+                    dsDOLScheduleA_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_A")
+                    dgv_Sched_A_Drop_BindData()
+
+                    If GridSortOrder = Windows.Forms.SortOrder.Ascending Then
+                        SetSortOrder = ListSortDirection.Ascending
+                    ElseIf GridSortOrder = Windows.Forms.SortOrder.Descending Then
+                        SetSortOrder = ListSortDirection.Descending
+                    ElseIf GridSortOrder = Windows.Forms.SortOrder.None Then
+                        SetSortOrder = ListSortDirection.Ascending
+                    Else : GridSortOrder = ListSortDirection.Ascending
+                        MsgBox("not good")
+                    End If
+
+                    If Not sortColumn Is Nothing Then
+                        dgv_Sched_A_Drop.Sort(sortColumn, SetSortOrder)
+                        Me.dgv_Sched_A_Drop.CurrentCell = Me.dgv_Sched_A_Drop(mysortcolumn, myindex)
+                    End If
+                    Me.Cursor = Cursors.Default
+                    bInitial = False
+                End If
+
+            End If
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "dgv_Sched_A_Drop_UserDeletingRow ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgv_Sched_A_Drop_UserDeletingRow : " + ex.Message)
+        End Try
+    End Sub
 #End Region
-
-
 
 
     Private Sub get_ChangeData()
@@ -2212,8 +4072,6 @@ Public Class Form1
         End Try
     End Sub
 
-
-
     Private Sub ckbSortAlpha_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles ckbSortAlpha.CheckedChanged
         Reprocess_Sub_List()
     End Sub
@@ -2226,150 +4084,6 @@ Public Class Form1
         Reprocess_Sub_List()
     End Sub
 
-   
-    Private Sub btnParticipantsGreaterthan250_Click(sender As System.Object, e As System.EventArgs) Handles btnParticipantsGreaterthan250.Click
-        Dim iresult As Integer
-        Try
-            bInitial = True
-            Me.Cursor = Cursors.AppStarting
-
-            'iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_RemoveNoParticipants", strCurrentUser)
-
-
-            'Dim CN
-            'Using conn As New SqlClient.SqlConnection("Server=NasProSQL1;Database=Testing;timeout=0")
-            Using conn As New SqlClient.SqlConnection(CN)
-                conn.Open()
-                Using cm As New SqlClient.SqlCommand("emp.s_RemoveNoParticipants", conn)
-                    cm.CommandType = CommandType.StoredProcedure
-                    cm.CommandTimeout = 3000
-                    cm.Parameters.Add("@user", SqlDbType.VarChar)
-                    cm.Parameters("@user").Value = strCurrentUser
-
-                    cm.ExecuteNonQuery()
-                End Using
-            End Using
-
-
-            If iresult = 0 Then
-                dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", 1)
-                dgvClean5500_BindData()
-
-                dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", 1)
-                dgvDirty5500_BindData()
-
-                get_DOL_CleanStats()
-            End If
-
-            Me.Cursor = Cursors.Default
-            bInitial = False
-
-        Catch ex As Exception
-            bInitial = False
-            Me.Cursor = Cursors.Default
-            'Functions.Sendmail(ex.Message, "btnParticipantsGreaterthan250_Click ", 0, 0, "Employer Maintenance")
-            MsgBox("Employer Maintenance : btnParticipantsGreaterthan250_Click : " + ex.Message)
-        End Try
-    End Sub
-
-    Private Sub btnWelfareBNFTCode_Click(sender As System.Object, e As System.EventArgs) Handles btnWelfareBNFTCode.Click
-        Dim iresult As Integer
-        Try
-            bInitial = True
-            Me.Cursor = Cursors.AppStarting
-
-            Using conn As New SqlClient.SqlConnection(CN)
-                conn.Open()
-                Using cm As New SqlClient.SqlCommand("emp.s_RemoveWelfareBenefit", conn)
-                    cm.CommandType = CommandType.StoredProcedure
-                    cm.CommandTimeout = 3000
-                    cm.Parameters.Add("@user", SqlDbType.VarChar)
-                    cm.Parameters("@user").Value = strCurrentUser
-
-                    cm.ExecuteNonQuery()
-                End Using
-            End Using
-
-
-            If iresult = 0 Then
-                dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", 1)
-                dgvClean5500_BindData()
-
-                dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", 1)
-                dgvDirty5500_BindData()
-
-                get_DOL_CleanStats()
-            End If
-
-            Me.Cursor = Cursors.Default
-            bInitial = False
-
-        Catch ex As Exception
-            bInitial = False
-            Me.Cursor = Cursors.Default
-            'Functions.Sendmail(ex.Message, "btnWelfareBNFTCode_Click ", 0, 0, "Employer Maintenance")
-            MsgBox("Employer Maintenance : btnWelfareBNFTCode_Click : " + ex.Message)
-        End Try
-    End Sub
-
-    Private Sub btnTaxPrepDate_Click(sender As System.Object, e As System.EventArgs) Handles btnTaxPrepDate.Click
-        Dim iresult As Integer
-        Try
-            bInitial = True
-            Me.Cursor = Cursors.AppStarting
-
-            iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_RemovebyTaxDate", TextBox176.Text, strCurrentUser)
-
-            If iresult = 0 Then
-                dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", 1)
-                dgvClean5500_BindData()
-
-                dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", 1)
-                dgvDirty5500_BindData()
-
-                get_DOL_CleanStats()
-            End If
-
-            Me.Cursor = Cursors.Default
-            bInitial = False
-
-        Catch ex As Exception
-            bInitial = False
-            Me.Cursor = Cursors.Default
-            'Functions.Sendmail(ex.Message, "btnTaxPrepDate_Click ", 0, 0, "Employer Maintenance")
-            MsgBox("Employer Maintenance : btnTaxPrepDate_Click : " + ex.Message)
-        End Try
-    End Sub
-
-    Private Sub btnInjury_Click(sender As System.Object, e As System.EventArgs) Handles btnInjury.Click
-        Dim iresult As Integer
-        Try
-            bInitial = True
-            Me.Cursor = Cursors.AppStarting
-
-            iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_RemoveInjury", strCurrentUser)
-
-            If iresult = 0 Then
-                dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", 1)
-                dgvClean5500_BindData()
-
-                dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", 1)
-                dgvDirty5500_BindData()
-
-                get_DOL_CleanStats()
-            End If
-
-            Me.Cursor = Cursors.Default
-            bInitial = False
-
-        Catch ex As Exception
-            bInitial = False
-            Me.Cursor = Cursors.Default
-            'Functions.Sendmail(ex.Message, "btnInjury_Click ", 0, 0, "Employer Maintenance")
-            MsgBox("Employer Maintenance : btnInjury_Click : " + ex.Message)
-        End Try
-    End Sub
-
     Private Sub get_DOL_CleanStats()
         dsDOLCleanStats = SQLHelper.ExecuteDataset(CN, "EMP.s_get_DOLCleanStats")
 
@@ -2379,6 +4093,353 @@ Public Class Form1
             Label98.Text = dsDOLCleanStats.Tables(0).Rows(0).Item("WelfareBenefit") + " Welfare Benefit Code"
             Label99.Text = dsDOLCleanStats.Tables(0).Rows(0).Item("PlanYear") + " Plan Year"
             Label100.Text = dsDOLCleanStats.Tables(0).Rows(0).Item("Injury") + " Injury"
+            Label101.Text = dsDOLCleanStats.Tables(0).Rows(0).Item("FlexPlans") + " Flex/Reimbursement"
         End If
+    End Sub
+
+    Private Sub ckb5KLimit_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles ckb5KLimit.CheckedChanged
+        Try
+            If Not bInitial Then
+                bInitial = True
+
+                If ckb5KLimit.Checked Then
+                    b5KLimit = True
+                Else
+                    b5KLimit = False
+                End If
+                dsDOLF5500 = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_5500", b5KLimit)
+                dgvClean5500_BindData()
+
+                dsDOLF5500Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_5500", b5KLimit)
+                dgvDirty5500_BindData()
+
+                bInitial = False
+            End If
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "ckb5KLimit_CheckedChanged ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : ckb5KLimit_CheckedChanged : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub RUN_DTSX_Package(ByVal Package As String)
+        Try
+            Dim jobConnection As SqlConnection
+            Dim jobCommand As SqlCommand
+            Dim jobReturnValue As SqlParameter
+            Dim jobParameter As SqlParameter
+            Dim jobResult As Integer
+
+
+            jobConnection = New SqlConnection("Data Source=NASPROSQL1;Initial Catalog=msdb;User ID=HLIDBAdmin;PWD=^HLI<&dm!n")
+            jobCommand = New SqlCommand("sp_start_job", jobConnection)
+            jobCommand.CommandType = CommandType.StoredProcedure
+
+            'required
+            jobReturnValue = New SqlParameter("@RETURN_VALUE", SqlDbType.Int)
+            jobReturnValue.Direction = ParameterDirection.ReturnValue
+            jobCommand.Parameters.Add(jobReturnValue)
+
+            'required
+            jobParameter = New SqlParameter("@job_name", SqlDbType.VarChar)
+            jobParameter.Direction = ParameterDirection.Input
+            jobCommand.Parameters.Add(jobParameter)
+            jobParameter.Value = Package   'This is the DTSX package that exists in the directory of the Executable
+
+            jobConnection.Open()
+            jobCommand.ExecuteNonQuery()
+            jobResult = DirectCast(jobCommand.Parameters("@RETURN_VALUE").Value, Integer)
+            jobConnection.Close()
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
+    End Sub
+
+
+    Private Sub btnReAssess_Click(sender As System.Object, e As System.EventArgs) Handles btnReAssess.Click
+        Dim dsfix As New DataSet
+
+
+        Try
+            If Not boolReadOnly Then
+                Me.Cursor = Cursors.AppStarting
+
+                dsfix = SQLHelper.ExecuteDataset(CN, "Emp.S_Reassess_DUNS_DLN")
+
+                MsgBox("No records Updated")
+               
+
+                dsDuns_Dln = SQLHelper.ExecuteDataset(CN, "emp.s_get_Duns_Dln")
+                dgvDuns_Dln_BindData()
+
+                Me.Cursor = Cursors.Default
+            End If
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnReAssess_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnReAssess_Click : " + ex.Message)
+        End Try
+    End Sub
+
+
+  
+    Private Sub btnAcceptCorporatesDeletes_Click(sender As System.Object, e As System.EventArgs) Handles btnAcceptCorporatesDeletes.Click
+        Dim iresult As Integer
+        Try
+
+            Me.Cursor = Cursors.AppStarting
+            dsDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_Delete_List")
+
+            While dsDemotionList.Tables(0).Rows.Count > 1
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Delete", dsDemotionList.Tables(0).Rows(1).Item("EmployerID"), strCurrentUser)
+                Using sw As StreamWriter = File.AppendText(path)
+                    sw.WriteLine("EMP.s_Accept_Delete " + CStr(dsDemotionList.Tables(0).Rows(1).Item("EmployerID")) + ", " + strCurrentUser)
+                    sw.WriteLine("Go")
+                End Using
+
+                dsDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_Delete_List")
+            End While
+
+            MsgBox("Deletion Complete")
+            Me.Cursor = Cursors.Default
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnAcceptCorporatesDeletes_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnAcceptCorporatesDeletes_Click : " + ex.Message)
+        End Try
+
+    End Sub
+
+    Private Sub btnAcceptAllAdds_Click(sender As System.Object, e As System.EventArgs) Handles btnAcceptAllAdds.Click
+        Dim iresult As Integer
+        Try
+
+            Me.Cursor = Cursors.AppStarting
+            dsDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_Addition_List")
+
+            While dsDemotionList.Tables(0).Rows.Count > 1
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Addition", dsDemotionList.Tables(0).Rows(1).Item("EmployerID"), strCurrentUser)
+                Using sw As StreamWriter = File.AppendText(path)
+                    sw.WriteLine("EMP.s_Accept_Addition " + CStr(dsDemotionList.Tables(0).Rows(1).Item("EmployerID")) + ", " + strCurrentUser)
+                    sw.WriteLine("Go")
+                End Using
+
+                dsDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_Addition_List")
+            End While
+
+            MsgBox("Additions Complete")
+            Me.Cursor = Cursors.Default
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnAcceptAllAdds_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnAcceptAllAdds_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnAcceptCorporateDemotion_Click(sender As System.Object, e As System.EventArgs) Handles btnAcceptCorporateDemotion.Click
+        Dim iresult As Integer
+        Try
+
+            Me.Cursor = Cursors.AppStarting
+            dsDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_Demotion_List")
+
+            While dsDemotionList.Tables(0).Rows.Count > 1
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Demotion", dsDemotionList.Tables(0).Rows(1).Item("EmployerID"), strCurrentUser)
+                Using sw As StreamWriter = File.AppendText(path)
+                    sw.WriteLine("EMP.s_Accept_Demotion " + CStr(dsDemotionList.Tables(0).Rows(1).Item("EmployerID")) + ", " + strCurrentUser)
+                    sw.WriteLine("Go")
+                End Using
+
+                dsDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_Demotion_List")
+            End While
+
+            MsgBox("Demotions Complete")
+            Me.Cursor = Cursors.Default
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnAcceptCorporateDemotion_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnAcceptCorporateDemotion_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnAcceptBulkPromotion_Click(sender As System.Object, e As System.EventArgs) Handles btnAcceptBulkPromotion.Click
+        Dim iresult As Integer
+        Try
+
+            Me.Cursor = Cursors.AppStarting
+            dsDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_Promotion_List")
+
+            While dsDemotionList.Tables(0).Rows.Count > 1
+                iresult = SQLHelper.ExecuteScalar(CN, "EMP.s_Accept_Promotion", dsDemotionList.Tables(0).Rows(1).Item("EmployerID"), strCurrentUser)
+                Using sw As StreamWriter = File.AppendText(path)
+                    sw.WriteLine("EMP.s_Accept_Promotion " + CStr(dsDemotionList.Tables(0).Rows(1).Item("EmployerID")) + ", " + strCurrentUser)
+                    sw.WriteLine("Go")
+                End Using
+
+                dsDemotionList = GlobalLibrary.SqlHelper.ExecuteDataset(CN, "EMP.s_Get_Promotion_List")
+            End While
+
+            MsgBox("Promotions Complete")
+            Me.Cursor = Cursors.Default
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "btnAcceptBulkPromotion_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnAcceptBulkPromotion_Click : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub LinkLabel4_LinkClicked(sender As System.Object, e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles LinkLabel4.LinkClicked
+        System.Diagnostics.Process.Start("http://myreports/DRG/Pages/Report.aspx?ItemPath=%2fProd%2fEV+Validation%2fCorporate+records+that+do+not+have+an+associated+Form+5500&SelectedSubTabId=ReportDataSourcePropertiesTab")
+    End Sub
+
+    Private Sub LinkLabel5_LinkClicked(sender As System.Object, e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles LinkLabel5.LinkClicked
+        System.Diagnostics.Process.Start("http://myreports/DRG/Pages/Report.aspx?ItemPath=%2fProd%2fEV+Validation%2fList+of+possible+EIN+matches")
+    End Sub
+
+    Private Sub LinkLabel6_LinkClicked(sender As System.Object, e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles LinkLabel6.LinkClicked
+        System.Diagnostics.Process.Start("http://myreports/DRG/Pages/Report.aspx?ItemPath=%2fProd%2fEV+Validation%2fPossible+Corporate+to+5500+Match+based+on+Partial+Name+Match")
+    End Sub
+
+    Private Sub btnDeleteMarkedCs_Click(sender As System.Object, e As System.EventArgs) Handles btnDeleteMarkedCs.Click
+        Dim iresult As Integer
+
+        Try
+            If Not boolReadOnly Then
+                iresult = MsgBox("This will delete all of the Schedule Cs that are marked for deletion.  Are you sure you want to do this?", MsgBoxStyle.YesNo)
+                If iresult = 6 Then
+                    Me.Cursor = Cursors.AppStarting
+                    Using conn As New SqlClient.SqlConnection(CN)
+                        conn.Open()
+                        Using cm As New SqlClient.SqlCommand("emp.s_Delete_ScheduleC", conn)
+                            cm.CommandType = CommandType.StoredProcedure
+                            cm.CommandTimeout = 500
+                            cm.ExecuteNonQuery()
+                        End Using
+                    End Using
+
+                    dsDOLScheduleC = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_C")
+                    dgvSched_C_BindData()
+
+                    dsDOLScheduleC_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_C")
+                    dgv_Sched_C_Drop_BindData()
+
+                    Me.Cursor = Cursors.Default
+                    'If dsDOLScheduleC.Tables.Count = 0 Then
+                    '    MsgBox("No records fixed")
+                    'Else
+                    '    MsgBox(CStr(dsDOLScheduleC.Tables(0).Rows(0).Item(0).ToString) + " records fixed.")
+                    'End If
+                End If
+            End If
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "btnDeleteMarkedCs_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnDeleteMarkedCs_Click : " + ex.Message)
+            Me.Cursor = Cursors.Default
+        End Try
+    End Sub
+
+    Private Sub dgv_ScheduleC_UserDeletedRow(ByVal sender As System.Object, e As DataGridViewRowCancelEventArgs) Handles dgv_ScheduleC.UserDeletingRow
+        Dim iResult As Integer, sortColumn As DataGridViewColumn, myindex As Integer, mysortcolumn As Integer
+        Dim SetSortOrder As ListSortDirection
+        Dim GridSortOrder As SortOrder
+
+        Try
+            e.Cancel = True ' never actually delete the row.
+            If Not bInitial And Not boolReadOnly Then
+                bInitial = True
+                If dgv_ScheduleC.SelectedRows.Count > 1 Then
+                    MsgBox("please only select 1 row to delete at a time")
+
+                Else
+
+                    sortColumn = dgv_ScheduleC.SortedColumn
+
+
+                    If Not sortColumn Is Nothing Then
+                        mysortcolumn = sortColumn.Index
+                        GridSortOrder = dgv_ScheduleC.SortOrder
+                    End If
+
+                    myindex = dgv_ScheduleC.CurrentRow.Index
+                    MsgBox("Deleteing " + dgv_ScheduleC.SelectedRows(0).Cells("DOLID").Value.ToString + "  " + dgv_ScheduleC.SelectedRows(0).Cells("Row_Number").Value.ToString)
+
+                    iResult = SQLHelper.ExecuteScalar(CN, "Emp.s_UserDelete_ScheduleC", _
+                                                      dgv_ScheduleC.SelectedRows(0).Cells("DOLID").Value.ToString, _
+                                                      dgv_ScheduleC.SelectedRows(0).Cells("Row_Number").Value.ToString,
+                                                      Userid)
+                    If iResult = 0 Then
+                        MsgBox("Record marked for deletion")
+                    Else
+                        MsgBox("Delete failed")
+                    End If
+
+
+                    Me.Cursor = Cursors.AppStarting
+
+                    dsDOLScheduleC = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_C")
+                    dgvSched_C_BindData()
+
+                    dsDOLScheduleC_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_C")
+                    dgv_Sched_C_Drop_BindData()
+
+
+                    If GridSortOrder = Windows.Forms.SortOrder.Ascending Then
+                        SetSortOrder = ListSortDirection.Ascending
+                    ElseIf GridSortOrder = Windows.Forms.SortOrder.Descending Then
+                        SetSortOrder = ListSortDirection.Descending
+                    ElseIf GridSortOrder = Windows.Forms.SortOrder.None Then
+                        SetSortOrder = ListSortDirection.Ascending
+                    Else : GridSortOrder = ListSortDirection.Ascending
+                        MsgBox("not good")
+                    End If
+
+                    If Not sortColumn Is Nothing Then
+                        dgv_ScheduleC.Sort(sortColumn, SetSortOrder)
+                        Me.dgv_ScheduleC.CurrentCell = Me.dgv_ScheduleC(mysortcolumn, myindex)
+                    End If
+
+                    Me.Cursor = Cursors.Default
+                    bInitial = False
+                End If
+            End If
+        Catch ex As Exception
+            Me.Cursor = Cursors.Default
+            'Functions.Sendmail(ex.Message, "dgv_ScheduleC_UserDeletedRow ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : dgv_ScheduleC_UserDeletedRow : " + ex.Message)
+        End Try
+    End Sub
+
+    Private Sub btnDelete_As_Click(sender As System.Object, e As System.EventArgs) Handles btnDelete_As.Click
+        Dim iresult As Integer
+
+        Try
+            If Not boolReadOnly Then
+                iresult = MsgBox("This will delete all of the Schedule As that are marked for deletion.  Are you sure you want to do this?", MsgBoxStyle.YesNo)
+                If iresult = 6 Then
+                    Me.Cursor = Cursors.AppStarting
+                    Using conn As New SqlClient.SqlConnection(CN)
+                        conn.Open()
+                        Using cm As New SqlClient.SqlCommand("emp.s_Delete_ScheduleA", conn)
+                            cm.CommandType = CommandType.StoredProcedure
+                            cm.CommandTimeout = 500
+                            cm.ExecuteNonQuery()
+                        End Using
+                    End Using
+
+                    dsDOLScheduleA = SQLHelper.ExecuteDataset(CN, "emp.s_get_Clean_Sched_A")
+                    dgvSched_A_BindData()
+
+                    dsDOLScheduleA_Deletes = SQLHelper.ExecuteDataset(CN, "emp.s_get_dirty_Schedule_A")
+                    dgv_Sched_A_Drop_BindData()
+
+                    Me.Cursor = Cursors.Default
+                 
+                End If
+            End If
+        Catch ex As Exception
+            'Functions.Sendmail(ex.Message, "btnDeleteMarkedCs_Click ", 0, 0, "Employer Maintenance")
+            MsgBox("Employer Maintenance : btnDeleteMarkedCs_Click : " + ex.Message)
+            Me.Cursor = Cursors.Default
+        End Try
     End Sub
 End Class
